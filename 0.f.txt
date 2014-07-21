@@ -1,0 +1,18 @@
+0.f Development plans:
+----------------------
+- Endgame positional knowledge
+- Parallel search (PV split)
+- Endgame tablebase support
+- Automated book building
+
+Computational:
+--------------
+- Tune evaluation terms
+- Tune selective search parameters
+
+Try:
+----
+- Butterfly boards for history heuristics (depths ROOT and 5 or 6)
+	-> Use for move ordering
+	-> Use for making futility pruning safer
+- History leaf pruning

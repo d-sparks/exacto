@@ -1,0 +1,254 @@
+		======================
+		  OPEN GAMES (1. e4)
+		======================
+
+1. Ruy Lopez (e4, e5, Nf3, Nc6, Bb5)
+
+	(a6)
+
+	1.a - Morphy defense (Ba4 Nf6)
+
+		(O-O)
+
+		1.a.I - Steinitz deffered (d6)
+
+		1.a.II - Ruy Lopez open (Nxe4 d4 b5 Bb3 d5 dxe5)
+
+		1.a.III - Ruy Lopez closed (Be7 Re1)
+		
+
+	1.b - Exchange variation (Bxc6 dxc6)
+
+	(other)
+
+	1.c - Bird's defense (Nd4 Nxd4 exd4)
+
+	1.d - Berlin defense (Nf6 O-O)
+
+		1.d.I - Berlin open (Nxe4 d2d4)
+
+			1.d.I.A - Main line (Be7 Qe2 Nd6 Bxc6 bxc6 dxe5 Nb7)			
+
+			1.d.I.B - L'Hermet (Nd6 dxe5)
+
+			1.d.I.C - Showalter (Nd6 Ba4)
+
+		1.d.II - d6 (d6 d4 Bd7 Nc3)
+
+2. Petrov's defense / Russian defense (e4, e5, Nf3, Nf6)
+
+	2.a - Main line (Nxe5 d6 Nf3 Nxe4 d4)
+
+	2.b - Transpose to four knights game (Nc3 Nc6)
+
+3. Giuoco Piano (e4, e5, Nf3, Nc6, Bc4, Bc5, c3, Nf6, d4, exd4, cxd4, Bb4) [or: e4, e5, Bc4, Nc6, Nf3...]
+
+	3.a - Bd2
+
+	3.b - Nc3
+
+4. Four knights (e4, e5, Nf3, Nc6, Nc3, Nf6)
+
+	4.a - Scotch variation (d4 exd4 Nxd4 Bb4)
+
+	4.b - Spanish variation (Bb5 Bb4)
+
+	4.c - Italian variation (Bc4)
+
+
+5. Sicilian defense (e4, c5, Nf3)
+
+	5.a - Main line (d6, d4, cxd4, Nxd4, Nf6, Nc3)
+
+		5.a.I - Najdorf (a6)
+
+			5.a.I.A - Main line Najdorf (Bg5, e6, f4)
+
+				(Qb6)
+
+				5.a.I.A.one - Poisened pawn variation (Qd2, Qxb2, Rb1, Qa3)
+
+					(f5)
+
+					(e5)
+
+				5.a.I.A.two - Nb3 (Nb3)
+
+				(Qc7)
+
+		5.a.II - Dragon (g6)
+
+			5.a.II.A - Yugoslav Attack (Be3, Bg7, f2f3, O-O, Qd2, Nc6)
+
+				(O-O-O)
+
+				(Bc4)
+
+			5.a.II.B - Classical variation (Be2)
+
+		5.a.III - Scheveningen variation (e6)
+
+			5.a.III.A - Keres attack (g4, h6, h4, Nc6, Rg1)
+
+				5.a.III.A.* - d5 (d5, Bb5, Bd7, exd5, Nxd5, Nxd5, exd5, Qe2+, Be7, Nf5, Bxf5
+
+						  gxf5, Kf8, Be3, Qa5+)
+
+				5.a.III.A.** - h5 (h5, gxh5, Nxh5, Bg5, Nf6, Qd2)
+
+			5.a.III.B - Shozin-Fischer attack (Bc4, Nc6, Be3)
+
+		5.a.IV - Transpose to classical variation (Nc6)
+
+	5.b - Classical variation (Nc6, d4, cxd4, Nxd4, Nf6, Nc3)
+
+		5.b.I - Mainline classical (d6, Bg5)
+
+		5.b.II - Sveshnikov variation (e5, Ndb5, d6, Bg5, a6, Na3, b5)
+
+	5.c - e6 (e6, d4, cxd4, Nxd4, Nc6)
+	
+
+6. French defense (e4, e6, d4, d5)
+
+	6.a - Classical (nc3, nf6, Bg5)
+
+		6.a.I - Burn variation (dxe4, Nxe4, Be7, Bxf6, Bxf6, Nf3, Nd7)
+
+		6.a.II - Old main line (Be7, e5, Nf6d7, Bxe7, Qxe7, f4, O-O, Nf3)
+
+	6.c - Advance variation (e5, c5, c3, Nc6, Nf3)
+
+7. Caro-Kahn defense (e4, c6, d4, d5)
+
+	7.a - Main line (Nc3)
+
+		7.a.I - Classical (dxe4, Nxe4, Bf5, Ng3, Bg6, h4, h6, Nf3, Nd7, h5, Bh7, Bd3, Bxd3, Qxd3)
+
+		7.a.II - Modern variation (Nd7)
+
+	7.b - Exchange variation (exd5, cxd5, Bd3, Nc6, c3, Nf6, Bf4, Bg4, Qb3)
+	
+	7.c - Advance variation (e4e5, Bf5)
+
+8. Scandanavian defense (e4, d5, exd5)
+
+	8.a - Qxd5 (Nc3, Qa5, d2d4, Nf6, Nf3, c6, Bc4
+
+	8.b - Nf6 (d4, Nxd5, c4, Nb6, Nf3, g6, Nc3, Bg7)
+
+9. Alekhine defense (e4, Nf6)
+
+	9.a - Main line (e5, Nd5, c4, Nb6, d2d4, d6) [or: e5, Nd5, d4, d6, c4, Nb6]
+
+		9.a.I - Four pawns attack (f4)
+
+		9.a.II - Exchange variation (exd6)
+
+	9.b - Transposition to four knights (Nc3, e5)
+
+
+		========================
+		  CLOSED GAMES (1. d4)
+		========================
+
+1. Queen's gambit (d4, d5, c4)
+
+	1.a - Queen's gambit accepted (dxc4, Nf3)
+
+		1.a.I - Main line (Nf6, e3, e6, Bxc4, c5, O-O, a6)
+
+		1.a.II - Alekhine's variation (a6, e3, Nf6, Bxc4, e6, O-O, c5)
+
+	1.b - Queen's gambit declined
+
+		1.b.I - Main line (e6 Nc3)
+
+			1.b.I.A - Main line (Nf6, Bg5, Be7, e3, O-O, Nf3)
+
+			1.b.I.B - Transpose to semi-slav (c6 Nf3 Nf6)
+
+		1.b.II - Slav defense (c6, Nf3, Nf6, Nc3) [or: c6, Nc3, Nf6, Nf3]
+
+			1.b.II.A - Semislav (e6, e3, Nbd7)
+
+				1.b.II.A.one - Meran variation (Bd3, dxc4, Bxc4, b5)
+
+				1.b.II.A.two - Anti-Meran variation (Qc2)
+
+
+2. Indian defense (d4, Nf6, c4)
+
+	2.a - Queen's Indian defense (e6)
+
+		2.a.I - Main line (Nf3, b6, g3)
+
+			2.a.I.one - Modern main life (Ba6, b3, Bb4, Bd2, Be7, Bg2, c6, Bc3, d5, Ne5,
+
+						      Nfd7, Nxd7, Nxd7, Nd2, O-O, O-O)
+
+			2.a.I.two - Old main line (Bb7, Bg2, Be7, O-O, O-O, Nc3, Ne4, Qc2, Nxc3, Qxc3)
+
+		2.a.II - Nimzo-Indian (Nc3, Bb4, e3, O-O)
+
+			2.a.II.one - Main line (Bd3, d5, Nf3, c5, O-O)
+
+				2.a.II.one.* - Parma variation (dxc4, Bxc4, Nbd7)
+
+				2.a.II.one.** - Karpov variation (dxc4, Bxc4, cxd4, exd4, b6)
+
+				2.a.II.one.*** - Larsen variation (dxc4, Bxc4, Nc6, a3, Ba5)
+
+				2.a.II.one.**** - Main variation (Nc6, a3, Bxc3, bxc3, dxc4, Bxc4, Qc7)
+
+			2.a.II.two - Lines with Nge2
+
+				2.a.II.two.* - Reshevsky variation (Nge2, d5, a3, Be7, cxd5)
+
+					(exd5)
+
+					(Nxd5)
+
+				2.a.II.two.** - Modern variation (Bd3, d5, Nge2)
+
+		2.a.III - Transposition to the queen's gambit declined (Nc3, d7d5, c1g5)
+
+
+	2.b - King's Indian defense (g6, Nc3, Bg7, e4, d6)
+
+		2.b.I - Main line (Nf3, O-O, Be2, e5, O-O)
+
+			2.b.I.one - Main line (Nc6, d5, Ne7)
+
+			2.b.I.two - Old main line (Nbd7)
+
+		2.b.II - Samisch Variation (f3)
+
+
+		======================
+		  ALTERNATE OPENINGS
+		======================
+
+1. English opening (c4)
+
+	1.a - Transposition to the Indian defense (Nf6, d4)
+
+		1.c.I - Transposition to Queen's Indian (e6)
+
+		1.c.II - Transposition to King's Indian	(g6)	
+
+	1.b - Other transpositions (e6, d4)
+
+		1.d.I - Transposition to the Queen's Indian (Nf6)
+
+		1.d.II - Transposition to the Queen's Gambit declined (d5, Nc3)
+
+			
+2. Kings indian attack (Nf3, Nf6)
+
+	1.a - Transposition to King's Indian defense (c4, g6, Nc3, Bg7, e4, d6, d4, O-O)
+
+	1.b - Symmetric fianchetto variation (g3, g6, Bg2, Bg7, O-O, O-O)
+
+	1.c - d4 (d4, g6, c4, Bg7, Nc3, O-O)
+	

@@ -1,0 +1,2 @@
+#!/bin/sh
+c++ ../source/tune.cpp ../source/debug.cpp ../source/book.cpp ../source/evaluate.cpp ../source/magics.cpp ../source/search.cpp ../source/exacto.cpp ../source/go.cpp ../source/io.cpp ../source/bitboards.cpp ../source/engine.cpp ../source/game.cpp ../source/hash.cpp ../source/movegen.cpp ../source/SEE.cpp ../source/sort.cpp -O2 -std=c++11 -o ../exacto-mac $1
