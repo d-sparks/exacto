@@ -1,2 +1,0 @@
-#!/bin/sh
-i586-mingw32-c++ ../source/debug.cpp ../source/debug.cpp ../source/book.cpp ../source/evaluate.cpp ../source/magics.cpp ../source/search.cpp ../source/exacto.cpp ../source/go.cpp ../source/io.cpp ../source/bitboards.cpp ../source/engine.cpp ../source/game.cpp ../source/hash.cpp ../source/movegen.cpp ../source/SEE.cpp ../source/sort.cpp -O2 -std=c++11 -o ../exacto-win32.exe $1
