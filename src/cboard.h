@@ -17,8 +17,7 @@ public:
 #ifndef _TEST
 private:
 #endif
-    bool    wtm,
-            btm;
+    bool    wtm;
     BB      pieces[2][7],
             castling[2],
             enPassant,
@@ -26,12 +25,3 @@ private:
             empty;
     ind     board[64];
 };
-
-// Convenient inlines
-inline ind white(ind piece) {
-    return 8 + piece;
-}
-
-inline ind black(ind piece) {
-    return piece;
-}

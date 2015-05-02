@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include "cboard.h"
+#include "cboard_helpers.cpp"
 #include "inlines.h"
 #include "bb.cpp"
 
@@ -71,7 +72,6 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep, string hm,
 
     // Set color to move
     wtm = (clr == "w" || clr == "W");
-    btm = !wtm;
 
     // Set castling data
     for(ind i = 0; i < cstl.length(); i++) {
@@ -87,9 +87,7 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep, string hm,
     if(ep == "-") {
         enPassant = 0;
     } else {
-        int r = atoi(ep.substr(0, 1).c_str()) - 96;
-        int f = atoi(ep.substr(1, 1).c_str()) - 1;
-        enPassant = exp_2((8 * f) + r);
+        enPassant = exp_2(squareToIndex(ep));
     }
 
     // Set occupancy bitboards

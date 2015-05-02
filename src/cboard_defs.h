@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 #include "bb.h"
 
 #define WHITE 1
@@ -22,3 +23,13 @@ enum squares : ind {
     H7, G7, F7, E7, D7, C7, B7, A7,
     H8, G8, F8, E8, D8, C8, B8, A8, totalSquares
 };
+
+// Convenient inlines
+inline ind white(ind piece) {
+    return 8 + piece;
+}
+
+inline ind black(ind piece) {
+    return piece;
+}
+
