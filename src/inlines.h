@@ -81,7 +81,7 @@ inline
 #endif
 #endif
 #ifdef __GNUC__
-    ind bitscan_reverse(BB b) {
+    ind bitscanReverse(BB b) {
         return (63 - __builtin_clzll(b));
     }
 #endif
