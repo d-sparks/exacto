@@ -7,11 +7,16 @@
 
 using namespace std;
 
-CBoard::CBoard(void) {
-    setBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", "w", "KQkq", "-", "0", "0");
+// Constructor(s) and destructor(s)
+CBoard::CBoard() {
+    setBoard();
 }
 
-CBoard::~CBoard(void) {
+CBoard::CBoard(string brd, string clr, string cstl, string ep, string hm, string fm) {
+    setBoard(brd, clr, cstl, ep, hm, fm);
+}
+
+CBoard::~CBoard() {
 }
 
 // print prints a graphical representation of the board.
@@ -30,6 +35,11 @@ void CBoard::print() {
     }
 }
 
+// setBoard with no arguments sets the board to the default position
+void CBoard::setBoard() {
+    setBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", "w", "KQkq", "-", "0", "0");
+}
+
 // setBoard sets board given an FEN string.
 void CBoard::setBoard(string brd, string clr, string cstl, string ep, string hm, string fm) {
     map<string, ind> stringToPiece = {
@@ -40,7 +50,7 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep, string hm,
     // Clear the board first
     memset(pieces, 0, sizeof(pieces[0][0]) * 2 * 7);
     memset(board, 0, sizeof(board[0]) * 64);
-    memset(castling, 0, sizeof(castling[0] * 2));
+    memset(castling, 0, sizeof(castling[0]) * 2);
 
     // Parse FEN board and set pieces, board arrays
     for(ind x = 0, y = 63; x < brd.length(); x++, y--) {
@@ -88,5 +98,7 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep, string hm,
             pieces[i][ALL] |= pieces[i][j];
         }
     }
+    occupied = pieces[BLACK][ALL] | pieces[WHITE][ALL];
+    empty = ~occupied;
 }
 
