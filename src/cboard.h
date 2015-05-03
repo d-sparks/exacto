@@ -12,7 +12,7 @@ public:
     void setBoard();
     void setBoard(string brd, string clr, string cstl, string ep, string hm, string fm);
     void makeMove(mv m);
-    void movePiece(bool color, ind source, ind dest, ind attacker, ind defender, BB sourceBB, BB destBB);
+    void movePiece(bool color, ind attacker, ind source, ind dest, BB sourceBB, BB destBB);
     void makePiece(bool color, ind piece, ind square, BB squareBB);
     void killPiece(bool color, ind piece, ind square, BB squareBB);
     bool operator==(const CBoard &other) const;

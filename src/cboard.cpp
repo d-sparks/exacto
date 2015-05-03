@@ -106,7 +106,7 @@ bool CBoard::operator==(const CBoard &other) const {
     bool piecesEqual    = memcmp(pieces, other.pieces, sizeof(pieces[0][0]) * 2 * 7) == 0;
     bool boardsEqual    = memcmp(board, other.board, sizeof(board[0]) * 64) == 0;
     bool enPassantEqual = enPassant == other.enPassant;
-    bool wtmEqual       = (wtm == other.wtm) || true;
+    bool wtmEqual       = wtm == other.wtm;
     return piecesEqual && boardsEqual && enPassantEqual && wtmEqual;
 }
 
@@ -119,19 +119,14 @@ void CBoard::makeMove(mv m) {
     BB sourceBB = exp_2(source);
     BB destBB = exp_2(dest);
 
-    movePiece(wtm, source, dest, attacker, defender, sourceBB, destBB);
+    if(defender) {
+        killPiece(!wtm, defender, dest, destBB);
+    }
+    movePiece(wtm, source, dest, attacker, sourceBB, destBB);
 }
 
-// Moves a piece on the board.
-void CBoard::movePiece(bool color, ind source, ind dest, ind attacker, ind defender,
-                        BB sourceBB, BB destBB) {
-
-    // Remove the defender, if it exists
-    if(defender) {
-        killPiece(!color, defender, dest, destBB);
-    }
-
-    // Move the attacker from the source square to dest square
+// Moves a piece on the board, assumes target is empty. Does not udpate occupancy bitboard.
+void CBoard::movePiece(bool color, ind attacker, ind source, ind dest, BB sourceBB, BB destBB) {
     killPiece(color, attacker, source, sourceBB);
     makePiece(color, attacker, dest, destBB);
 }

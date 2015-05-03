@@ -11,9 +11,9 @@ int testMovePiece() {
     cout << "Testing CBoard::movePiece..." << endl;
     CBoard board1, board2;
 
-    // board1.movePiece(E2, E4);
-    // board2.setBoard("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR", "b", "KQkq", "-", "0", "0");
-    // ASSERT(board1 == board2, "Move gave wrong result");
+    board1.movePiece(WHITE, PAWN, E2, E4, exp_2(E2), exp_2(E4));
+    board2.setBoard("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR", "w", "KQkq", "-", "0", "0");
+    ASSERT(board1 == board2, "Move gave wrong result");
 
     return 1;
 }
@@ -47,6 +47,7 @@ int main() {
 
     t += testMovePiece();
     t += testKillPiece();
+    t += testMakePiece();
 
     cout << endl;
     cout << t << " test(s) OK" << endl;
