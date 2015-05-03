@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "bb.cpp"
-#include "cboard.cpp"
+#include "cgame.cpp"
 
 using namespace std;
 
@@ -19,8 +19,8 @@ void printVersion(string version) {
 
 int main() {
     printVersion("?.?");
-    CBoard board;
-    board.move(E2, E4);
+    CGame board;
+    board.movePiece(WHITE, PAWN, E2, E4, exp_2(E2), exp_2(E4));
     board.print();
     return 0;
 }

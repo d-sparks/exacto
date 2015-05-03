@@ -5,7 +5,6 @@
 #include "cboard_helpers.cpp"
 #include "inlines.h"
 #include "bb.cpp"
-#include "move.cpp"
 
 using namespace std;
 
@@ -108,21 +107,6 @@ bool CBoard::operator==(const CBoard &other) const {
     bool enPassantEqual = enPassant == other.enPassant;
     bool wtmEqual       = wtm == other.wtm;
     return piecesEqual && boardsEqual && enPassantEqual && wtmEqual;
-}
-
-// Makes a move, fully updating the gamestate.
-void CBoard::makeMove(mv m) {
-    ind source = move::source(m);
-    ind dest = move::dest(m);
-    ind attacker = move::attacker(m);
-    ind defender = move::defender(m);
-    BB sourceBB = exp_2(source);
-    BB destBB = exp_2(dest);
-
-    if(defender) {
-        killPiece(!wtm, defender, dest, destBB);
-    }
-    movePiece(wtm, source, dest, attacker, sourceBB, destBB);
 }
 
 // Moves a piece on the board, assumes target is empty. Does not udpate occupancy bitboard.
