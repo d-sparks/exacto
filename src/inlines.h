@@ -32,21 +32,21 @@ inline
 #ifdef _MSC_VER
 #if _WIN32
     ind bitscan(BB b) {
-        unsigned long ind;
+        unsigned long i;
         if((uint32_t)b) {
-            _BitScanForward(&ind, (uint32_t)b);
+            _BitScanForward(&i, (uint32_t)b);
         } else {
-            _BitScanForward(&ind, (uint32_t)(b >> 32));
-            ind += 32;
+            _BitScanForward(&i, (uint32_t)(b >> 32));
+            i += 32;
         }
-        return (ind)ind;
+        return (ind)i;
     }
 #endif
 #if _WIN64
     ind bitscan(BB b) {
-        unsigned long ind;
-        _BitScanForward64(&ind, b);
-        return (ind)ind;
+        unsigned long i;
+        _BitScanForward64(&i, b);
+        return (ind)i;
     }
 #endif
 #endif
@@ -62,21 +62,21 @@ inline
 #ifdef _MSC_VER
 #ifdef _WIN_32
     ind bitscanReverse(BB b) {
-        unsigned long ind;
+        unsigned long i;
         if(b >> 32) {
-            _BitScanReverse(&ind, b >> 32);
-            ind += 32;
+            _BitScanReverse(&i, b >> 32);
+            i += 32;
         } else {
-            _BitScanReverse(&ind, (uint32_t)b);
+            _BitScanReverse(&i, (uint32_t)b);
         }
-        return (ind)ind;
+        return (ind)i;
     }
 #endif
 #ifdef _WIN_64
     ind bitscanReverse(BB b) {
-        unsigned long ind;
-        _BitScanReverse64(&ind, b);
-        return (ind)ind;
+        unsigned long i;
+        _BitScanReverse64(&i, b);
+        return (ind)i;
     }
 #endif
 #endif

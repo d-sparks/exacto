@@ -111,7 +111,7 @@ bool CBoard::operator==(const CBoard &other) const {
 
 // Moves a piece on the board. Assumes a piece on the source square is of the color to move, and
 // that the destination is either empty or occupied by an opposing piece.
-void CBoard::move(ind source, ind dest) {
+void CBoard::movePiece(ind source, ind dest) {
     // Remove the defender, if it exists
     ind defender = piece(board[dest]);
     BB destBB = exp_2(dest);
