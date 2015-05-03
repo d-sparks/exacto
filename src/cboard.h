@@ -10,6 +10,8 @@ public:
     void print();
     void setBoard();
     void setBoard(string brd, string clr, string cstl, string ep, string hm, string fm);
+    void move(ind source, ind dest);
+    bool operator==(const CBoard &other) const;
     CBoard();
     CBoard(string brd, string clr, string cstl, string ep, string hm, string fm);
     ~CBoard();

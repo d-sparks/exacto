@@ -20,6 +20,7 @@ void printVersion(string version) {
 int main() {
     printVersion("?.?");
     CBoard board;
+    board.move(E2, E4);
     board.print();
     return 0;
 }

@@ -33,3 +33,6 @@ inline ind black(ind piece) {
     return piece;
 }
 
+inline ind piece(ind coloredPiece) {
+    return coloredPiece % 8;
+}

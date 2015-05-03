@@ -1,5 +1,3 @@
-#define _TEST 1
-
 #include <string>
 #include <map>
 #include "assert.h"
@@ -8,7 +6,8 @@
 
 using namespace std;
 
-// Test setBoard
+// Test squareToIndex by checking that it is the inverse of the array indexToSquare on the
+// appropriate domain.
 int testSquareToIndex() {
     cout << "Testing squareToIndex..." << endl;
     for(ind i = 0; i < totalSquares; i++) {
