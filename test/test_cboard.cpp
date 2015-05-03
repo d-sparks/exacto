@@ -18,10 +18,35 @@ int testMovePiece() {
     return 1;
 }
 
+int testKillPiece() {
+    cout << "Testing CBoard::killPiece..." << endl;
+    CBoard board1, board2;
+
+    board1.setBoard("8/8/8/8/4P3/8/8/8", "w", "KQkq", "-", "0", "0");
+    board2.setBoard("8/8/8/8/8/8/8/8", "w", "KQkq", "-", "0", "0");
+    board1.killPiece(WHITE, PAWN, E4, exp_2(E4));
+    ASSERT(board1 == board2, "killPiece failed");
+
+    return 1;
+}
+
+int testMakePiece() {
+    cout << "Testing CBoard::makePiece..." << endl;
+    CBoard board1, board2;
+
+    board1.setBoard("8/8/8/8/8/8/8/8", "w", "KQkq", "-", "0", "0");
+    board2.setBoard("8/8/8/8/4P3/8/8/8", "w", "KQkq", "-", "0", "0");
+    board1.makePiece(WHITE, PAWN, E4, exp_2(E4));
+    ASSERT(board1 == board2, "killPiece failed");
+
+    return 1;
+}
+
 int main() {
     int t = 0;
 
     t += testMovePiece();
+    t += testKillPiece();
 
     cout << endl;
     cout << t << " test(s) OK" << endl;
