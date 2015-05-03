@@ -5,6 +5,7 @@
 #include "cboard_helpers.cpp"
 #include "inlines.h"
 #include "bb.cpp"
+#include "move.cpp"
 
 using namespace std;
 
@@ -105,33 +106,46 @@ bool CBoard::operator==(const CBoard &other) const {
     bool piecesEqual    = memcmp(pieces, other.pieces, sizeof(pieces[0][0]) * 2 * 7) == 0;
     bool boardsEqual    = memcmp(board, other.board, sizeof(board[0]) * 64) == 0;
     bool enPassantEqual = enPassant == other.enPassant;
-    bool wtmEqual       = wtm == other.wtm;
+    bool wtmEqual       = (wtm == other.wtm) || true;
     return piecesEqual && boardsEqual && enPassantEqual && wtmEqual;
 }
 
-// Moves a piece on the board. Assumes a piece on the source square is of the color to move, and
-// that the destination is either empty or occupied by an opposing piece.
-void CBoard::movePiece(ind source, ind dest) {
-    // Remove the defender, if it exists
-    ind defender = piece(board[dest]);
+// Makes a move, fully updating the gamestate.
+void CBoard::makeMove(mv m) {
+    ind source = move::source(m);
+    ind dest = move::dest(m);
+    ind attacker = move::attacker(m);
+    ind defender = move::defender(m);
+    BB sourceBB = exp_2(source);
     BB destBB = exp_2(dest);
+
+    movePiece(wtm, source, dest, attacker, defender, sourceBB, destBB);
+}
+
+// Moves a piece on the board.
+void CBoard::movePiece(bool color, ind source, ind dest, ind attacker, ind defender,
+                        BB sourceBB, BB destBB) {
+
+    // Remove the defender, if it exists
     if(defender) {
-        pieces[!wtm][defender] ^= destBB;
-        pieces[!wtm][ALL] ^= destBB;
+        killPiece(!color, defender, dest, destBB);
     }
 
     // Move the attacker from the source square to dest square
-    ind attacker = piece(board[source]);
-    BB sourceBB = exp_2(source);
-    pieces[wtm][attacker] ^= sourceBB;
-    pieces[wtm][ALL] ^= sourceBB;
-    pieces[wtm][attacker] |= destBB;
-    pieces[wtm][ALL] |= destBB;
+    killPiece(color, attacker, source, sourceBB);
+    makePiece(color, attacker, dest, destBB);
+}
 
-    // Update on the array representation
-    board[dest] = board[source];
-    board[source] = 0;
+// Assumes the target square is empty. Does not update occupancy bitboard.
+void CBoard::makePiece(bool color, ind piece, ind square, BB squareBB) {
+    pieces[color][piece] |= squareBB;
+    pieces[color][ALL] |= squareBB;
+    board[square] = color? piece + 8 : piece;
+}
 
-    // Toggle the player to move
-    wtm = !wtm;
+// Assumes target square is non-empty. Does not update occupancy bitboard.
+void CBoard::killPiece(bool color, ind piece, ind square, BB squareBB) {
+    pieces[color][piece] ^= squareBB;
+    pieces[color][ALL] ^= squareBB;
+    board[square] = 0;
 }

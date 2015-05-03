@@ -36,3 +36,7 @@ inline ind black(ind piece) {
 inline ind piece(ind coloredPiece) {
     return coloredPiece % 8;
 }
+
+inline bool color(ind coloredPiece) {
+    return coloredPiece > 8;
+}
