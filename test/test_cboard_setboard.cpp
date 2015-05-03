@@ -1,6 +1,6 @@
 #define _TEST 1
 
-#include <string>
+#include <string.h>
 #include <map>
 #include "assert.h"
 #include "../src/cboard.cpp"

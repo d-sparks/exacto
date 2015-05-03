@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdint.h>
-#include <string>
+#include <string.h>
 #include "bb.cpp"
 #include "cboard.cpp"
 

@@ -1,5 +1,5 @@
 #pragma once
-#include <string>
+#include <string.h>
 #include "cboard_defs.h"
 #include "bb.cpp"
 

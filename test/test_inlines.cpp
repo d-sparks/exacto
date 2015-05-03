@@ -1,4 +1,4 @@
-#include <string>
+#include <string.h>
 #include "assert.h"
 #include "../src/inlines.h"
 #include "../src/bb.cpp"

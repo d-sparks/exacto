@@ -1,5 +1,6 @@
 #pragma once
-#include <string>
+#include <string.h>
+#include <algorithm>
 #include "bb.h"
 
 using namespace std;
