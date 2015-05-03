@@ -8,6 +8,7 @@
 
 using namespace std;
 
+// Tests of the move namespace: creating and unpacking moves.
 int testEndToEnd() {
     cout << "Testing move namespace end to end..." << endl;
 
