@@ -27,7 +27,7 @@ test: test/bin $(TESTS)
 	@printf "\nOK\n\n"
 	@rm -rf test/bin
 
-$(TESTS):
+$(TESTS): test/bin
 	@printf "\n=== Building tests: "$@" ===\n"
 	$(CC) $(CFLAGS) -o test/bin/$@ test/$@.cpp
 	@printf "\n=== Running tests:  "$@" ===\n"
