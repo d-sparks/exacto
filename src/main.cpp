@@ -20,7 +20,11 @@ void printVersion(string version) {
 int main() {
     printVersion("?.?");
     CGame board;
-    board.movePiece(WHITE, PAWN, E2, E4, exp_2(E2), exp_2(E4));
-    board.print();
+    // board.movePiece(WHITE, PAWN, E2, E4, exp_2(E2), exp_2(E4));
+    mv asdf[25] = { 0 };
+    board.moveGen(asdf);
+    for(ind i = 0; i < 25; i++) {
+        cout << (int)move::source(asdf[i]) << " " << (int)move::dest(asdf[i]) << endl;
+    }
     return 0;
 }

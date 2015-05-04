@@ -4,7 +4,9 @@
 #include "cboard.h"
 #include "cboard_helpers.cpp"
 #include "inlines.h"
+#include "move.cpp"
 #include "bb.cpp"
+#include "cboard_movegen.cpp"
 
 using namespace std;
 

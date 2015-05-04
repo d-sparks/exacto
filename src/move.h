@@ -11,6 +11,7 @@
 // [00000011110000000000000000000000]: castling data (4 bits)
 // [00111100000000000000000000000000]: special data (4 bits)
 
+#define REGULAR_MOVE              0
 #define PROMOTE_QUEEN             1
 #define PROMOTE_ROOK              2
 #define PROMOTE_BISHOP            3
