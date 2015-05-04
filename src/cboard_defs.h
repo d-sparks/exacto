@@ -6,6 +6,7 @@
 #define BLACK 0
 
 #define ALL 0
+#define NONE 0
 #define PAWN 1
 #define KNIGHT 2
 #define BISHOP 3
