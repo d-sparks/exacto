@@ -1,7 +1,9 @@
 #pragma once
 #include <iostream>
+#include <string.h>
 #include "bb.h"
 #include "moves.h"
+#include "squares.cpp"
 
 using namespace std;
 
@@ -41,5 +43,9 @@ namespace moves {
                       | (enPassant << 18)
                       | (castling << 22)
                       | (special << 26);
+    }
+
+    string algebraic(mv m) {
+        return squares::algebraic[source(m)] + "-" + squares::algebraic[dest(m)] + " " + to_string(defender(m));
     }
 }

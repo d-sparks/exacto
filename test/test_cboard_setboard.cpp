@@ -13,14 +13,14 @@ int testSetBoardDefaultPosition() {
     cout << "Testing setBoard in default position..." << endl;
 
     map<ind, ind> expectedBoard = {
-        {H1, white(ROOK)},  {G1, white(KNIGHT)}, {F1, white(BISHOP)}, {E1, white(KING)},
-        {D1, white(QUEEN)}, {C1, white(BISHOP)}, {B1, white(KNIGHT)}, {A1, white(ROOK)},
-        {H2, white(PAWN)},  {G2, white(PAWN)},   {F2, white(PAWN)},   {E2, white(PAWN)},
-        {D2, white(PAWN)},  {C2, white(PAWN)},   {B2, white(PAWN)},   {A2, white(PAWN)},
-        {H8, black(ROOK)},  {G8, black(KNIGHT)}, {F8, black(BISHOP)}, {E8, black(KING)},
-        {D8, black(QUEEN)}, {C8, black(BISHOP)}, {B8, black(KNIGHT)}, {A8, black(ROOK)},
-        {H7, black(PAWN)},  {G7, black(PAWN)},   {F7, black(PAWN)},   {E7, black(PAWN)},
-        {D7, black(PAWN)},  {C7, black(PAWN)},   {B7, black(PAWN)},   {A7, black(PAWN)}
+        {H1, ROOK},  {G1, KNIGHT}, {F1, BISHOP}, {E1, KING},
+        {D1, QUEEN}, {C1, BISHOP}, {B1, KNIGHT}, {A1, ROOK},
+        {H2, PAWN},  {G2, PAWN},   {F2, PAWN},   {E2, PAWN},
+        {D2, PAWN},  {C2, PAWN},   {B2, PAWN},   {A2, PAWN},
+        {H8, ROOK},  {G8, KNIGHT}, {F8, BISHOP}, {E8, KING},
+        {D8, QUEEN}, {C8, BISHOP}, {B8, KNIGHT}, {A8, ROOK},
+        {H7, PAWN},  {G7, PAWN},   {F7, PAWN},   {E7, PAWN},
+        {D7, PAWN},  {C7, PAWN},   {B7, PAWN},   {A7, PAWN}
     };
 
     CBoard board;
@@ -54,8 +54,8 @@ int testSetBoardDefaultPosition() {
 int testSetBoardEnPassant() {
     cout << "Testing setBoard: en passant" << endl;
     for(ind i = H1; i < totalSquares; i++) {
-        CBoard board("8/8/8/8/8/8/8/8", "w", "KQkq", indexToSquare[i], "0", "0");
-        ASSERT(board.enPassant == exp_2(i), "Bad enPassant loading " + indexToSquare[i]);
+        CBoard board("8/8/8/8/8/8/8/8", "w", "KQkq", squares::algebraic[i], "0", "0");
+        ASSERT(board.enPassant == exp_2(i), "Bad enPassant loading " + squares::algebraic[i]);
     }
     return 1;
 }
@@ -71,13 +71,13 @@ int testSetBoardCastling() {
 
     // Kingside only
     board = CBoard("8/8/8/8/8/8/8/8", "w", "Kk", "-", "0", "0");
-    ASSERT(board.castling[WHITE] == exp_2(squareToIndex("G1")), "Castling failed: '-'");
-    ASSERT(board.castling[BLACK] == exp_2(squareToIndex("G8")), "Castling failed: '-'");
+    ASSERT(board.castling[WHITE] == exp_2(squares::index("G1")), "Castling failed: '-'");
+    ASSERT(board.castling[BLACK] == exp_2(squares::index("G8")), "Castling failed: '-'");
 
     // Queenside only
     board = CBoard("8/8/8/8/8/8/8/8", "w", "Qq", "-", "0", "0");
-    ASSERT(board.castling[WHITE] == exp_2(squareToIndex("C1")), "Castling failed: '-'");
-    ASSERT(board.castling[BLACK] == exp_2(squareToIndex("C8")), "Castling failed: '-'");
+    ASSERT(board.castling[WHITE] == exp_2(squares::index("C1")), "Castling failed: '-'");
+    ASSERT(board.castling[BLACK] == exp_2(squares::index("C8")), "Castling failed: '-'");
 
     return 1;
 }

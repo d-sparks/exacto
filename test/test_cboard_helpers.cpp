@@ -6,12 +6,12 @@
 
 using namespace std;
 
-// Test squareToIndex by checking that it is the inverse of the array indexToSquare on the
+// Test squares::index by checking that it is the inverse of the array indexToSquare on the
 // appropriate domain.
 int testSquareToIndex() {
-    cout << "Testing squareToIndex..." << endl;
+    cout << "Testing squares::index..." << endl;
     for(ind i = 0; i < totalSquares; i++) {
-        ASSERT(i == squareToIndex(indexToSquare[i]), "squareToIndex failed for i = " + to_string(i));
+        ASSERT(i == squares::index(squares::algebraic[i]), "squares::index failed for i = " + to_string(i));
     }
     return 1;
 }

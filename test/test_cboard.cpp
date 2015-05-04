@@ -52,12 +52,12 @@ int testMakePiece() {
     board1.setBoard("8/8/8/8/8/8/8/8", "w", "KQkq", "-", "0", "0");
     board2.setBoard("8/8/8/8/4N3/8/8/8", "w", "KQkq", "-", "0", "0");
     board1.makePiece(WHITE, KNIGHT, E4, exp_2(E4));
-    ASSERT(board1 == board2, "killPiece failed");
+    ASSERT(board1 == board2, "makePiece failed");
 
     board1.setBoard("8/8/8/8/8/8/8/8", "w", "KQkq", "-", "0", "0");
     board2.setBoard("8/8/8/8/4r3/8/8/8", "w", "KQkq", "-", "0", "0");
     board1.makePiece(BLACK, ROOK, E4, exp_2(E4));
-    ASSERT(board1 == board2, "killPiece failed");
+    ASSERT(board1 == board2, "makePiece failed");
 
     return 1;
 }

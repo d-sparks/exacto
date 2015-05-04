@@ -24,7 +24,9 @@ int main() {
     mv asdf[25] = { 0 };
     board.moveGen(asdf);
     for(ind i = 0; i < 25; i++) {
-        cout << (int)move::source(asdf[i]) << " " << (int)move::dest(asdf[i]) << endl;
+        if(asdf[i]) {
+            cout << (int)moves::source(asdf[i]) << " " << (int)moves::dest(asdf[i]) << endl;
+        }
     }
     return 0;
 }

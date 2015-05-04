@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include "move.cpp"
+#include "moves.cpp"
 #include "cboard.cpp"
 #include "cgame.h"
 
@@ -19,10 +19,10 @@ CGame::~CGame() {
 
 // Makes a move, fully updating the gamestate and history.
 void CGame::makeMove(mv m) {
-    ind source = move::source(m);
-    ind dest = move::dest(m);
-    ind attacker = move::attacker(m);
-    ind defender = move::defender(m);
+    ind source = moves::source(m);
+    ind dest = moves::dest(m);
+    ind attacker = moves::attacker(m);
+    ind defender = moves::defender(m);
     BB sourceBB = exp_2(source);
     BB destBB = exp_2(dest);
 

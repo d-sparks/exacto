@@ -1,6 +1,6 @@
 #pragma once
 #include <string.h>
-#include "move.h"
+#include "moves.h"
 #include "cboard.h"
 
 using namespace std;

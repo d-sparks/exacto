@@ -2,11 +2,11 @@
 #include <string.h>
 #include <map>
 #include "cboard.h"
-#include "cboard_helpers.cpp"
 #include "inlines.h"
-#include "move.cpp"
+#include "moves.cpp"
 #include "bb.cpp"
 #include "cboard_movegen.cpp"
+#include "squares.cpp"
 
 using namespace std;
 
@@ -31,7 +31,9 @@ void CBoard::print() {
     cout << "+---+---+---+---+---+---+---+---+" << endl;
     for (ind i = 7; i < 255; i--) {
         for (ind j = 7; j < 255; j--) {
-            cout << "|" << piecesToStrings[board[8 * i + j]];
+            ind square = 8 * i + j;
+            ind colorModifier = (pieces[WHITE][ALL] & exp_2(square))? 8 : 0;
+            cout << "|" << piecesToStrings[colorModifier + board[square]];
         }
         cout << "|" << endl;
         cout << "+---+---+---+---+---+---+---+---+" << endl;
@@ -65,7 +67,7 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep, string hm,
             } else {
                 ind piece = stringToPiece[temp];
                 pieces[piece > 8][piece % 8] |= exp_2(y);
-                board[y] = piece;
+                board[y] = piece % 8;
             }
         } else {
             y -= (atoi(temp.c_str()) - 1);
@@ -89,7 +91,7 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep, string hm,
     if(ep == "-") {
         enPassant = 0;
     } else {
-        enPassant = exp_2(squareToIndex(ep));
+        enPassant = exp_2(squares::index(ep));
     }
 
     // Set occupancy bitboards
@@ -121,7 +123,7 @@ void CBoard::movePiece(bool color, ind attacker, ind source, ind dest, BB source
 void CBoard::makePiece(bool color, ind piece, ind square, BB squareBB) {
     pieces[color][piece] |= squareBB;
     pieces[color][ALL] |= squareBB;
-    board[square] = color? piece + 8 : piece;
+    board[square] = piece;
 }
 
 // Assumes target square is non-empty. Does not update occupancy bitboard.
