@@ -48,12 +48,10 @@ int testPawnCaps() {
 
 // Test knightGen: all knight moves
 int testKnightGen() {
-    cout << "Testing knight gen..." << endl;
+    cout << "Testing knightGen..." << endl;
 
     mv moveList[256] = { 0 };
-    mv capList[256] = { 0 };
     mv * moves = moveList;
-    mv * caps = capList;
 
     CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q7/P1PQ2PP/NR2KB1R", "w", "Kkq", "-", "0", "12");
     board.knightGen(&moves, true);
@@ -70,8 +68,21 @@ int testKnightGen() {
     sort(begin(expectedMoves), end(expectedMoves));
     ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect knight move generation");
 
+    return 1;
+}
+
+// Test knightCaps: knight capture moves only
+int testKnightCaps() {
+    cout << "Testing knightCaps..." << endl;
+
+    mv capList[256] = { 0 };
+    mv * caps = capList;
+
+    CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q7/P1PQ2PP/NR2KB1R", "w", "Kkq", "-", "0", "12");
     board.knightGen(&caps, false);
     mv expectedCaps[256] = { 0 };
+    expectedCaps[0] = moves::make(D4, E6, KNIGHT, PAWN, NONE, NONE, NONE);
+    ASSERT(!memcmp(capList, expectedCaps, sizeof(capList[0]) * 256), "Incorrect knight capture generation");
 
     return 1;
 }
@@ -82,6 +93,7 @@ int main() {
     t += testPawnGen();
     t += testPawnCaps();
     t += testKnightGen();
+    t += testKnightCaps();
 
     cout << endl;
     cout << t << " test(s) OK" << endl;
