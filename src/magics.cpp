@@ -17,7 +17,7 @@ namespace magics {
 
     // 9 bit bishop magics (generated with exacto 0.e)
     BB BISHOP_MOVES[64][EXP2_BISHOP_MAGIC_BITS];
-    BB const BISHOP[64] = {
+    BB const BISHOP_MAGICS[64] = {
         0x150510001100a407, 0x1020040820240400, 0x4801400808800208, 0x20469c0108004001,
         0x2390084002941,    0x11a120201808041c, 0x185000b00900080,  0x801801080984001,
         0x40022a84420201,   0x1000120010304202, 0x1140004a52008080, 0x860042030281010,
@@ -38,7 +38,7 @@ namespace magics {
 
     // 11 bit rook magics (generated with exaxcto 0.e)
     BB ROOK_MOVES[64][EXP2_ROOK_MAGIC_BITS];
-    BB const ROOK[64]   = {
+    BB const ROOK_MAGICS[64]   = {
         0xa8002c000108020,  0x100084000802070,  0x8180048020009000, 0x102002110000800,
         0x100023302040800,  0x220012000884b108, 0x2010158412000040, 0x880004024800100,
         0x1a41800010400020, 0xba00500c800,      0x2000c8120005,     0x200080a002840,
@@ -59,12 +59,12 @@ namespace magics {
 
     // The magic formula, helper for bishops
     BB hashBishop(BB bb, ind square) {
-        return (bb*BISHOP[square]) >> BISHOP_SHIFT;
+        return (bb*BISHOP_MAGICS[square]) >> BISHOP_SHIFT;
     }
 
     // The magic formula, helper for rooks
     BB hashRook(BB bb, ind square) {
-        return (bb*ROOK[square]) >> ROOK_SHIFT;
+        return (bb*ROOK_MAGICS[square]) >> ROOK_SHIFT;
     }
 
     // bishopMoves gives the moves for a bishop given an occupancy bitboard and a square

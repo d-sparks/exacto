@@ -4,6 +4,7 @@
 #include "bb.h"
 #include "masks.cpp"
 #include "moves.cpp"
+#include "magics.cpp"
 
 using namespace std;
 
@@ -16,17 +17,6 @@ void CBoard::moveGen(mv * moveList) {
 
     knightGen(&moveList, true);
 
-}
-
-// Generates all moves for knights
-void CBoard::knightGen(mv **moveList, bool quietMoves) {
-    BB knights = pieces[wtm][KNIGHT];
-    while(knights) {
-        ind i = bitscan(knights);
-        BB movesBB = masks::KNIGHT_MOVES[i] & (quietMoves? ~pieces[wtm][ALL] : pieces[!wtm][ALL]);
-        serialize(moveList, movesBB, i);
-        knights &= ~exp_2(i);
-    }
 }
 
 // Generates the non-capture pawn moves
@@ -54,6 +44,42 @@ void CBoard::pawnCaps(mv **moveList) {
         serializePawn(moveList, ((pawns & ~masks::FILE[7]) >> 7) & pieces[WHITE][ALL], REGULAR_MOVE, 7);
     }
     // en-passant captures not yet supported
+}
+
+// Generates all moves for knights. Accepts a boolean argument which specifies whether to return
+// non-captures.
+void CBoard::knightGen(mv **moveList, bool quietMoves) {
+    BB knights = pieces[wtm][KNIGHT];
+    while(knights) {
+        ind i = bitscan(knights);
+        BB movesBB = masks::KNIGHT_MOVES[i] & (quietMoves? ~pieces[wtm][ALL] : pieces[!wtm][ALL]);
+        serialize(moveList, movesBB, i);
+        knights &= ~exp_2(i);
+    }
+}
+
+// Generates all moves for bishops and the bishop moves for queens. Accepts a boolean argument which
+// specifies whether to return non-captures.
+void CBoard::bishopGen(mv **moveList, bool quietMoves) {
+    BB sliders = pieces[wtm][BISHOP] || pieces[wtm][QUEEN];
+    while(sliders) {
+        ind i = bitscan(sliders);
+        BB movesBB = magics::bishopMoves(i, occupied);
+        movesBB &= quietMoves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL];
+        sliders &= ~exp_2(i);
+    }
+}
+
+// Generates all moves for rooks, and the rook moves for queens. Accepts a boolean argument which
+// specifies whether to return non-captures.
+void CBoard::rookGen(mv **moveList, bool quietMoves) {
+    BB sliders = pieces[wtm][ROOK] || pieces[wtm][QUEEN];
+    while(sliders) {
+        ind i = bitscan(sliders);
+        BB movesBB = magics::rookMoves(i, occupied);
+        movesBB &= quietMoves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL];
+        sliders &= ~exp_2(i);
+    }
 }
 
 // serialize turns a bitboard into moves.

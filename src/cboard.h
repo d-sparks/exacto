@@ -31,6 +31,8 @@ protected:
     void pawnGen(mv ** moveList);
     void pawnCaps(mv ** moveList);
     void knightGen(mv ** moveList, bool quietMoves);
+    void bishopGen(mv ** moveList, bool quietMoves);
+    void rookGen(mv ** moveList, bool quietMoves);
     bool    wtm;
     BB      pieces[2][7],
             castling[2],
