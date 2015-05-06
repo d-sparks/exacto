@@ -1,13 +1,20 @@
 #pragma once
 #include <vector>
-#include "bb.h"
+#include "bb.cpp"
 #include "inlines.h"
+#include "masks.cpp"
 
 using namespace std;
+
+#define BISHOP_MAGIC_BITS 9
+#define EXP2_BISHOP_MAGIC_BITS 2048
+#define ROOK_MAGIC_BITS 11
+#define EXP2_ROOK_MAGIC_BITS 16384
 
 namespace magics {
 
     // 9 bit bishop magics (generated with exacto 0.e)
+    BB BISHOP_MOVES[64][EXP2_BISHOP_MAGIC_BITS];
     BB const BISHOP[64] = {
         0x150510001100a407, 0x1020040820240400, 0x4801400808800208, 0x20469c0108004001,
         0x2390084002941,    0x11a120201808041c, 0x185000b00900080,  0x801801080984001,
@@ -28,6 +35,7 @@ namespace magics {
     };
 
     // 11 bit rook magics (generated with exaxcto 0.e)
+    BB ROOK_MOVES[64][EXP2_ROOK_MAGIC_BITS];
     BB const ROOK[64]   = {
         0xa8002c000108020,  0x100084000802070,  0x8180048020009000, 0x102002110000800,
         0x100023302040800,  0x220012000884b108, 0x2010158412000040, 0x880004024800100,
@@ -46,6 +54,10 @@ namespace magics {
         0x11b0080002241,    0xd004284000104901, 0xd808c200104282,   0x420201a90000805,
         0x100900500480001,  0x40004980a440011,  0x110048420520401,  0x800011040280c422
     };
+
+    BB hash(BB bb, BB key, int bits) {
+        return (bb*key) >> (64-bits);
+    }
 
     // generateSubsets finds all sub-bitstrings of a given bitstring. It is used to generate occupancy
     // bitboards for magics. It works by going through indices x = 0, ..., 2^(popcount(b)) - 1,
@@ -70,6 +82,62 @@ namespace magics {
                 }
             }
             subsets->push_back(subset);
+        }
+    }
+
+    // Generate the moves for a given occupancy bitboard, square and set of directions.
+    BB generateMovesFromOccupancy(ind square, BB occupancy, BB mask, int directionDeltas[4]) {
+        BB moveBoard = 0;
+        for(ind direction = 0; direction < 4; direction++) {
+            int delta = directionDeltas[direction];
+            for(ind j = square + delta; j < 64; j += delta) {
+                BB nextMove = exp_2(j);
+                moveBoard |= nextMove;
+                if((occupancy & nextMove) != 0 || (mask & nextMove) == 0) {
+                    break;
+                }
+            }
+        }
+        return moveBoard;
+    }
+
+    // Populate the bishop move table for a certain square and a certain number of bits.
+    void populateBishopTable(ind square, int bits) {
+        BB mask = masks::BISHOP_MASKS[square];
+        vector<BB> occupancyBoards;
+        generateSubsets(mask, &occupancyBoards);
+        for(int i = 0; i < occupancyBoards.size(); i++) {
+            BB occupancy = occupancyBoards.at(i);
+            int directionDeltas[4] = { 7, 9, -7, -9 };
+            BB moveBoard = generateMovesFromOccupancy(square, occupancy, mask, directionDeltas);
+            BISHOP_MOVES[square][hash(occupancy, BISHOP[square], bits)] = moveBoard;
+        }
+    }
+
+    // Populate the rook move table for a certain square and a certain number of bits.
+    void populateRookTable(ind square, int bits) {
+        BB mask = masks::ROOK_MASKS[square];
+        vector<BB> occupancyBoards;
+        generateSubsets(mask, &occupancyBoards);
+        for(int i = 0; i < occupancyBoards.size(); i++) {
+            BB occupancy = occupancyBoards.at(i);
+            int directionDeltas[4] = { 1, 8, -1, -8 };
+            BB moveBoard = generateMovesFromOccupancy(square, occupancy, mask, directionDeltas);
+            ROOK_MOVES[square][hash(occupancy, ROOK[square], bits)] = moveBoard;
+        }
+    }
+
+    // Generate bishop move table for all squares.
+    void populateBishopTables() {
+        for(ind square = 0; square < 63; square++) {
+            populateBishopTable(square, BISHOP_MAGIC_BITS);
+        }
+    }
+
+    // Generate rook move table for all squares.
+    void populateRookTables() {
+        for(ind square = 0; square < 63; square++) {
+            populateRookTable(square, ROOK_MAGIC_BITS);
         }
     }
 
