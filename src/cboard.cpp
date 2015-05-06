@@ -73,7 +73,6 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep, string hm,
             y -= (atoi(temp.c_str()) - 1);
         }
     }
-
     // Set color to move
     wtm = (clr == "w" || clr == "W");
 
