@@ -1,7 +1,7 @@
 #pragma once
 #include <string.h>
-#include "cboard_defs.h"
 #include "moves.h"
+#include "pieces.h"
 #include "bb.h"
 
 using namespace std;

@@ -2,8 +2,8 @@
 #include <string.h>
 #include <map>
 #include "assert.h"
+#include "../src/pieces.h"
 #include "../src/moves.cpp"
-#include "../src/cboard_defs.h"
 #include "../src/bb.cpp"
 
 using namespace std;

@@ -1,8 +1,8 @@
 #pragma once
 #include "cboard.h"
+#include "squares.h"
 #include "bb.h"
 #include "masks.cpp"
-#include "squares.cpp"
 #include "moves.cpp"
 
 using namespace std;
