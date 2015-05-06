@@ -20,16 +20,14 @@ clean:
 bin:
 	mkdir -p bin
 
-test/bin:
-	mkdir -p test/bin
-
-test: test/bin $(TESTS)
+test: $(TESTS)
 	@printf "\nOK\n\n"
-	@rm -rf test/bin
 
-$(TESTS): test/bin
+$(TESTS):
+	mkdir -p test/bin
 	@printf "\n=== Building tests: "$@" ===\n"
 	$(CC) $(CFLAGS) -o test/bin/$@ test/$@.cpp
 	@printf "\n=== Running tests:  "$@" ===\n"
 	@test/bin/$@
+	@rm -rf test/bin
 
