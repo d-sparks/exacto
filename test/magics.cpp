@@ -42,8 +42,7 @@ int testBishopMagics() {
     CBoard board("1b6/8/8/4P3/8/8/8/8", "b", "", "-", "0", "0");
     BB expectedMoves = exp_2(A7) | exp_2(C7) | exp_2(D6) | exp_2(E5);
     magics::populateBishopTable(B8);
-    BB hashKey = magics::hashBishop(board.occupied & ~exp_2(B8), B8);
-    BB moves = magics::BISHOP_MOVES[B8][hashKey];
+    BB moves = magics::bishopMoves(B8, board.occupied);
     ASSERT(moves == expectedMoves, "Bishop magic test failed");
 
     return 1;

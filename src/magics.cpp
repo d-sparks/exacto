@@ -7,8 +7,10 @@
 using namespace std;
 
 #define BISHOP_MAGIC_BITS 9
+#define BISHOP_SHIFT 55 // 64-BISHOP_MAGIC_BITS
 #define EXP2_BISHOP_MAGIC_BITS 512
 #define ROOK_MAGIC_BITS 12
+#define ROOK_SHIFT 52 // 64-ROOK_MAGIC_BITS
 #define EXP2_ROOK_MAGIC_BITS 4096
 
 namespace magics {
@@ -55,12 +57,26 @@ namespace magics {
         0x100900500480001,  0x40004980a440011,  0x110048420520401,  0x800011040280c422
     };
 
+    // The magic formula, helper for bishops
     BB hashBishop(BB bb, ind square) {
-        return (bb*BISHOP[square]) >> (64-BISHOP_MAGIC_BITS);
+        return (bb*BISHOP[square]) >> BISHOP_SHIFT;
     }
 
+    // The magic formula, helper for rooks
     BB hashRook(BB bb, ind square) {
-        return (bb*ROOK[square]) >> (64-ROOK_MAGIC_BITS);
+        return (bb*ROOK[square]) >> ROOK_SHIFT;
+    }
+
+    // bishopMoves gives the moves for a bishop given an occupancy bitboard and a square
+    BB bishopMoves(ind square, BB occupancy) {
+        occupancy = occupancy & masks::BISHOP_MASKS[square];
+        return BISHOP_MOVES[square][hashBishop(occupancy, square)];
+    }
+
+    // rookMoves gives the moves for a bishop given an occupancy bitboard and a square
+    BB rookMoves(ind square, BB occupancy) {
+        occupancy = occupancy & masks::ROOK_MASKS[square];
+        return ROOK_MOVES[square][hashRook(occupancy, square)];
     }
 
     // generateSubsets finds all sub-bitstrings of a given bitstring. It is used to generate occupancy
