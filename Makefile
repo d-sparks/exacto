@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 CC := g++
 CFLAGS := -std=c++0x
-TESTS := $(shell ls -d test/test*cpp | sed -e "s/test\///g" | sed -e "s/.cpp//g")
+TESTS := $(shell ls -d test/*cpp | sed -e "s/test\///g" | sed -e "s/.cpp//g")
 
 .PHONY: build run test clean $(TESTS)
 
