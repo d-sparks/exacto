@@ -88,7 +88,7 @@ int testKnightCaps() {
     return 1;
 }
 
-// Test bishopGen: bishop all moves
+// Test bishopGen: all bishop moves
 int testBishopGen() {
     cout << "Testing bishopGen with quiet moves..." << endl;
 
@@ -150,6 +150,74 @@ int testBishopGenQueen() {
     return 1;
 }
 
+// Test rookGen: all rook moves
+int testRookGen() {
+    cout << "Testing rookGen with quiet moves..." << endl;
+
+    mv moveList[256] = { 0 };
+    mv * moves = moveList;
+
+    CBoard board("1p6/PR2p3/8/1P6/8/8/8/8", "w", "", "-", "0", "0");
+    magics::populateRookTable(B7);
+    board.rookGen(&moves, true);
+    mv expectedMoves[256] = { 0 };
+    expectedMoves[0] = moves::make(B7, B8, ROOK, PAWN, NONE, NONE, NONE);
+    expectedMoves[1] = moves::make(B7, C7, ROOK, NONE, NONE, NONE, NONE);
+    expectedMoves[2] = moves::make(B7, D7, ROOK, NONE, NONE, NONE, NONE);
+    expectedMoves[3] = moves::make(B7, E7, ROOK, PAWN, NONE, NONE, NONE);
+    expectedMoves[4] = moves::make(B7, B6, ROOK, NONE, NONE, NONE, NONE);
+    sort(begin(moveList), end(moveList));
+    sort(begin(expectedMoves), end(expectedMoves));
+    ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect rook moves");
+
+    return 1;
+}
+
+// Test rookGen: rook capture moves
+int testRookGenCaps() {
+    cout << "Testing rookGen with capture moves..." << endl;
+
+    mv capList[256] = { 0 };
+    mv * caps = capList;
+
+    CBoard board("1p6/PR2p3/8/1P6/8/8/8/8", "w", "", "-", "0", "0");
+    magics::populateRookTable(B7);
+    board.rookGen(&caps, false);
+    mv expectedCaps[256] = { 0 };
+    expectedCaps[0] = moves::make(B7, B8, ROOK, PAWN, NONE, NONE, NONE);
+    expectedCaps[1] = moves::make(B7, E7, ROOK, PAWN, NONE, NONE, NONE);
+    sort(begin(capList), end(capList));
+    sort(begin(expectedCaps), end(expectedCaps));
+    ASSERT(!memcmp(capList, expectedCaps, sizeof(capList[0]) * 256), "Incorrect rook moves");
+
+    return 1;
+}
+
+// Test rookGen: queen horizontal moves
+int testRookGenQueen() {
+    cout << "Testing rookGen with queen moves..." << endl;
+
+    mv moveList[256] = { 0 };
+    mv * moves = moveList;
+
+    CBoard board("8/8/8/8/8/8/7P/7Q", "w", "", "-", "0", "0");
+    magics::populateRookTable(H1);
+    board.rookGen(&moves, true);
+    mv expectedMoves[256] = { 0 };
+    expectedMoves[0] = moves::make(H1, G1, QUEEN, NONE, NONE, NONE, NONE);
+    expectedMoves[1] = moves::make(H1, F1, QUEEN, NONE, NONE, NONE, NONE);
+    expectedMoves[2] = moves::make(H1, E1, QUEEN, NONE, NONE, NONE, NONE);
+    expectedMoves[3] = moves::make(H1, D1, QUEEN, NONE, NONE, NONE, NONE);
+    expectedMoves[4] = moves::make(H1, C1, QUEEN, NONE, NONE, NONE, NONE);
+    expectedMoves[5] = moves::make(H1, B1, QUEEN, NONE, NONE, NONE, NONE);
+    expectedMoves[6] = moves::make(H1, A1, QUEEN, NONE, NONE, NONE, NONE);
+    sort(begin(moveList), end(moveList));
+    sort(begin(expectedMoves), end(expectedMoves));
+    ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect horizontal queen moves");
+
+    return 1;
+}
+
 int main() {
     int t = 0;
 
@@ -160,6 +228,9 @@ int main() {
     t += testBishopGen();
     t += testBishopGenCaps();
     t += testBishopGenQueen();
+    t += testRookGen();
+    t += testRookGenCaps();
+    t += testRookGenQueen();
 
     cout << endl;
     cout << t << " test(s) OK" << endl;
