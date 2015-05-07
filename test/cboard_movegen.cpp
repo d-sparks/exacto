@@ -3,6 +3,7 @@
 #include <algorithm>
 #include "assert.h"
 #include "../src/cboard.cpp"
+#include "../src/magics.cpp"
 
 using namespace std;
 
@@ -87,6 +88,49 @@ int testKnightCaps() {
     return 1;
 }
 
+// Test bishopGen: bishop all moves
+int testBishopGen() {
+    cout << "Testing bishopGen with quiet moves..." << endl;
+
+    mv moveList[256] = { 0 };
+    mv * moves = moveList;
+
+    CBoard board("8/8/2P5/5p2/4b3/3p4/8/8", "b", "", "-", "0", "0");
+    magics::populateBishopTable(E4);
+    board.bishopGen(&moves, true);
+    mv expectedMoves[256] = { 0 };
+    expectedMoves[0] = moves::make(E4, D5, BISHOP, NONE, NONE, NONE, NONE);
+    expectedMoves[1] = moves::make(E4, C6, BISHOP, PAWN, NONE, NONE, NONE);
+    expectedMoves[2] = moves::make(E4, F3, BISHOP, NONE, NONE, NONE, NONE);
+    expectedMoves[3] = moves::make(E4, G2, BISHOP, NONE, NONE, NONE, NONE);
+    expectedMoves[4] = moves::make(E4, H1, BISHOP, NONE, NONE, NONE, NONE);
+    sort(begin(moveList), end(moveList));
+    sort(begin(expectedMoves), end(expectedMoves));
+    ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect bishop moves");
+
+    return 1;
+}
+
+// Test bishopGen: quen diagonal moves
+int testBishopGenQueen() {
+    cout << "Testing bishopGen with queen moves..." << endl;
+
+    mv moveList[256] = { 0 };
+    mv * moves = moveList;
+
+    CBoard board("8/8/8/8/8/5ppp/5P2/5P1Q", "w", "", "-", "0", "0");
+    magics::populateBishopTable(H1);
+    board.bishopGen(&moves, true);
+    mv expectedMoves[256] = { 0 };
+    expectedMoves[0] = moves::make(H1, G2, QUEEN, NONE, NONE, NONE, NONE);
+    expectedMoves[1] = moves::make(H1, F3, QUEEN, PAWN, NONE, NONE, NONE);
+    sort(begin(moveList), end(moveList));
+    sort(begin(expectedMoves), end(expectedMoves));
+    ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect queen moves");
+
+    return 1;
+}
+
 int main() {
     int t = 0;
 
@@ -94,6 +138,8 @@ int main() {
     t += testPawnCaps();
     t += testKnightGen();
     t += testKnightCaps();
+    t += testBishopGen();
+    t += testBishopGenQueen();
 
     cout << endl;
     cout << t << " test(s) OK" << endl;

@@ -61,11 +61,12 @@ void CBoard::knightGen(mv **moveList, bool quietMoves) {
 // Generates all moves for bishops and the bishop moves for queens. Accepts a boolean argument which
 // specifies whether to return non-captures.
 void CBoard::bishopGen(mv **moveList, bool quietMoves) {
-    BB sliders = pieces[wtm][BISHOP] || pieces[wtm][QUEEN];
+    BB sliders = pieces[wtm][BISHOP] | pieces[wtm][QUEEN];
     while(sliders) {
         ind i = bitscan(sliders);
         BB movesBB = magics::bishopMoves(i, occupied);
         movesBB &= quietMoves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL];
+        serialize(moveList, movesBB, i);
         sliders &= ~exp_2(i);
     }
 }
@@ -73,22 +74,22 @@ void CBoard::bishopGen(mv **moveList, bool quietMoves) {
 // Generates all moves for rooks, and the rook moves for queens. Accepts a boolean argument which
 // specifies whether to return non-captures.
 void CBoard::rookGen(mv **moveList, bool quietMoves) {
-    BB sliders = pieces[wtm][ROOK] || pieces[wtm][QUEEN];
+    BB sliders = pieces[wtm][ROOK] | pieces[wtm][QUEEN];
     while(sliders) {
         ind i = bitscan(sliders);
         BB movesBB = magics::rookMoves(i, occupied);
         movesBB &= quietMoves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL];
+        serialize(moveList, movesBB, i);
         sliders &= ~exp_2(i);
     }
 }
 
 // serialize turns a bitboard into moves.
 void CBoard::serialize(mv **moveList, BB b, ind source) {
-    BB x = b & ~masks::promoRank(wtm);
-    while(x) {
-        ind dest = bitscan(x);
+    while(b) {
+        ind dest = bitscan(b);
         *((*moveList)++) = moves::make(source, dest, board[source], board[dest], NONE, NONE, NONE);
-        x ^= exp_2(dest);
+        b ^= exp_2(dest);
     }
 }
 
