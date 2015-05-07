@@ -111,6 +111,25 @@ int testBishopGen() {
     return 1;
 }
 
+// Test bishopGen: bishop capture moves
+int testBishopGenCaps() {
+    cout << "Testing bishopGen with capture moves..." << endl;
+
+    mv capList[256] = { 0 };
+    mv * caps = capList;
+
+    CBoard board("8/8/2P5/5p2/4b3/3p4/8/8", "b", "", "-", "0", "0");
+    magics::populateBishopTable(E4);
+    board.bishopGen(&caps, false);
+    mv expectedCaps[256] = { 0 };
+    expectedCaps[0] = moves::make(E4, C6, BISHOP, PAWN, NONE, NONE, NONE);
+    sort(begin(capList), end(capList));
+    sort(begin(expectedCaps), end(expectedCaps));
+    ASSERT(!memcmp(capList, expectedCaps, sizeof(capList[0]) * 256), "Incorrect bishop captures");
+
+    return 1;
+}
+
 // Test bishopGen: quen diagonal moves
 int testBishopGenQueen() {
     cout << "Testing bishopGen with queen moves..." << endl;
@@ -139,6 +158,7 @@ int main() {
     t += testKnightGen();
     t += testKnightCaps();
     t += testBishopGen();
+    t += testBishopGenCaps();
     t += testBishopGenQueen();
 
     cout << endl;
