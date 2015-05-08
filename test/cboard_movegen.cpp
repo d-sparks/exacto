@@ -218,6 +218,32 @@ int testRookGenQueen() {
     return 1;
 }
 
+// Test bishopPins for bishops and queens pinning pieces diagonally
+int testBishopPins() {
+    cout << "Testing bishopPins..." << endl;
+
+    CBoard board("q7/5b2/2P1P3/3K4/2P1P3/8/8/8", "w", "", "-", "0", "0");
+    magics::populateBishopTables();
+    BB pins = board.bishopPins(D5);
+    BB expectedPins = exp_2(C6) | exp_2(E6);
+    ASSERT(pins == expectedPins, "Wrong bishop pins");
+
+    return 1;
+}
+
+// Test rookPins for rooks and queens pinning pieces horizontally/vertically
+int testRookPins() {
+    cout << "Testing rookPins..." << endl;
+
+    CBoard board("4q3/8/8/4P3/r1P1KP2/8/8/8", "w", "", "-", "0", "0");
+    magics::populateRookTables();
+    BB pins = board.rookPins(E4);
+    BB expectedPins = exp_2(C4) | exp_2(E5);
+    ASSERT(pins == expectedPins, "Wrong rook pins");
+
+    return 1;
+}
+
 int main() {
     int t = 0;
 
@@ -231,6 +257,8 @@ int main() {
     t += testRookGen();
     t += testRookGenCaps();
     t += testRookGenQueen();
+    t += testBishopPins();
+    t += testRookPins();
 
     cout << endl;
     cout << t << " test(s) OK" << endl;

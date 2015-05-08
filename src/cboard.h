@@ -33,6 +33,8 @@ protected:
     void knightGen(mv ** moveList, bool quietMoves);
     void bishopGen(mv ** moveList, bool quietMoves);
     void rookGen(mv ** moveList, bool quietMoves);
+    BB bishopPins(ind kingSquare);
+    BB rookPins(ind kingSquare);
     bool    wtm;
     BB      pieces[2][7],
             castling[2],

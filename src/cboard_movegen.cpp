@@ -11,6 +11,10 @@ using namespace std;
 // Generate legal moves given the current state of the board.
 void CBoard::moveGen(mv * moveList) {
 
+    // Determine pinned pieces
+    BB pinnedByBishop = 0;
+    BB pinnedByRook = 0;
+
     // in check? else:
     pawnGen(&moveList);
     pawnCaps(&moveList);
@@ -82,6 +86,38 @@ void CBoard::rookGen(mv **moveList, bool quietMoves) {
         serialize(moveList, movesBB, i);
         sliders &= ~exp_2(i);
     }
+}
+
+// Gets the pieces that are currently pinned to the king by a diagonally moving piece.
+BB CBoard::bishopPins(ind kingSquare) {
+    BB pins = 0;
+    BB candidatePins = magics::bishopMoves(kingSquare, occupied) & pieces[wtm][ALL];
+    while(candidatePins) {
+        ind i = bitscan(candidatePins);
+        BB candidateMoves = magics::bishopMoves(i, occupied);
+        candidatePins &= candidatePins - 1;
+        BB kingXRayAttacks = magics::bishopMoves(kingSquare, occupied & ~exp_2(i));
+        if(candidateMoves & kingXRayAttacks & (pieces[!wtm][BISHOP] | pieces[!wtm][QUEEN])) {
+            pins |= exp_2(i);
+        }
+    }
+    return pins;
+}
+
+// Gets the pieces that are currently pinned to the king by a horizontally moving piece.
+BB CBoard::rookPins(ind kingSquare) {
+    BB pins = 0;
+    BB candidatePins = magics::rookMoves(kingSquare, occupied) & pieces[wtm][ALL];
+    while(candidatePins) {
+        ind i = bitscan(candidatePins);
+        BB candidateMoves = magics::rookMoves(i, occupied);
+        candidatePins &= candidatePins - 1;
+        BB kingXRayAttacks = magics::rookMoves(kingSquare, occupied & ~exp_2(i));
+        if(candidateMoves & kingXRayAttacks & (pieces[!wtm][ROOK] | pieces[!wtm][QUEEN])) {
+            pins |= exp_2(i);
+        }
+    }
+    return pins;
 }
 
 // serialize turns a bitboard into moves.
