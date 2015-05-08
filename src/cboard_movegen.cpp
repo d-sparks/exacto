@@ -90,6 +90,31 @@ void CBoard::rookGen(mv **moveList, BB pins, bool quietMoves) {
     }
 }
 
+// Generates all the moves from a given position, including castling moves. Optionally, only
+// generate captures by passing quietMoves=false.
+void CBoard::kingGen(mv **moveList, ind kingSquare, bool quietMoves) {
+    BB safeSquares = ~attackSetGen(!wtm);
+    // Regular moves
+    BB validSquares = safeSquares & (quietMoves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL]);
+    BB moves = masks::KING_MOVES[kingSquare] & validSquares;
+    serialize(moveList, moves, kingSquare);
+    // Castling
+    if(quietMoves && castling[wtm] != 0) {
+        // We extend our reach to the right by one square from each valid move found so far. If the
+        // square between the rook and destination square for a left (queenside) castle is empty, we
+        // similarly extend our reach to the left. From here we determine if the destination squares
+        // are safe, empty squares which we are still have castling rights to.
+        moves &= ~occupied;
+        moves |= moves >> 1;
+        if(~occupied & (exp_2(kingSquare) << 3)) {
+            moves |= moves << 1;
+        }
+        moves = (moves & castling[wtm]) & validSquares;
+        // TODO: add special flag by overloading serialize
+        serialize(moveList, moves, kingSquare);
+    }
+}
+
 // Returns a bitmap of all squares threatened by a given color on the current board. A piece is
 // threatening any square it aims at or can move to, even if it is pinned.
 BB CBoard::attackSetGen(bool color) {

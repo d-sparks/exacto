@@ -258,6 +258,70 @@ int testAttackSetGen() {
     return 1;
 }
 
+// Tests kingGen with quiet moves, captures and castling.
+int testKingMoves() {
+    cout << "Testing kingGen with quiet moves and castling..." << endl;
+
+    mv moveList[256] = { 0 };
+    mv * moves = moveList;
+
+    CBoard board("k7/8/8/8/8/8/8/R3K2R", "w", "KQkq", "-", "0", "0");
+    board.kingGen(&moves, E1, true);
+    mv expectedMoves[256] = { 0 };
+    expectedMoves[0] = moves::make(E1, D1, KING, NONE, NONE, NONE, NONE);
+    expectedMoves[1] = moves::make(E1, D2, KING, NONE, NONE, NONE, NONE);
+    expectedMoves[2] = moves::make(E1, E2, KING, NONE, NONE, NONE, NONE);
+    expectedMoves[3] = moves::make(E1, F2, KING, NONE, NONE, NONE, NONE);
+    expectedMoves[4] = moves::make(E1, F1, KING, NONE, NONE, NONE, NONE);
+    expectedMoves[5] = moves::make(E1, G1, KING, NONE, NONE, NONE, NONE);
+    expectedMoves[6] = moves::make(E1, C1, KING, NONE, NONE, NONE, NONE);
+    sort(begin(moveList), end(moveList));
+    sort(begin(expectedMoves), end(expectedMoves));
+    ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect king quiet moves");
+
+    return 1;
+}
+
+// Tests kingGen with captures only.
+int testKingMovesCaps() {
+    cout << "Testing kingGen capatures only..." << endl;
+
+    mv capList[256] = { 0 };
+    mv * caps = capList;
+
+    CBoard board("k7/8/8/8/8/8/5p2/R3K2R", "w", "KQkq", "-", "0", "0");
+    board.kingGen(&caps, E1, false);
+    mv expectedMoves[256] = { 0 };
+    expectedMoves[3] = moves::make(E1, F2, KING, PAWN, NONE, NONE, NONE);
+    sort(begin(capList), end(capList));
+    sort(begin(expectedMoves), end(expectedMoves));
+    ASSERT(!memcmp(capList, expectedMoves, sizeof(capList[0]) * 256), "Incorrect king capture moves");
+
+    return 1;
+}
+
+// Tests kingGen with quiet moves but no castling rights.
+int testKingMovesNoCastling() {
+    cout << "Testing kingGen with quiet moves and no castling..." << endl;
+
+    mv moveList[256] = { 0 };
+    mv * moves = moveList;
+
+    CBoard board("k7/8/8/8/8/8/8/R3K2R", "w", "kq", "-", "0", "0");
+    board.kingGen(&moves, E1, true);
+    mv expectedMoves[256] = { 0 };
+    expectedMoves[0] = moves::make(E1, D1, KING, NONE, NONE, NONE, NONE);
+    expectedMoves[1] = moves::make(E1, D2, KING, NONE, NONE, NONE, NONE);
+    expectedMoves[2] = moves::make(E1, E2, KING, NONE, NONE, NONE, NONE);
+    expectedMoves[3] = moves::make(E1, F2, KING, NONE, NONE, NONE, NONE);
+    expectedMoves[4] = moves::make(E1, F1, KING, NONE, NONE, NONE, NONE);
+    sort(begin(moveList), end(moveList));
+    sort(begin(expectedMoves), end(expectedMoves));
+    ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect king quiet non-castling moves");
+
+    return 1;
+}
+
 int main() {
     int t = 0;
 
@@ -274,6 +338,9 @@ int main() {
     t += testBishopPins();
     t += testRookPins();
     t += testAttackSetGen();
+    t += testKingMoves();
+    t += testKingMovesCaps();
+    t += testKingMovesNoCastling();
 
     cout << endl;
     cout << t << " test(s) OK" << endl;

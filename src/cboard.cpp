@@ -80,10 +80,10 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep, string hm,
     for(ind i = 0; i < cstl.length(); i++) {
         string temp = cstl;
         temp = temp.substr(i, 1);
-        if(temp == "K") castling[WHITE] |= exp_2(1);
-        if(temp == "Q") castling[WHITE] |= exp_2(5);
-        if(temp == "k") castling[BLACK] |= exp_2(57);
-        if(temp == "q") castling[BLACK] |= exp_2(61);
+        if(temp == "K") castling[WHITE] |= exp_2(G1);
+        if(temp == "Q") castling[WHITE] |= exp_2(C1);
+        if(temp == "k") castling[BLACK] |= exp_2(G8);
+        if(temp == "q") castling[BLACK] |= exp_2(C8);
     }
 
     // Set en passant data
