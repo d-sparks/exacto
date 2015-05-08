@@ -12,19 +12,21 @@ using namespace std;
 void CBoard::moveGen(mv * moveList) {
 
     // Determine pinned pieces
-    BB pinnedByBishop = 0;
-    BB pinnedByRook = 0;
+    ind kingSquare = bitscan(pieces[wtm][KING]);
+    BB pinnedByBishop = bishopPins(kingSquare);
+    BB pinnedByRook = rookPins(kingSquare);
+    BB pins = pinnedByRook | pinnedByBishop;
 
     // in check? else:
-    pawnGen(&moveList);
-    pawnCaps(&moveList);
+    pawnGen(&moveList, pins);
+    pawnCaps(&moveList, pins);
 
-    knightGen(&moveList, true);
+    knightGen(&moveList, pins, true);
 
 }
 
 // Generates the non-capture pawn moves
-void CBoard::pawnGen(mv **moveList) {
+void CBoard::pawnGen(mv **moveList, BB pins) {
     if(wtm) {
         BB b = (pieces[wtm][PAWN] << 8) & ~occupied;
         serializePawn(moveList, b, REGULAR_MOVE, 8);
@@ -37,7 +39,7 @@ void CBoard::pawnGen(mv **moveList) {
 }
 
 // Generate pawn capture moves
-void CBoard::pawnCaps(mv **moveList) {
+void CBoard::pawnCaps(mv **moveList, BB pins) {
     if(wtm) {
         BB pawns = pieces[wtm][PAWN];
         serializePawn(moveList, ((pawns & ~masks::FILE[0]) << 7) & pieces[BLACK][ALL], REGULAR_MOVE, 7);
@@ -52,7 +54,7 @@ void CBoard::pawnCaps(mv **moveList) {
 
 // Generates all moves for knights. Accepts a boolean argument which specifies whether to return
 // non-captures.
-void CBoard::knightGen(mv **moveList, bool quietMoves) {
+void CBoard::knightGen(mv **moveList, BB pins, bool quietMoves) {
     BB knights = pieces[wtm][KNIGHT];
     while(knights) {
         ind i = bitscan(knights);
@@ -64,7 +66,7 @@ void CBoard::knightGen(mv **moveList, bool quietMoves) {
 
 // Generates all moves for bishops and the bishop moves for queens. Accepts a boolean argument which
 // specifies whether to return non-captures.
-void CBoard::bishopGen(mv **moveList, bool quietMoves) {
+void CBoard::bishopGen(mv **moveList, BB pins, bool quietMoves) {
     BB sliders = pieces[wtm][BISHOP] | pieces[wtm][QUEEN];
     while(sliders) {
         ind i = bitscan(sliders);
@@ -77,7 +79,7 @@ void CBoard::bishopGen(mv **moveList, bool quietMoves) {
 
 // Generates all moves for rooks, and the rook moves for queens. Accepts a boolean argument which
 // specifies whether to return non-captures.
-void CBoard::rookGen(mv **moveList, bool quietMoves) {
+void CBoard::rookGen(mv **moveList, BB pins, bool quietMoves) {
     BB sliders = pieces[wtm][ROOK] | pieces[wtm][QUEEN];
     while(sliders) {
         ind i = bitscan(sliders);

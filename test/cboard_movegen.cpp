@@ -15,7 +15,7 @@ int testPawnGen() {
     mv * moves = moveList;
 
     CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q1N5/P1PQ2PP/1R2KB1R", "w", "Kkq", "-", "0", "12");
-    board.pawnGen(&moves);
+    board.pawnGen(&moves, 0);
     mv expectedMoves[256] = { 0 };
     expectedMoves[0] = moves::make(H2, H3, PAWN, NONE, NONE, NONE, NONE);
     expectedMoves[1] = moves::make(H2, H4, PAWN, NONE, NONE, NONE, DOUBLE_PAWN_MOVE_W);
@@ -37,7 +37,7 @@ int testPawnCaps() {
     mv * moves = moveList;
 
     CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q1N5/P1PQ2PP/1R2KB1R", "w", "Kkq", "-", "0", "12");
-    board.pawnCaps(&moves);
+    board.pawnCaps(&moves, 0);
     mv expectedMoves[256] = { 0 };
     expectedMoves[0] = moves::make(F4, E5, PAWN, PAWN, NONE, NONE, NONE);
     sort(begin(moveList), end(moveList));
@@ -55,7 +55,7 @@ int testKnightGen() {
     mv * moves = moveList;
 
     CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q7/P1PQ2PP/NR2KB1R", "w", "Kkq", "-", "0", "12");
-    board.knightGen(&moves, true);
+    board.knightGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
     expectedMoves[0] = moves::make(A1, B3, KNIGHT, NONE, NONE, NONE, NONE);
     expectedMoves[1] = moves::make(D4, B3, KNIGHT, NONE, NONE, NONE, NONE);
@@ -80,7 +80,7 @@ int testKnightCaps() {
     mv * caps = capList;
 
     CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q7/P1PQ2PP/NR2KB1R", "w", "Kkq", "-", "0", "12");
-    board.knightGen(&caps, false);
+    board.knightGen(&caps, 0, false);
     mv expectedCaps[256] = { 0 };
     expectedCaps[0] = moves::make(D4, E6, KNIGHT, PAWN, NONE, NONE, NONE);
     ASSERT(!memcmp(capList, expectedCaps, sizeof(capList[0]) * 256), "Incorrect knight capture generation");
@@ -97,7 +97,7 @@ int testBishopGen() {
 
     CBoard board("8/8/2P5/5p2/4b3/3p4/8/8", "b", "", "-", "0", "0");
     magics::populateBishopTable(E4);
-    board.bishopGen(&moves, true);
+    board.bishopGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
     expectedMoves[0] = moves::make(E4, D5, BISHOP, NONE, NONE, NONE, NONE);
     expectedMoves[1] = moves::make(E4, C6, BISHOP, PAWN, NONE, NONE, NONE);
@@ -120,7 +120,7 @@ int testBishopGenCaps() {
 
     CBoard board("8/8/2P5/5p2/4b3/3p4/8/8", "b", "", "-", "0", "0");
     magics::populateBishopTable(E4);
-    board.bishopGen(&caps, false);
+    board.bishopGen(&caps, 0, false);
     mv expectedCaps[256] = { 0 };
     expectedCaps[0] = moves::make(E4, C6, BISHOP, PAWN, NONE, NONE, NONE);
     sort(begin(capList), end(capList));
@@ -139,7 +139,7 @@ int testBishopGenQueen() {
 
     CBoard board("8/8/8/8/8/5ppp/5P2/5P1Q", "w", "", "-", "0", "0");
     magics::populateBishopTable(H1);
-    board.bishopGen(&moves, true);
+    board.bishopGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
     expectedMoves[0] = moves::make(H1, G2, QUEEN, NONE, NONE, NONE, NONE);
     expectedMoves[1] = moves::make(H1, F3, QUEEN, PAWN, NONE, NONE, NONE);
@@ -159,7 +159,7 @@ int testRookGen() {
 
     CBoard board("1p6/PR2p3/8/1P6/8/8/8/8", "w", "", "-", "0", "0");
     magics::populateRookTable(B7);
-    board.rookGen(&moves, true);
+    board.rookGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
     expectedMoves[0] = moves::make(B7, B8, ROOK, PAWN, NONE, NONE, NONE);
     expectedMoves[1] = moves::make(B7, C7, ROOK, NONE, NONE, NONE, NONE);
@@ -182,7 +182,7 @@ int testRookGenCaps() {
 
     CBoard board("1p6/PR2p3/8/1P6/8/8/8/8", "w", "", "-", "0", "0");
     magics::populateRookTable(B7);
-    board.rookGen(&caps, false);
+    board.rookGen(&caps, 0, false);
     mv expectedCaps[256] = { 0 };
     expectedCaps[0] = moves::make(B7, B8, ROOK, PAWN, NONE, NONE, NONE);
     expectedCaps[1] = moves::make(B7, E7, ROOK, PAWN, NONE, NONE, NONE);
@@ -202,7 +202,7 @@ int testRookGenQueen() {
 
     CBoard board("8/8/8/8/8/8/7P/7Q", "w", "", "-", "0", "0");
     magics::populateRookTable(H1);
-    board.rookGen(&moves, true);
+    board.rookGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
     expectedMoves[0] = moves::make(H1, G1, QUEEN, NONE, NONE, NONE, NONE);
     expectedMoves[1] = moves::make(H1, F1, QUEEN, NONE, NONE, NONE, NONE);

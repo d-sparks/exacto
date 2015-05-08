@@ -28,11 +28,11 @@ protected:
 #endif
     void serializePawn(mv **moveList, BB b, ind special, int delta);
     void serialize(mv **moveList, BB b, ind source);
-    void pawnGen(mv ** moveList);
-    void pawnCaps(mv ** moveList);
-    void knightGen(mv ** moveList, bool quietMoves);
-    void bishopGen(mv ** moveList, bool quietMoves);
-    void rookGen(mv ** moveList, bool quietMoves);
+    void pawnGen(mv ** moveList, BB pins);
+    void pawnCaps(mv ** moveList, BB pins);
+    void knightGen(mv ** moveList, BB pins, bool quietMoves);
+    void bishopGen(mv ** moveList, BB pins, bool quietMoves);
+    void rookGen(mv ** moveList, BB pins, bool quietMoves);
     BB bishopPins(ind kingSquare);
     BB rookPins(ind kingSquare);
     bool    wtm;
