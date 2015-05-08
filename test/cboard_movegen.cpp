@@ -244,6 +244,20 @@ int testRookPins() {
     return 1;
 }
 
+// Tests attackSetGen on a board with one of each piece type.
+int testAttackSetGen() {
+    cout << "Testing attackSetGen..." << endl;
+
+    CBoard board("3k4/6P1/6pb/rn6/8/5q2/p4P2/8", "w", "", "-", "0", "0");
+    magics::populateBishopTables();
+    magics::populateRookTables();
+    BB attacks = board.attackSetGen(BLACK);
+    BB expectedAttacks = 0b1010110011111110101101000101011110011110111110111001111001110001;
+    ASSERT(attacks == expectedAttacks, "Wrong attack set");
+
+    return 1;
+}
+
 int main() {
     int t = 0;
 
@@ -259,6 +273,7 @@ int main() {
     t += testRookGenQueen();
     t += testBishopPins();
     t += testRookPins();
+    t += testAttackSetGen();
 
     cout << endl;
     cout << t << " test(s) OK" << endl;

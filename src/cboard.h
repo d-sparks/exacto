@@ -33,6 +33,7 @@ protected:
     void knightGen(mv ** moveList, BB pins, bool quietMoves);
     void bishopGen(mv ** moveList, BB pins, bool quietMoves);
     void rookGen(mv ** moveList, BB pins, bool quietMoves);
+    BB attackSetGen(bool color);
     BB bishopPins(ind kingSquare);
     BB rookPins(ind kingSquare);
     bool    wtm;

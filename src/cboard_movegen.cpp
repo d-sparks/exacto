@@ -90,6 +90,46 @@ void CBoard::rookGen(mv **moveList, BB pins, bool quietMoves) {
     }
 }
 
+// Returns a bitmap of all squares threatened by a given color on the current board. A piece is
+// threatening any square it aims at or can move to, even if it is pinned.
+BB CBoard::attackSetGen(bool color) {
+    BB attackSet = 0;
+
+    // Pawns
+    if(color == WHITE) {
+        attackSet |= (pieces[WHITE][PAWN] & ~masks::FILE[0]) << 9;
+        attackSet |= (pieces[WHITE][PAWN] & ~masks::FILE[7]) << 7;
+    } else {
+        attackSet |= (pieces[BLACK][PAWN] & ~masks::FILE[0]) >> 7;
+        attackSet |= (pieces[BLACK][PAWN] & ~masks::FILE[7]) >> 9;
+    }
+    // Knights
+    BB knights = pieces[color][KNIGHT];
+    while(knights) {
+        ind i = bitscan(knights);
+        attackSet |= masks::KNIGHT_MOVES[i];
+        knights &= knights - 1;
+    }
+    // Bishops and queen diagonal attacks
+    BB bishops = pieces[color][BISHOP] | pieces[color][QUEEN];
+    while(bishops) {
+        ind i = bitscan(bishops);
+        attackSet |= magics::bishopMoves(i, occupied);
+        bishops &= bishops - 1;
+    }
+    // Rooks and queen horizontal/vertical moves
+    BB rooks = pieces[color][ROOK] | pieces[color][QUEEN];
+    while(rooks) {
+        ind i = bitscan(rooks);
+        attackSet |= magics::rookMoves(i, occupied);
+        rooks &= rooks - 1;
+    }
+    // King moves
+    attackSet |= masks::KING_MOVES[bitscan(pieces[color][KING])];
+
+    return attackSet;
+}
+
 // Gets the pieces that are currently pinned to the king by a diagonally moving piece.
 BB CBoard::bishopPins(ind kingSquare) {
     BB pins = 0;
