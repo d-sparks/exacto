@@ -36,6 +36,7 @@ protected:
     BB bishopPins(ind kingSquare);
     BB rookPins(ind kingSquare);
     void serialize(mv **moveList, BB b, ind source);
+    void serialize(mv **moveList, BB b, ind source, ind special);
     void serializeFromDest(mv **moveList, BB b, ind dest, ind defender, ind special);
     void serializePawn(mv **moveList, BB b, ind special, int delta);
     bool    wtm;

@@ -28,13 +28,13 @@ void CBoard::moveGen(mv * moveList) {
 // Generates the non-capture pawn moves
 void CBoard::pawnGen(mv **moveList, BB pins) {
     if(wtm) {
-        BB b = (pieces[wtm][PAWN] << 8) & ~occupied;
+        BB b = (pieces[WHITE][PAWN] << 8) & ~occupied;
         serializePawn(moveList, b, REGULAR_MOVE, 8);
         serializePawn(moveList, ((b & masks::RANK[2]) << 8) & ~occupied, DOUBLE_PAWN_MOVE_W, 16);
     } else {
-        BB b = (pieces[wtm][PAWN] >> 8) & ~occupied;
+        BB b = (pieces[BLACK][PAWN] >> 8) & ~occupied;
         serializePawn(moveList, b, REGULAR_MOVE, -8);
-        serializePawn(moveList, ((b & masks::RANK[5]) >> 8) & ~occupied, DOUBLE_PAWN_MOVE_W, -16);
+        serializePawn(moveList, ((b & masks::RANK[5]) >> 8) & ~occupied, DOUBLE_PAWN_MOVE_B, -16);
     }
 }
 
@@ -42,11 +42,11 @@ void CBoard::pawnGen(mv **moveList, BB pins) {
 void CBoard::pawnCaps(mv **moveList, BB pins) {
     BB pawns = pieces[wtm][PAWN] & ~pins;
     if(wtm) {
-        serializePawn(moveList, ((pawns & ~masks::FILE[0]) << 7) & pieces[BLACK][ALL], REGULAR_MOVE, 7);
-        serializePawn(moveList, ((pawns & ~masks::FILE[7]) << 9) & pieces[BLACK][ALL], REGULAR_MOVE, 9);
+        serializePawn(moveList, ((pawns & ~masks::FILE[0]) << 9) & pieces[BLACK][ALL], REGULAR_MOVE, 9);
+        serializePawn(moveList, ((pawns & ~masks::FILE[7]) << 7) & pieces[BLACK][ALL], REGULAR_MOVE, 7);
     } else {
-        serializePawn(moveList, ((pawns & ~masks::FILE[0]) >> 9) & pieces[WHITE][ALL], REGULAR_MOVE, 9);
-        serializePawn(moveList, ((pawns & ~masks::FILE[7]) >> 7) & pieces[WHITE][ALL], REGULAR_MOVE, 7);
+        serializePawn(moveList, ((pawns & ~masks::FILE[0]) >> 7) & pieces[WHITE][ALL], REGULAR_MOVE, -7);
+        serializePawn(moveList, ((pawns & ~masks::FILE[7]) >> 9) & pieces[WHITE][ALL], REGULAR_MOVE, -9);
     }
     if(enPassant) {
         do {
@@ -226,9 +226,13 @@ BB CBoard::rookPins(ind kingSquare) {
 
 // serialize turns a bitboard into moves.
 void CBoard::serialize(mv **moveList, BB b, ind source) {
+    serialize(moveList, b, source, NONE);
+}
+
+void CBoard::serialize(mv **moveList, BB b, ind source, ind special) {
     while(b) {
         ind dest = bitscan(b);
-        *((*moveList)++) = moves::make(source, dest, board[source], board[dest], NONE, NONE, NONE);
+        *((*moveList)++) = moves::make(source, dest, board[source], board[dest], NONE, NONE, special);
         b &= b - 1;
     }
 }
@@ -250,19 +254,19 @@ void CBoard::serializeFromDest(mv **moveList, BB b, ind dest, ind defender, ind 
 // types of moves are disjoint.
 void CBoard::serializePawn(mv **moveList, BB b, ind special, int delta) {
     // non-promotion moves
-    BB x = b & ~masks::promoRank(wtm);
-    while(x) {
-        ind i = bitscan(x);
+    BB pawns = b & ~masks::promoRank(wtm);
+    while(pawns) {
+        ind i = bitscan(pawns);
         *((*moveList)++) = moves::make((int)i - delta, i, PAWN, board[i], 0, 0, special);
-        x ^= exp_2(i);
+        pawns ^= exp_2(i);
     }
     // promotion moves
-    x = b & masks::promoRank(wtm);
-    while(x) {
-        ind i = bitscan(x);
-        for(ind j = PROMOTE_QUEEN; j <= PROMOTE_KNIGHT; j++) {
-            *((*moveList)++) = moves::make((int)i - delta, i, PAWN, board[i], 0, 0, j);
+    pawns = b & masks::promoRank(wtm);
+    while(pawns) {
+        ind i = bitscan(pawns);
+        for(ind special = PROMOTE_QUEEN; special <= PROMOTE_KNIGHT; special++) {
+            *((*moveList)++) = moves::make((int)i - delta, i, PAWN, board[i], 0, 0, special);
         }
-        x ^= exp_2(i);
+        pawns ^= exp_2(i);
     }
 }

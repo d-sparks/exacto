@@ -6,7 +6,7 @@ using namespace std;
 namespace masks {
 
     BB promoRank(bool color) {
-        return color? (BB)0x00FF000000000000 : (BB)0x000000000000FF00;
+        return color? (BB)0xFF00000000000000 : (BB)0x00000000000000FF;
     }
 
     BB const RANK[8] = {
