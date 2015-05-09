@@ -33,16 +33,34 @@ int testPawnGen() {
 int testPawnCaps() {
     cout << "Testing pawnCaps..." << endl;
 
-    mv moveList[256] = { 0 };
-    mv * moves = moveList;
+    mv capList[256] = { 0 };
+    mv * caps = capList;
 
     CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q1N5/P1PQ2PP/1R2KB1R", "w", "Kkq", "-", "0", "12");
-    board.pawnCaps(&moves, 0);
-    mv expectedMoves[256] = { 0 };
-    expectedMoves[0] = moves::make(F4, E5, PAWN, PAWN, NONE, NONE, NONE);
-    sort(begin(moveList), end(moveList));
-    sort(begin(expectedMoves), end(expectedMoves));
-    ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect pawn captures generation");
+    board.pawnCaps(&caps, 0);
+    mv expectedCaps[256] = { 0 };
+    expectedCaps[0] = moves::make(F4, E5, PAWN, PAWN, NONE, NONE, NONE);
+    sort(begin(capList), end(capList));
+    sort(begin(expectedCaps), end(expectedCaps));
+    ASSERT(!memcmp(capList, expectedCaps, sizeof(capList[0]) * 256), "Incorrect pawn captures generation");
+
+    return 1;
+}
+
+// Test pawnCaps: pawn enPassant captures
+int testPawnCapsEnPassant() {
+    cout << "Testing pawnCaps for enPassant..." << endl;
+
+    mv capList[256] = { 0 };
+    mv * caps = capList;
+
+    CBoard board("8/8/8/3P4/8/8/8/K7", "w", "", "E6", "0", "0");
+    board.pawnCaps(&caps, 0);
+    mv expectedCaps[256] = { 0 };
+    expectedCaps[0] = moves::make(D5, E6, PAWN, PAWN, NONE, NONE, NONE);
+    sort(begin(capList), end(capList));
+    sort(begin(expectedCaps), end(expectedCaps));
+    ASSERT(!memcmp(capList, expectedCaps, sizeof(capList[0]) * 256), "Incorrect en passant pawn captures generation");
 
     return 1;
 }
@@ -327,6 +345,7 @@ int main() {
 
     t += testPawnGen();
     t += testPawnCaps();
+    t += testPawnCapsEnPassant();
     t += testKnightGen();
     t += testKnightCaps();
     t += testBishopGen();

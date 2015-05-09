@@ -40,16 +40,53 @@ void CBoard::pawnGen(mv **moveList, BB pins) {
 
 // Generate pawn capture moves
 void CBoard::pawnCaps(mv **moveList, BB pins) {
+    BB pawns = pieces[wtm][PAWN] & ~pins;
     if(wtm) {
-        BB pawns = pieces[wtm][PAWN];
         serializePawn(moveList, ((pawns & ~masks::FILE[0]) << 7) & pieces[BLACK][ALL], REGULAR_MOVE, 7);
         serializePawn(moveList, ((pawns & ~masks::FILE[7]) << 9) & pieces[BLACK][ALL], REGULAR_MOVE, 9);
     } else {
-        BB pawns = pieces[wtm][PAWN];
         serializePawn(moveList, ((pawns & ~masks::FILE[0]) >> 9) & pieces[WHITE][ALL], REGULAR_MOVE, 9);
         serializePawn(moveList, ((pawns & ~masks::FILE[7]) >> 7) & pieces[WHITE][ALL], REGULAR_MOVE, 7);
     }
-    // en-passant captures not yet supported
+    if(enPassant) {
+        do {
+            ind enPassantSquare = bitscan(enPassant);
+            BB candidateSquares = wtm ? (enPassant >> 7 | enPassant >> 9) : (enPassant << 7 | enPassant << 9);
+            candidateSquares &= pawns & masks::KING_MOVES[enPassantSquare];
+            if(candidateSquares == 0) {
+                break;
+            }
+
+            // We take care of pins like this now.  Presumably this code will execute infrequently:
+
+            //     +---+---+---+---+---+---+---+---+
+            //     |   |   |   |   | : |   |   |   |
+            //     +---+---+---+---+---+---+---+---+
+            //     |   | r |   | P | p |   | K |   |
+            //     +---+---+---+---+---+---+---+---+
+
+            // If control has reached this point, we know either that there are two pawns that are
+            // in the above configuration.
+
+            BB epRank = masks::RANK[wtm ? 5 : 2];
+            bool kingOnEPRank = (pieces[wtm][KING] & epRank) != 0;
+            bool horizontalOnEPRank = ((pieces[!wtm][ROOK] | pieces[!wtm][ROOK]) & epRank) != 0;
+
+            // At this point we know that our king, an enemy horizontal sliding piece, and our two pawns
+            // are on this rank. The pawns must be adjacent, and since we are assuming we are not in
+            // check, then we deduce: if there are exactly four pieces on this rank, we are in the above
+            // situation.
+
+            if(kingOnEPRank && horizontalOnEPRank && popcount(occupied) == 4) {
+                break;
+            }
+
+            // Finally, generate the moves.
+            ind flag = wtm ? EN_PASSANT_CAP_W : EN_PASSANT_CAP_B;
+            serializeFromDest(moveList, candidateSquares, enPassantSquare, PAWN, flag);
+
+        } while(false);
+    }
 }
 
 // Generates all moves for knights. Accepts a boolean argument which specifies whether to return
@@ -192,7 +229,18 @@ void CBoard::serialize(mv **moveList, BB b, ind source) {
     while(b) {
         ind dest = bitscan(b);
         *((*moveList)++) = moves::make(source, dest, board[source], board[dest], NONE, NONE, NONE);
-        b ^= exp_2(dest);
+        b &= b - 1;
+    }
+}
+
+// serializeFromDest turns a bitboard into moves, where the given bitboard are source squares. This
+// can be used to generate intercepting moves to checks or for enPassant pawn captures, where one
+// knows the destination in advance and generates moves to it.
+void CBoard::serializeFromDest(mv **moveList, BB b, ind dest, ind defender, ind special) {
+    while(b) {
+        ind source = bitscan(b);
+        *((*moveList)++) = moves::make(source, dest, board[source], defender, NONE, NONE, special);
+        b &= b - 1;
     }
 }
 

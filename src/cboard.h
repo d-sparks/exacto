@@ -26,8 +26,6 @@ public:
 #ifndef _TEST
 protected:
 #endif
-    void serializePawn(mv **moveList, BB b, ind special, int delta);
-    void serialize(mv **moveList, BB b, ind source);
     void pawnGen(mv ** moveList, BB pins);
     void pawnCaps(mv ** moveList, BB pins);
     void knightGen(mv ** moveList, BB pins, bool quietMoves);
@@ -37,6 +35,9 @@ protected:
     BB attackSetGen(bool color);
     BB bishopPins(ind kingSquare);
     BB rookPins(ind kingSquare);
+    void serialize(mv **moveList, BB b, ind source);
+    void serializeFromDest(mv **moveList, BB b, ind dest, ind defender, ind special);
+    void serializePawn(mv **moveList, BB b, ind special, int delta);
     bool    wtm;
     BB      pieces[2][7],
             castling[2],
