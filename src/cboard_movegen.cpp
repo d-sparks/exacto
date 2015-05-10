@@ -134,7 +134,7 @@ void CBoard::pawnGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMov
 // Generates all moves for knights. Accepts a boolean argument which specifies whether to return
 // non-captures.
 void CBoard::knightGen(mv **moveList, BB pins, bool quietMoves) {
-    BB knights = pieces[wtm][KNIGHT];
+    BB knights = pieces[wtm][KNIGHT] & ~pins;
     while(knights) {
         ind i = bitscan(knights);
         BB movesBB = masks::KNIGHT_MOVES[i] & (quietMoves? ~pieces[wtm][ALL] : pieces[!wtm][ALL]);
@@ -146,7 +146,7 @@ void CBoard::knightGen(mv **moveList, BB pins, bool quietMoves) {
 // Generates all moves for bishops and the bishop moves for queens. Accepts a boolean argument which
 // specifies whether to return non-captures.
 void CBoard::bishopGen(mv **moveList, BB pins, bool quietMoves) {
-    BB sliders = pieces[wtm][BISHOP] | pieces[wtm][QUEEN];
+    BB sliders = (pieces[wtm][BISHOP] | pieces[wtm][QUEEN]) & ~pins;
     while(sliders) {
         ind i = bitscan(sliders);
         BB movesBB = magics::bishopMoves(i, occupied);
@@ -156,16 +156,44 @@ void CBoard::bishopGen(mv **moveList, BB pins, bool quietMoves) {
     }
 }
 
+// Generates all moves for bishops and the bishop moves for queens that are valid despite an already
+// recognized pin. Accepts a boolean argument which specifies whether to return non-captures.
+void CBoard::bishopGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMoves) {
+    BB sliders = (pieces[wtm][BISHOP] | pieces[wtm][QUEEN]) & pins;
+    while(sliders) {
+        ind i = bitscan(sliders);
+        BB validMoves = masks::OPPOSITE[kingSquare][i] | masks::INTERCEDING[kingSquare][i];
+        validMoves &= magics::bishopMoves(i, occupied);
+        validMoves &= quietMoves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL];
+        serialize(moveList, validMoves, i);
+        sliders &= sliders - 1;
+    }
+}
+
 // Generates all moves for rooks, and the rook moves for queens. Accepts a boolean argument which
 // specifies whether to return non-captures.
 void CBoard::rookGen(mv **moveList, BB pins, bool quietMoves) {
-    BB sliders = pieces[wtm][ROOK] | pieces[wtm][QUEEN];
+    BB sliders = (pieces[wtm][ROOK] | pieces[wtm][QUEEN]) & ~pins;
     while(sliders) {
         ind i = bitscan(sliders);
         BB movesBB = magics::rookMoves(i, occupied);
         movesBB &= quietMoves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL];
         serialize(moveList, movesBB, i);
         sliders &= ~exp_2(i);
+    }
+}
+
+// Generates all moves for rooks, and the rooks moves for queens that are valid despite an already
+// recognized pin. Accepts a boolean argument which specifies whether to return non-captures.
+void CBoard::rookGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMoves) {
+    BB sliders = (pieces[wtm][ROOK] | pieces[wtm][QUEEN]) & pins;
+    while(sliders) {
+        ind i = bitscan(sliders);
+        BB validMoves = masks::OPPOSITE[kingSquare][i] | masks::INTERCEDING[kingSquare][i];
+        validMoves &= magics::rookMoves(i, occupied);
+        validMoves &= quietMoves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL];
+        serialize(moveList, validMoves, i);
+        sliders &= sliders - 1;
     }
 }
 

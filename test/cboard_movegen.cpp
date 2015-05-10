@@ -220,6 +220,29 @@ int testBishopGenQueen() {
     return 1;
 }
 
+// Test bishopGenPinned: bishops that are pinned
+int testBishopGenPinned() {
+    cout << "Testing bishopGenPinned..." << endl;
+
+    mv moveList[256] = { 0 };
+    mv * moves = moveList;
+
+    CBoard board("b7/8/2B5/8/4K3/8/8/8", "w", "", "-", "0", "0");
+    magics::populateBishopTable(C6);
+    masks::generateOpposite();
+    masks::generateInterceding();
+    board.bishopGenPinned(&moves, exp_2(C6), E4, true);
+    mv expectedMoves[256] = { 0 };
+    expectedMoves[0] = moves::make(C6, A8, BISHOP, BISHOP, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[1] = moves::make(C6, B7, BISHOP, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[2] = moves::make(C6, D5, BISHOP, NONE, NONE, NONE, REGULAR_MOVE);
+    sort(begin(moveList), end(moveList));
+    sort(begin(expectedMoves), end(expectedMoves));
+    ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect bishop pinned moves");
+
+    return 1;
+}
+
 // Test rookGen: all rook moves
 int testRookGen() {
     cout << "Testing rookGen with quiet moves..." << endl;
@@ -284,6 +307,29 @@ int testRookGenQueen() {
     sort(begin(moveList), end(moveList));
     sort(begin(expectedMoves), end(expectedMoves));
     ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect horizontal queen moves");
+
+    return 1;
+}
+
+// Test rookGenPinned: bishops that are pinned
+int testRookGenPinned() {
+    cout << "Testing rookGenPinned..." << endl;
+
+    mv moveList[256] = { 0 };
+    mv * moves = moveList;
+
+    CBoard board("8/8/8/8/8/8/8/r1R1K3", "w", "", "-", "0", "0");
+    magics::populateRookTable(C1);
+    masks::generateOpposite();
+    masks::generateInterceding();
+    board.rookGenPinned(&moves, exp_2(C1), E1, true);
+    mv expectedMoves[256] = { 0 };
+    expectedMoves[0] = moves::make(C1, A1, ROOK, ROOK, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[1] = moves::make(C1, B1, ROOK, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[2] = moves::make(C1, D1, ROOK, NONE, NONE, NONE, REGULAR_MOVE);
+    sort(begin(moveList), end(moveList));
+    sort(begin(expectedMoves), end(expectedMoves));
+    ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect pinned rook moves");
 
     return 1;
 }
@@ -405,9 +451,11 @@ int main() {
     t += testBishopGen();
     t += testBishopGenCaps();
     t += testBishopGenQueen();
+    t += testBishopGenPinned();
     t += testRookGen();
     t += testRookGenCaps();
     t += testRookGenQueen();
+    t += testRookGenPinned();
     t += testBishopPins();
     t += testRookPins();
     t += testAttackSetGen();

@@ -31,7 +31,9 @@ protected:
     void pawnGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMoves);
     void knightGen(mv ** moveList, BB pins, bool quietMoves);
     void bishopGen(mv ** moveList, BB pins, bool quietMoves);
+    void bishopGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMoves);
     void rookGen(mv ** moveList, BB pins, bool quietMoves);
+    void rookGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMoves);
     void kingGen(mv **moveList, ind kingSquare, bool quietMoves);
     void pinnedPieceGen(mv **moveList, BB pins, ind kingSquare, bool quietMoves);
     BB attackSetGen(bool color);
