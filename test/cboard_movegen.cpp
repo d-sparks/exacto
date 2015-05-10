@@ -15,13 +15,14 @@ int testPawnGen() {
     mv * moves = moveList;
 
     CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q1N5/P1PQ2PP/1R2KB1R", "w", "Kkq", "-", "0", "12");
-    board.pawnGen(&moves, 0);
+    board.pawnGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
     expectedMoves[0] = moves::make(H2, H3, PAWN, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[1] = moves::make(H2, H4, PAWN, NONE, NONE, NONE, DOUBLE_PAWN_MOVE_W);
     expectedMoves[2] = moves::make(G2, G3, PAWN, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[3] = moves::make(G2, G4, PAWN, NONE, NONE, NONE, DOUBLE_PAWN_MOVE_W);
     expectedMoves[4] = moves::make(F4, F5, PAWN, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[5] = moves::make(F4, E5, PAWN, PAWN, NONE, NONE, REGULAR_MOVE);
     sort(begin(moveList), end(moveList));
     sort(begin(expectedMoves), end(expectedMoves));
     ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect pawn move generation");
@@ -37,8 +38,7 @@ int testPawnGenPromotions() {
     mv * moves = moveList;
 
     CBoard board("8/8/8/8/8/8/7p/6R1", "b", "", "-", "0", "0");
-    board.pawnGen(&moves, 0);
-    board.pawnCaps(&moves, 0);
+    board.pawnGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
     for(ind special = PROMOTE_QUEEN; special <= PROMOTE_KNIGHT; special++) {
         expectedMoves[special] = moves::make(H2, H1, PAWN, NONE, NONE, NONE, special);

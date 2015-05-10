@@ -19,26 +19,30 @@ void CBoard::moveGen(mv * moveList) {
     BB pins = pinnedByRook | pinnedByBishop;
 
     // in check? else:
-    pawnGen(&moveList, pins);
-    pawnCaps(&moveList, pins);
-
-    knightGen(&moveList, pins, true);
-    bishopGen(&moveList, pins, true);
-    rookGen(&moveList, pins, true);
-    kingGen(&moveList, kingSquare, enemyAttacks, true);
+    if(pieces[wtm][KING] & enemyAttacks) {
+    } else {
+        pawnGen(&moveList, pins, true);
+        knightGen(&moveList, pins, true);
+        bishopGen(&moveList, pins, true);
+        rookGen(&moveList, pins, true);
+        kingGen(&moveList, kingSquare, enemyAttacks, true);
+    }
 
 }
 
 // Generates the non-capture pawn moves
-void CBoard::pawnGen(mv **moveList, BB pins) {
-    if(wtm) {
-        BB b = (pieces[WHITE][PAWN] << 8) & ~occupied;
-        serializePawn(moveList, b, REGULAR_MOVE, 8);
-        serializePawn(moveList, ((b & masks::RANK[2]) << 8) & ~occupied, DOUBLE_PAWN_MOVE_W, 16);
-    } else {
-        BB b = (pieces[BLACK][PAWN] >> 8) & ~occupied;
-        serializePawn(moveList, b, REGULAR_MOVE, -8);
-        serializePawn(moveList, ((b & masks::RANK[5]) >> 8) & ~occupied, DOUBLE_PAWN_MOVE_B, -16);
+void CBoard::pawnGen(mv **moveList, BB pins, bool quietMoves) {
+    pawnCaps(moveList, pins);
+    if(quietMoves) {
+        if(wtm) {
+            BB b = (pieces[WHITE][PAWN] << 8) & ~occupied;
+            serializePawn(moveList, b, REGULAR_MOVE, 8);
+            serializePawn(moveList, ((b & masks::RANK[2]) << 8) & ~occupied, DOUBLE_PAWN_MOVE_W, 16);
+        } else {
+            BB b = (pieces[BLACK][PAWN] >> 8) & ~occupied;
+            serializePawn(moveList, b, REGULAR_MOVE, -8);
+            serializePawn(moveList, ((b & masks::RANK[5]) >> 8) & ~occupied, DOUBLE_PAWN_MOVE_B, -16);
+        }
     }
 }
 
@@ -223,11 +227,6 @@ void CBoard::kingGen(mv **moveList, ind kingSquare, BB enemyAttacks, bool quietM
         // TODO: add special flag by overloading serialize
         serialize(moveList, moves, kingSquare);
     }
-}
-
-// Generate legal moves that are pinned to the king.
-void CBoard::pinnedPieceGen(mv **moveList, BB pins, ind kingSquare, bool quietMoves) {
-    pawnGenPinned(moveList, pins, kingSquare, quietMoves);
 }
 
 // Returns a bitmap of all squares threatened by a given color on the current board. A piece is

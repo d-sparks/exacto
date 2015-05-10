@@ -26,7 +26,7 @@ public:
 #ifndef _TEST
 protected:
 #endif
-    void pawnGen(mv ** moveList, BB pins);
+    void pawnGen(mv ** moveList, BB pins, bool quietMoves);
     void pawnCaps(mv ** moveList, BB pins);
     void pawnGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMoves);
     void knightGen(mv ** moveList, BB pins, bool quietMoves);
@@ -35,7 +35,6 @@ protected:
     void rookGen(mv ** moveList, BB pins, bool quietMoves);
     void rookGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMoves);
     void kingGen(mv **moveList, ind kingSquare, BB enemyAttacks, bool quietMoves);
-    void pinnedPieceGen(mv **moveList, BB pins, ind kingSquare, bool quietMoves);
     BB attackSetGen(bool color);
     BB bishopPins(ind kingSquare);
     BB rookPins(ind kingSquare);
