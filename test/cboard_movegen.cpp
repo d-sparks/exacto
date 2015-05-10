@@ -382,7 +382,8 @@ int testKingMoves() {
     mv * moves = moveList;
 
     CBoard board("k7/8/8/8/8/8/8/R3K2R", "w", "KQkq", "-", "0", "0");
-    board.kingGen(&moves, E1, true);
+    BB enemyAttacks = board.attackSetGen(BLACK);
+    board.kingGen(&moves, E1, enemyAttacks, true);
     mv expectedMoves[256] = { 0 };
     expectedMoves[0] = moves::make(E1, D1, KING, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[1] = moves::make(E1, D2, KING, NONE, NONE, NONE, REGULAR_MOVE);
@@ -406,7 +407,8 @@ int testKingMovesCaps() {
     mv * caps = capList;
 
     CBoard board("k7/8/8/8/8/8/5p2/R3K2R", "w", "KQkq", "-", "0", "0");
-    board.kingGen(&caps, E1, false);
+    BB enemyAttacks = board.attackSetGen(BLACK);
+    board.kingGen(&caps, E1, enemyAttacks, false);
     mv expectedMoves[256] = { 0 };
     expectedMoves[3] = moves::make(E1, F2, KING, PAWN, NONE, NONE, NONE);
     sort(begin(capList), end(capList));
@@ -424,7 +426,8 @@ int testKingMovesNoCastling() {
     mv * moves = moveList;
 
     CBoard board("k7/8/8/8/8/8/8/R3K2R", "w", "kq", "-", "0", "0");
-    board.kingGen(&moves, E1, true);
+    BB enemyAttacks = board.attackSetGen(BLACK);
+    board.kingGen(&moves, E1, enemyAttacks, true);
     mv expectedMoves[256] = { 0 };
     expectedMoves[0] = moves::make(E1, D1, KING, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[1] = moves::make(E1, D2, KING, NONE, NONE, NONE, REGULAR_MOVE);

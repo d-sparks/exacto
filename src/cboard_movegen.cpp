@@ -13,6 +13,7 @@ void CBoard::moveGen(mv * moveList) {
 
     // Determine pinned pieces
     ind kingSquare = bitscan(pieces[wtm][KING]);
+    BB enemyAttacks = attackSetGen(!wtm);
     BB pinnedByBishop = bishopPins(kingSquare);
     BB pinnedByRook = rookPins(kingSquare);
     BB pins = pinnedByRook | pinnedByBishop;
@@ -22,6 +23,9 @@ void CBoard::moveGen(mv * moveList) {
     pawnCaps(&moveList, pins);
 
     knightGen(&moveList, pins, true);
+    bishopGen(&moveList, pins, true);
+    rookGen(&moveList, pins, true);
+    kingGen(&moveList, kingSquare, enemyAttacks, true);
 
 }
 
@@ -199,10 +203,9 @@ void CBoard::rookGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMov
 
 // Generates all the moves from a given position, including castling moves. Optionally, only
 // generate captures by passing quietMoves=false.
-void CBoard::kingGen(mv **moveList, ind kingSquare, bool quietMoves) {
-    BB safeSquares = ~attackSetGen(!wtm);
+void CBoard::kingGen(mv **moveList, ind kingSquare, BB enemyAttacks, bool quietMoves) {
     // Regular moves
-    BB validSquares = safeSquares & (quietMoves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL]);
+    BB validSquares = ~enemyAttacks & (quietMoves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL]);
     BB moves = masks::KING_MOVES[kingSquare] & validSquares;
     serialize(moveList, moves, kingSquare);
     // Castling
