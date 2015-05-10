@@ -28,10 +28,12 @@ protected:
 #endif
     void pawnGen(mv ** moveList, BB pins);
     void pawnCaps(mv ** moveList, BB pins);
+    void pawnGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMoves);
     void knightGen(mv ** moveList, BB pins, bool quietMoves);
     void bishopGen(mv ** moveList, BB pins, bool quietMoves);
     void rookGen(mv ** moveList, BB pins, bool quietMoves);
     void kingGen(mv **moveList, ind kingSquare, bool quietMoves);
+    void pinnedPieceGen(mv **moveList, BB pins, ind kingSquare, bool quietMoves);
     BB attackSetGen(bool color);
     BB bishopPins(ind kingSquare);
     BB rookPins(ind kingSquare);

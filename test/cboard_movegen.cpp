@@ -17,11 +17,11 @@ int testPawnGen() {
     CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q1N5/P1PQ2PP/1R2KB1R", "w", "Kkq", "-", "0", "12");
     board.pawnGen(&moves, 0);
     mv expectedMoves[256] = { 0 };
-    expectedMoves[0] = moves::make(H2, H3, PAWN, NONE, NONE, NONE, NONE);
+    expectedMoves[0] = moves::make(H2, H3, PAWN, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[1] = moves::make(H2, H4, PAWN, NONE, NONE, NONE, DOUBLE_PAWN_MOVE_W);
-    expectedMoves[2] = moves::make(G2, G3, PAWN, NONE, NONE, NONE, NONE);
+    expectedMoves[2] = moves::make(G2, G3, PAWN, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[3] = moves::make(G2, G4, PAWN, NONE, NONE, NONE, DOUBLE_PAWN_MOVE_W);
-    expectedMoves[4] = moves::make(F4, F5, PAWN, NONE, NONE, NONE, NONE);
+    expectedMoves[4] = moves::make(F4, F5, PAWN, NONE, NONE, NONE, REGULAR_MOVE);
     sort(begin(moveList), end(moveList));
     sort(begin(expectedMoves), end(expectedMoves));
     ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect pawn move generation");
@@ -61,7 +61,7 @@ int testPawnCaps() {
     CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q1N5/P1PQ2PP/1R2KB1R", "w", "Kkq", "-", "0", "12");
     board.pawnCaps(&caps, 0);
     mv expectedCaps[256] = { 0 };
-    expectedCaps[0] = moves::make(F4, E5, PAWN, PAWN, NONE, NONE, NONE);
+    expectedCaps[0] = moves::make(F4, E5, PAWN, PAWN, NONE, NONE, REGULAR_MOVE);
     sort(begin(capList), end(capList));
     sort(begin(expectedCaps), end(expectedCaps));
     ASSERT(!memcmp(capList, expectedCaps, sizeof(capList[0]) * 256), "Incorrect pawn captures generation");
@@ -87,6 +87,36 @@ int testPawnCapsEnPassant() {
     return 1;
 }
 
+// Test pawnGenPinned
+int testPawnGenPinned() {
+    cout << "Testing pawnGenPinned..." << endl;
+
+    //  . . . . . . . .
+    //  b . . . . . . .
+    //  . : . . . . . .
+    //  . p P . . . r .
+    //  . . . . . . . .
+    //  . . . . . . . r
+    //  . . . . . . P .
+    //  . . . . . . K .
+
+    mv moveList[256] = { 0 };
+    mv * moves = moveList;
+
+    CBoard board("8/b7/8/1pP3r1/8/7r/6P1/6K1", "w", "", "B6", "0", "0");
+    masks::generateOpposite();
+    board.pawnGenPinned(&moves, exp_2(C5) | exp_2(G2), G1, true);
+    mv expectedMoves[256] = { 0 };
+    expectedMoves[0] = moves::make(C5, B6, PAWN, PAWN, NONE, NONE, EN_PASSANT_CAP_W);
+    expectedMoves[1] = moves::make(G2, G3, PAWN, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[2] = moves::make(G2, G4, PAWN, NONE, NONE, NONE, DOUBLE_PAWN_MOVE_W);
+    sort(begin(moveList), end(moveList));
+    sort(begin(expectedMoves), end(expectedMoves));
+    ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect pinned pawn move generation");
+
+    return 1;
+}
+
 // Test knightGen: all knight moves
 int testKnightGen() {
     cout << "Testing knightGen..." << endl;
@@ -97,14 +127,14 @@ int testKnightGen() {
     CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q7/P1PQ2PP/NR2KB1R", "w", "Kkq", "-", "0", "12");
     board.knightGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
-    expectedMoves[0] = moves::make(A1, B3, KNIGHT, NONE, NONE, NONE, NONE);
-    expectedMoves[1] = moves::make(D4, B3, KNIGHT, NONE, NONE, NONE, NONE);
-    expectedMoves[2] = moves::make(D4, B5, KNIGHT, NONE, NONE, NONE, NONE);
-    expectedMoves[3] = moves::make(D4, C6, KNIGHT, NONE, NONE, NONE, NONE);
-    expectedMoves[4] = moves::make(D4, E6, KNIGHT, PAWN, NONE, NONE, NONE);
-    expectedMoves[5] = moves::make(D4, F5, KNIGHT, NONE, NONE, NONE, NONE);
-    expectedMoves[6] = moves::make(D4, F3, KNIGHT, NONE, NONE, NONE, NONE);
-    expectedMoves[7] = moves::make(D4, E2, KNIGHT, NONE, NONE, NONE, NONE);
+    expectedMoves[0] = moves::make(A1, B3, KNIGHT, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[1] = moves::make(D4, B3, KNIGHT, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[2] = moves::make(D4, B5, KNIGHT, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[3] = moves::make(D4, C6, KNIGHT, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[4] = moves::make(D4, E6, KNIGHT, PAWN, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[5] = moves::make(D4, F5, KNIGHT, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[6] = moves::make(D4, F3, KNIGHT, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[7] = moves::make(D4, E2, KNIGHT, NONE, NONE, NONE, REGULAR_MOVE);
     sort(begin(moveList), end(moveList));
     sort(begin(expectedMoves), end(expectedMoves));
     ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect knight move generation");
@@ -122,7 +152,7 @@ int testKnightCaps() {
     CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q7/P1PQ2PP/NR2KB1R", "w", "Kkq", "-", "0", "12");
     board.knightGen(&caps, 0, false);
     mv expectedCaps[256] = { 0 };
-    expectedCaps[0] = moves::make(D4, E6, KNIGHT, PAWN, NONE, NONE, NONE);
+    expectedCaps[0] = moves::make(D4, E6, KNIGHT, PAWN, NONE, NONE, REGULAR_MOVE);
     ASSERT(!memcmp(capList, expectedCaps, sizeof(capList[0]) * 256), "Incorrect knight capture generation");
 
     return 1;
@@ -139,11 +169,11 @@ int testBishopGen() {
     magics::populateBishopTable(E4);
     board.bishopGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
-    expectedMoves[0] = moves::make(E4, D5, BISHOP, NONE, NONE, NONE, NONE);
-    expectedMoves[1] = moves::make(E4, C6, BISHOP, PAWN, NONE, NONE, NONE);
-    expectedMoves[2] = moves::make(E4, F3, BISHOP, NONE, NONE, NONE, NONE);
-    expectedMoves[3] = moves::make(E4, G2, BISHOP, NONE, NONE, NONE, NONE);
-    expectedMoves[4] = moves::make(E4, H1, BISHOP, NONE, NONE, NONE, NONE);
+    expectedMoves[0] = moves::make(E4, D5, BISHOP, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[1] = moves::make(E4, C6, BISHOP, PAWN, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[2] = moves::make(E4, F3, BISHOP, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[3] = moves::make(E4, G2, BISHOP, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[4] = moves::make(E4, H1, BISHOP, NONE, NONE, NONE, REGULAR_MOVE);
     sort(begin(moveList), end(moveList));
     sort(begin(expectedMoves), end(expectedMoves));
     ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect bishop moves");
@@ -162,7 +192,7 @@ int testBishopGenCaps() {
     magics::populateBishopTable(E4);
     board.bishopGen(&caps, 0, false);
     mv expectedCaps[256] = { 0 };
-    expectedCaps[0] = moves::make(E4, C6, BISHOP, PAWN, NONE, NONE, NONE);
+    expectedCaps[0] = moves::make(E4, C6, BISHOP, PAWN, NONE, NONE, REGULAR_MOVE);
     sort(begin(capList), end(capList));
     sort(begin(expectedCaps), end(expectedCaps));
     ASSERT(!memcmp(capList, expectedCaps, sizeof(capList[0]) * 256), "Incorrect bishop captures");
@@ -181,8 +211,8 @@ int testBishopGenQueen() {
     magics::populateBishopTable(H1);
     board.bishopGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
-    expectedMoves[0] = moves::make(H1, G2, QUEEN, NONE, NONE, NONE, NONE);
-    expectedMoves[1] = moves::make(H1, F3, QUEEN, PAWN, NONE, NONE, NONE);
+    expectedMoves[0] = moves::make(H1, G2, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[1] = moves::make(H1, F3, QUEEN, PAWN, NONE, NONE, REGULAR_MOVE);
     sort(begin(moveList), end(moveList));
     sort(begin(expectedMoves), end(expectedMoves));
     ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect queen moves");
@@ -201,11 +231,11 @@ int testRookGen() {
     magics::populateRookTable(B7);
     board.rookGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
-    expectedMoves[0] = moves::make(B7, B8, ROOK, PAWN, NONE, NONE, NONE);
-    expectedMoves[1] = moves::make(B7, C7, ROOK, NONE, NONE, NONE, NONE);
-    expectedMoves[2] = moves::make(B7, D7, ROOK, NONE, NONE, NONE, NONE);
-    expectedMoves[3] = moves::make(B7, E7, ROOK, PAWN, NONE, NONE, NONE);
-    expectedMoves[4] = moves::make(B7, B6, ROOK, NONE, NONE, NONE, NONE);
+    expectedMoves[0] = moves::make(B7, B8, ROOK, PAWN, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[1] = moves::make(B7, C7, ROOK, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[2] = moves::make(B7, D7, ROOK, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[3] = moves::make(B7, E7, ROOK, PAWN, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[4] = moves::make(B7, B6, ROOK, NONE, NONE, NONE, REGULAR_MOVE);
     sort(begin(moveList), end(moveList));
     sort(begin(expectedMoves), end(expectedMoves));
     ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect rook moves");
@@ -224,8 +254,8 @@ int testRookGenCaps() {
     magics::populateRookTable(B7);
     board.rookGen(&caps, 0, false);
     mv expectedCaps[256] = { 0 };
-    expectedCaps[0] = moves::make(B7, B8, ROOK, PAWN, NONE, NONE, NONE);
-    expectedCaps[1] = moves::make(B7, E7, ROOK, PAWN, NONE, NONE, NONE);
+    expectedCaps[0] = moves::make(B7, B8, ROOK, PAWN, NONE, NONE, REGULAR_MOVE);
+    expectedCaps[1] = moves::make(B7, E7, ROOK, PAWN, NONE, NONE, REGULAR_MOVE);
     sort(begin(capList), end(capList));
     sort(begin(expectedCaps), end(expectedCaps));
     ASSERT(!memcmp(capList, expectedCaps, sizeof(capList[0]) * 256), "Incorrect rook moves");
@@ -244,13 +274,13 @@ int testRookGenQueen() {
     magics::populateRookTable(H1);
     board.rookGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
-    expectedMoves[0] = moves::make(H1, G1, QUEEN, NONE, NONE, NONE, NONE);
-    expectedMoves[1] = moves::make(H1, F1, QUEEN, NONE, NONE, NONE, NONE);
-    expectedMoves[2] = moves::make(H1, E1, QUEEN, NONE, NONE, NONE, NONE);
-    expectedMoves[3] = moves::make(H1, D1, QUEEN, NONE, NONE, NONE, NONE);
-    expectedMoves[4] = moves::make(H1, C1, QUEEN, NONE, NONE, NONE, NONE);
-    expectedMoves[5] = moves::make(H1, B1, QUEEN, NONE, NONE, NONE, NONE);
-    expectedMoves[6] = moves::make(H1, A1, QUEEN, NONE, NONE, NONE, NONE);
+    expectedMoves[0] = moves::make(H1, G1, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[1] = moves::make(H1, F1, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[2] = moves::make(H1, E1, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[3] = moves::make(H1, D1, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[4] = moves::make(H1, C1, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[5] = moves::make(H1, B1, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[6] = moves::make(H1, A1, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);
     sort(begin(moveList), end(moveList));
     sort(begin(expectedMoves), end(expectedMoves));
     ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect horizontal queen moves");
@@ -308,13 +338,13 @@ int testKingMoves() {
     CBoard board("k7/8/8/8/8/8/8/R3K2R", "w", "KQkq", "-", "0", "0");
     board.kingGen(&moves, E1, true);
     mv expectedMoves[256] = { 0 };
-    expectedMoves[0] = moves::make(E1, D1, KING, NONE, NONE, NONE, NONE);
-    expectedMoves[1] = moves::make(E1, D2, KING, NONE, NONE, NONE, NONE);
-    expectedMoves[2] = moves::make(E1, E2, KING, NONE, NONE, NONE, NONE);
-    expectedMoves[3] = moves::make(E1, F2, KING, NONE, NONE, NONE, NONE);
-    expectedMoves[4] = moves::make(E1, F1, KING, NONE, NONE, NONE, NONE);
-    expectedMoves[5] = moves::make(E1, G1, KING, NONE, NONE, NONE, NONE);
-    expectedMoves[6] = moves::make(E1, C1, KING, NONE, NONE, NONE, NONE);
+    expectedMoves[0] = moves::make(E1, D1, KING, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[1] = moves::make(E1, D2, KING, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[2] = moves::make(E1, E2, KING, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[3] = moves::make(E1, F2, KING, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[4] = moves::make(E1, F1, KING, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[5] = moves::make(E1, G1, KING, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[6] = moves::make(E1, C1, KING, NONE, NONE, NONE, REGULAR_MOVE);
     sort(begin(moveList), end(moveList));
     sort(begin(expectedMoves), end(expectedMoves));
     ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect king quiet moves");
@@ -350,11 +380,11 @@ int testKingMovesNoCastling() {
     CBoard board("k7/8/8/8/8/8/8/R3K2R", "w", "kq", "-", "0", "0");
     board.kingGen(&moves, E1, true);
     mv expectedMoves[256] = { 0 };
-    expectedMoves[0] = moves::make(E1, D1, KING, NONE, NONE, NONE, NONE);
-    expectedMoves[1] = moves::make(E1, D2, KING, NONE, NONE, NONE, NONE);
-    expectedMoves[2] = moves::make(E1, E2, KING, NONE, NONE, NONE, NONE);
-    expectedMoves[3] = moves::make(E1, F2, KING, NONE, NONE, NONE, NONE);
-    expectedMoves[4] = moves::make(E1, F1, KING, NONE, NONE, NONE, NONE);
+    expectedMoves[0] = moves::make(E1, D1, KING, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[1] = moves::make(E1, D2, KING, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[2] = moves::make(E1, E2, KING, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[3] = moves::make(E1, F2, KING, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[4] = moves::make(E1, F1, KING, NONE, NONE, NONE, REGULAR_MOVE);
     sort(begin(moveList), end(moveList));
     sort(begin(expectedMoves), end(expectedMoves));
     ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect king quiet non-castling moves");
@@ -369,6 +399,7 @@ int main() {
     t += testPawnGenPromotions();
     t += testPawnCaps();
     t += testPawnCapsEnPassant();
+    t += testPawnGenPinned();
     t += testKnightGen();
     t += testKnightCaps();
     t += testBishopGen();
