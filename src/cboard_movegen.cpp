@@ -352,6 +352,9 @@ void CBoard::evasionGen(mv **moveList, BB enemyAttacks, BB pins, ind kingSquare)
         }
     }
 
+    // In any case, the king can move to safe squares
+    BB kingMoves = masks::KING_MOVES[kingSquare] & ~pieces[wtm][ALL] & ~enemyAttacks;
+    serialize(moveList, kingMoves, kingSquare);
 }
 
 // Gets the pieces that are currently pinned to the king by a diagonally moving piece.

@@ -893,6 +893,55 @@ int testGenerateMovesToCaps() {
     return 1;
 }
 
+// Tests evasion generation
+int testEvasionGen() {
+    cout << "Testing evasionGen..." << endl;
+
+    mv moveList[256] = { 0 };
+    mv * moves = moveList;
+
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   |   | Q |   | q |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   | B |   |   |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   | r |   | : |   |[K]|   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   | p | P |   |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   |   |   | N |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   |   |   |   |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   |   |   |   |   |
+    // +---+---+---+---+---+---+---+---+
+    // | k |   |   |   |   |   |   |   |
+    // +---+---+---+---+---+---+---+---+
+
+    CBoard board("5Q1q/4B3/2r3K1/4pP2/6N1/8/8/k7", "w", "", "E6", "0", "0");
+    magics::populateBishopTables();
+    magics::populateRookTables();
+    masks::generateOpposite();
+    masks::generateInterceding();
+    BB enemyAttacks = board.attackSetGen(BLACK);
+    board.evasionGen(&moves, enemyAttacks, 0, G6);
+    mv expectedMoves[256] = { 0 };
+    expectedMoves[0] = moves::make(E7, F6, BISHOP, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[1] = moves::make(E7, D6, BISHOP, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[2] = moves::make(F5, E6, PAWN, PAWN, NONE, NONE, EN_PASSANT_CAP_W);
+    expectedMoves[3] = moves::make(F5, F6, PAWN, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[4] = moves::make(G4, F6, KNIGHT, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[5] = moves::make(F8, F6, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[6] = moves::make(G6, F7, KING, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[7] = moves::make(G6, G5, KING, NONE, NONE, NONE, REGULAR_MOVE);
+    sort(begin(moveList), end(moveList));
+    sort(begin(expectedMoves), end(expectedMoves));
+    ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect evasions");
+
+    return 1;
+}
+
+
 int main() {
     int t = 0;
 
@@ -919,6 +968,7 @@ int main() {
     t += testKingMovesNoCastling();
     t += testGenerateMovesTo();
     t += testGenerateMovesToCaps();
+    t += testEvasionGen();
 
     cout << endl;
     cout << t << " test(s) OK" << endl;
