@@ -35,6 +35,8 @@ protected:
     void rookGen(mv ** moveList, BB pins, bool quietMoves);
     void rookGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMoves);
     void kingGen(mv **moveList, ind kingSquare, BB enemyAttacks, bool quietMoves);
+    void generateMovesTo(mv **moveList, ind square, ind defender, BB pins, BB enemyAttacks);
+    void evasionGen(mv **moveList, BB enemyAttacks, BB pins, ind kingSquare);
     BB attackSetGen(bool color);
     BB bishopPins(ind kingSquare);
     BB rookPins(ind kingSquare);

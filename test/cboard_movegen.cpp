@@ -810,6 +810,89 @@ int testKingMovesNoCastling() {
     return 1;
 }
 
+// Tests move generation to a given square
+int testGenerateMovesTo() {
+    cout << "Testing generateMovesTo on empty square..." << endl;
+
+    mv moveList[256] = { 0 };
+    mv * moves = moveList;
+
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   | R |   | Q |   |
+    // +---+---+---+---+---+---+---+---+
+    // | k |   |   |   |   |   |   |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   | : |   |   |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   | P | p |   |   |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   |   | N | B |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   |   |   |   |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   |   |   |   |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   |[K]|   |   |   |
+    // +---+---+---+---+---+---+---+---+
+
+    CBoard board("4R1Q1/k7/8/3Pp3/5NB1/8/8/4K3", "w", "", "e6", "0", "0");
+    magics::populateBishopTables();
+    magics::populateRookTables();
+    board.generateMovesTo(&moves, E6, NONE, 0, 0);
+    mv expectedMoves[256] = { 0 };
+    expectedMoves[0] = moves::make(D5, E6, PAWN, PAWN, NONE, NONE, EN_PASSANT_CAP_W);
+    expectedMoves[1] = moves::make(F4, E6, KNIGHT, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[2] = moves::make(E8, E6, ROOK, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[3] = moves::make(G8, E6, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[4] = moves::make(G4, E6, BISHOP, NONE, NONE, NONE, REGULAR_MOVE);
+    sort(begin(moveList), end(moveList));
+    sort(begin(expectedMoves), end(expectedMoves));
+    ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect quiet movesTo moves");
+
+    return 1;
+}
+
+// Tests capture generation to a given square
+int testGenerateMovesToCaps() {
+    cout << "Testing generateMovesTo on an occupied square..." << endl;
+
+    mv moveList[256] = { 0 };
+    mv * moves = moveList;
+
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   | N |   |   |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   |   |   | B |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   |   | r | R |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   | P |[K]|   |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   |   |   |   |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   |   |   |   |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   |   |   |   |   |
+    // +---+---+---+---+---+---+---+---+
+    // |   |   |   |   |   |   |   |   |
+    // +---+---+---+---+---+---+---+---+
+
+    CBoard board("4N3/6B1/5rR1/4PK2/8/8/8/8", "w", "", "-", "0", "0");
+    magics::populateBishopTables();
+    magics::populateRookTables();
+    board.generateMovesTo(&moves, F6, ROOK, 0, 0);
+    mv expectedMoves[256] = { 0 };
+    expectedMoves[0] = moves::make(E5, F6, PAWN, ROOK, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[1] = moves::make(E8, F6, KNIGHT, ROOK, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[2] = moves::make(G6, F6, ROOK, ROOK, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[3] = moves::make(G7, F6, BISHOP, ROOK, NONE, NONE, REGULAR_MOVE);
+    sort(begin(moveList), end(moveList));
+    sort(begin(expectedMoves), end(expectedMoves));
+    ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect capture movesTo moves");
+
+    return 1;
+}
+
 int main() {
     int t = 0;
 
@@ -834,6 +917,8 @@ int main() {
     t += testKingMoves();
     t += testKingMovesCaps();
     t += testKingMovesNoCastling();
+    t += testGenerateMovesTo();
+    t += testGenerateMovesToCaps();
 
     cout << endl;
     cout << t << " test(s) OK" << endl;

@@ -18,14 +18,20 @@ void CBoard::moveGen(mv * moveList) {
     BB pinnedByRook = rookPins(kingSquare);
     BB pins = pinnedByRook | pinnedByBishop;
 
-    // in check? else:
-    if(pieces[wtm][KING] & enemyAttacks) {
+    bool inCheck = pieces[wtm][KING] & enemyAttacks;
+    if(inCheck) {
+
     } else {
         pawnGen(&moveList, pins, true);
         knightGen(&moveList, pins, true);
         bishopGen(&moveList, pins, true);
         rookGen(&moveList, pins, true);
         kingGen(&moveList, kingSquare, enemyAttacks, true);
+        if(pins) {
+            pawnGenPinned(&moveList, pins, kingSquare, true);
+            bishopGenPinned(&moveList, pins, kingSquare, true);
+            rookGenPinned(&moveList, pins, kingSquare, true);
+        }
     }
 
 }
@@ -267,6 +273,85 @@ BB CBoard::attackSetGen(bool color) {
     attackSet |= masks::KING_MOVES[bitscan(pieces[color][KING])];
 
     return attackSet;
+}
+
+// Generates the moves to a given square. King moves will only generate moves to the given square if
+// they are a capture.
+void CBoard::generateMovesTo(mv **moveList, ind dest, ind defender, BB pins, BB enemyAttacks) {
+
+    // Pawn moves
+    BB destBB = exp_2(dest);
+    BB potentialPawns = wtm ? destBB >> 8 : destBB << 8;
+    BB pawns = pieces[wtm][PAWN];
+    if(defender) {
+        // Pawn captures
+        if(pawns & ((potentialPawns & ~masks::FILE[7]) << 1)) {
+            serializePawn(moveList, destBB, REGULAR_MOVE, wtm ? 7 : -9);
+        }
+        if(pawns & ((potentialPawns & ~masks::FILE[0]) >> 1)) {
+            serializePawn(moveList, destBB, REGULAR_MOVE, wtm ? 9 : -7);
+        }
+    } else if(dest == bitscan(enPassant)) {
+        // Pawn en passant captures
+        ind special = wtm ? EN_PASSANT_CAP_W : EN_PASSANT_CAP_B;
+        serializeFromDest(moveList, pawns & ((potentialPawns & ~masks::FILE[7]) << 1), dest, PAWN, special);
+        serializeFromDest(moveList, pawns & ((potentialPawns & ~masks::FILE[0]) >> 1), dest, PAWN, special);
+    } else {
+        if(pawns & potentialPawns) {
+            // Pawn regular moves
+            serializePawn(moveList, destBB, REGULAR_MOVE, wtm ? 8 : -8);
+        } else if(potentialPawns & ~occupied) {
+            // Pawn double moves
+            if(wtm && squares::file(dest) == 3) {
+                serializeFromDest(moveList, pawns & (potentialPawns >> 8), dest, NONE, DOUBLE_PAWN_MOVE_W);
+            } else if(!wtm && squares::file(dest) == 4) {
+                serializeFromDest(moveList, pawns & (potentialPawns << 8), dest, NONE, DOUBLE_PAWN_MOVE_B);
+            }
+        }
+    }
+
+    // Knights, bishops, and rooks are very simple.
+    BB knights = masks::KNIGHT_MOVES[dest] & pieces[wtm][KNIGHT];
+    serializeFromDest(moveList, knights, dest, defender, REGULAR_MOVE);
+    BB bishops = magics::bishopMoves(dest, occupied) & (pieces[wtm][BISHOP] | pieces[wtm][QUEEN]);
+    serializeFromDest(moveList, bishops, dest, defender, REGULAR_MOVE);
+    BB rooks = magics::rookMoves(dest, occupied) & (pieces[wtm][ROOK] | pieces[wtm][QUEEN]);
+    serializeFromDest(moveList, rooks, dest, defender, REGULAR_MOVE);
+
+}
+
+// Assumes the king is in check and generates all legal ways to evade the check: move the king, kill
+// the attacker or intercept.
+void CBoard::evasionGen(mv **moveList, BB enemyAttacks, BB pins, ind kingSquare) {
+    BB attackers[QUEEN] = { 0 };
+
+    // Find all pieces attacking the king
+    if(wtm) {
+        attackers[PAWN] = pieces[BLACK][PAWN] & (pieces[WHITE][KING] >> 7 | pieces[WHITE][KING] >> 9);
+    } else {
+        attackers[PAWN] = pieces[WHITE][PAWN] & (pieces[BLACK][KING] << 7 | pieces[BLACK][KING] << 9);
+    }
+    attackers[PAWN] &= masks::KING_MOVES[kingSquare];
+    attackers[KNIGHT] = masks::KNIGHT_MOVES[kingSquare] & pieces[!wtm][KNIGHT];
+    attackers[BISHOP] = magics::bishopMoves(kingSquare, occupied) & (pieces[!wtm][BISHOP] | pieces[!wtm][QUEEN]);
+    attackers[ROOK] = magics::rookMoves(kingSquare, occupied) & (pieces[!wtm][ROOK] | pieces[!wtm][QUEEN]);
+    attackers[ALL] = attackers[PAWN] | attackers[KNIGHT] | attackers[BISHOP] | attackers[ROOK];
+
+    // If only one piece is attacking the king, can intercept or capture
+    if(popcount(attackers[ALL]) == 1) {
+        BB intercept = 0;
+        if(attackers[BISHOP] | attackers[ROOK]) {
+            intercept = masks::INTERCEDING[kingSquare][bitscan(attackers[ALL])];
+        }
+
+        // Generate interception moves
+        while(intercept) {
+            ind dest = bitscan(intercept);
+            generateMovesTo(moveList, dest, board[dest], pins, enemyAttacks);
+            intercept &= intercept - 1;
+        }
+    }
+
 }
 
 // Gets the pieces that are currently pinned to the king by a diagonally moving piece.
