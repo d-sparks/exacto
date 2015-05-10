@@ -105,25 +105,13 @@ namespace magics {
         }
     }
 
-    // Increments square by a delta and returns true if that square is still on the board.
-    bool wrapIter(int *square, int delta) {
-        *square += delta;
-        // Check for overflowing on the top or bottom of the board
-        bool wrapped = *square < 0 || *square >= 64;
-        // Check for overflowing on the right
-        wrapped |= (*square % 8 == 0) && ((16+delta) % 8 == 1);
-        // Check for overflowing on the left
-        wrapped |= (*square % 8 == 7) && ((16+delta) % 8 == 7);
-        return !wrapped;
-    }
-
     // Generate the moves for a given occupancy bitboard, square and set of directions.
     BB generateMovesFromOccupancy(ind square, BB occupancy, BB mask, int directionDeltas[4]) {
         BB moveBoard = 0;
         for(ind direction = 0; direction < 4; direction++) {
             int delta = directionDeltas[direction];
             int nextSquare = square;
-            while(wrapIter(&nextSquare, delta)) {
+            while(masks::wrapIter(&nextSquare, delta)) {
                 BB nextMove = exp_2(nextSquare);
                 moveBoard |= nextMove;
                 if((occupancy & nextMove) != 0 || (mask & nextMove) == 0) {

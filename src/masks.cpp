@@ -1,9 +1,22 @@
 #pragma once
-#include "bb.h"
+#include <map>
+#include "inlines.h"
 
 using namespace std;
 
 namespace masks {
+
+    // Increments square by a delta and returns true if that square is still on the board.
+    bool wrapIter(int *square, int delta) {
+        *square += delta;
+        // Check for overflowing on the top or bottom of the board
+        bool wrapped = *square < 0 || *square >= 64;
+        // Check for overflowing on the right
+        wrapped |= (*square % 8 == 0) && ((16+delta) % 8 == 1);
+        // Check for overflowing on the left
+        wrapped |= (*square % 8 == 7) && ((16+delta) % 8 == 7);
+        return !wrapped;
+    }
 
     BB promoRank(bool color) {
         return color? (BB)0xFF00000000000000 : (BB)0x00000000000000FF;
@@ -19,14 +32,14 @@ namespace masks {
         0x0808080808080808, 0x0404040404040404, 0x0202020202020202, 0x0101010101010101
     };
 
-    // Knight moves[i]  0 0 0 0 0 0 0 0    King moves[i]  0 0 0 0 0 0 0 0
-    //                  0 0 0 1 0 1 0 0                   0 0 1 1 1 0 0 0
-    //                  0 0 1 0 0 0 1 0                   0 0 1 i 1 0 0 0
-    //                  0 0 0 0 i 0 0 0                   0 0 1 1 1 0 0 0
-    //                  0 0 1 0 0 0 1 0                   0 0 0 0 0 0 0 0
-    //                  0 0 0 1 0 1 0 0                   0 0 0 0 0 0 0 0
-    //                  0 0 0 0 0 0 0 0                   0 0 0 0 0 0 0 0
-    //                  0 0 0 0 0 0 0 0                   0 0 0 0 0 0 0 0
+    //  Knight moves[i]     0 0 0 0 0 0 0 0     King moves[i]       0 0 0 0 0 0 0 0
+    //                      0 0 0 1 0 1 0 0                         0 0 1 1 1 0 0 0
+    //                      0 0 1 0 0 0 1 0                         0 0 1 i 1 0 0 0
+    //                      0 0 0 0 i 0 0 0                         0 0 1 1 1 0 0 0
+    //                      0 0 1 0 0 0 1 0                         0 0 0 0 0 0 0 0
+    //                      0 0 0 1 0 1 0 0                         0 0 0 0 0 0 0 0
+    //                      0 0 0 0 0 0 0 0                         0 0 0 0 0 0 0 0
+    //                      0 0 0 0 0 0 0 0                         0 0 0 0 0 0 0 0
 
     BB const KNIGHT_MOVES[64] = {
         0x0000000000020400, 0x0000000000050800, 0x00000000000a1100, 0x0000000000142200,
@@ -66,14 +79,14 @@ namespace masks {
         0x2838000000000000, 0x5070000000000000, 0xa0e0000000000000, 0x40c0000000000000
     };
 
-    // Bishop masks[i] 0 0 0 0 0 0 0 0    Rook masks[i]  i 1 1 1 1 1 1 0
-    //                 0 0 1 0 1 0 0 0                   1 0 0 0 0 0 0 0
-    //                 0 0 0 i 0 0 0 0                   1 0 0 0 0 0 0 0
-    //                 0 0 1 0 1 0 0 0                   1 0 0 0 0 0 0 0
-    //                 0 1 0 0 0 1 0 0                   1 0 0 0 0 0 0 0
-    //                 0 0 0 0 0 0 1 0                   1 0 0 0 0 0 0 0
-    //                 0 0 0 0 0 0 0 0                   1 0 0 0 0 0 0 0
-    //                 0 0 0 0 0 0 0 0                   0 0 0 0 0 0 0 0
+    //  Bishop masks[i]     0 0 0 0 0 0 0 0     Rook masks[i]       i 1 1 1 1 1 1 0
+    //                      0 0 1 0 1 0 0 0                         1 0 0 0 0 0 0 0
+    //                      0 0 0 i 0 0 0 0                         1 0 0 0 0 0 0 0
+    //                      0 0 1 0 1 0 0 0                         1 0 0 0 0 0 0 0
+    //                      0 1 0 0 0 1 0 0                         1 0 0 0 0 0 0 0
+    //                      0 0 0 0 0 0 1 0                         1 0 0 0 0 0 0 0
+    //                      0 0 0 0 0 0 0 0                         1 0 0 0 0 0 0 0
+    //                      0 0 0 0 0 0 0 0                         0 0 0 0 0 0 0 0
 
     BB const BISHOP_MASKS[64] = {
         0x0040201008040200, 0x0000402010080400, 0x0000004020100a00, 0x0000000040221400,
@@ -112,5 +125,53 @@ namespace masks {
         0x7e01010101010100, 0x7c02020202020200, 0x7a04040404040400, 0x7608080808080800,
         0x6e10101010101000, 0x5e20202020202000, 0x3e40404040404000, 0x7e80808080808000
     };
+
+    //  Interceding[i][j]   0 0 0 0 0 0 0 0     Opposite[i][j]      0 0 0 0 0 0 0 0
+    //                      0 i 0 0 0 0 0 0                         0 i 0 0 0 0 0 0
+    //                      0 0 1 0 0 0 0 0                         0 0 0 0 0 0 0 0
+    //                      0 0 0 1 0 0 0 0                         0 0 0 0 0 0 0 0
+    //                      0 0 0 0 j 0 0 0                         0 0 0 0 j 0 0 0
+    //                      0 0 0 0 0 0 0 0                         0 0 0 0 0 1 0 0
+    //                      0 0 0 0 0 0 0 0                         0 0 0 0 0 0 1 0
+    //                      0 0 0 0 0 0 0 0                         0 0 0 0 0 0 0 1
+
+    BB INTERCEDING[64][64] = { 0 };
+    BB OPPOSITE[64][64] = { 0 };
+
+    void generateInterceding() {
+        int deltas[8] = {-1, -7, -8, -9, 1, 9, 8, 7};
+        for(ind source = 0; source < 64; source++) {
+            for(ind direction = 0; direction < 8; direction++) {
+                int dest = source;
+                BB interceding = 0;
+                while(wrapIter(&dest, deltas[direction])) {
+                    INTERCEDING[source][dest] = interceding;
+                    interceding |= exp_2(dest);
+                }
+            }
+        }
+    }
+
+    void generateOpposite() {
+        int deltas[8] = {-1, -7, -8, -9, 1, 9, 8, 7};
+        for(ind dest = 0; dest < 64; dest++) {
+            for(ind direction = 0; direction < 8; direction++) {
+                BB opposite = 0;
+
+                // Set the "opposite" bits
+                int t = dest;
+                while(wrapIter(&t, -deltas[direction])) {
+                    opposite |= exp_2(t);
+                }
+
+                // Fill OPPOSITE with this bitmap for each source square.
+                int source = dest;
+                while(wrapIter(&source, deltas[direction])) {
+                    OPPOSITE[source][dest] = opposite;
+                }
+            }
+            OPPOSITE[dest][dest] = 0;
+        }
+    }
 
 };
