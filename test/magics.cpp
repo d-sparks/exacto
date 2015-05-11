@@ -39,7 +39,7 @@ int testGenerateSubsets() {
 int testBishopMagics() {
     cout << "Testing bishop magics" << endl;
 
-    CBoard board("1b6/8/8/4P3/8/8/8/8", "b", "", "-", "0", "0");
+    CBoard board("1b6/8/8/4P3/8/8/8/8", "b", "", "-");
     BB expectedMoves = exp_2(A7) | exp_2(C7) | exp_2(D6) | exp_2(E5);
     magics::populateBishopTable(B8);
     BB moves = magics::bishopMoves(B8, board.occupied);
@@ -52,7 +52,7 @@ int testBishopMagics() {
 int testRookMagics() {
     cout << "Testing bishop magics" << endl;
 
-    CBoard board("R7/P7/8/8/8/8/8/8", "b", "", "-", "0", "0");
+    CBoard board("R7/P7/8/8/8/8/8/8", "b", "", "-");
     BB expectedMoves = exp_2(A7);
     for(ind square = B8; square >= H8; square--) {
         expectedMoves |= exp_2(square);

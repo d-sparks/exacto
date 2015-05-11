@@ -3,6 +3,7 @@
 #include <string.h>
 #include "bb.cpp"
 #include "cgame.cpp"
+#include "moves.cpp"
 
 using namespace std;
 
@@ -19,14 +20,12 @@ void printVersion(string version) {
 
 int main() {
     printVersion("?.?");
-    CGame board;
-    // board.movePiece(WHITE, PAWN, E2, E4, exp_2(E2), exp_2(E4));
-    mv asdf[25] = { 0 };
-    board.moveGen(asdf);
-    for(ind i = 0; i < 25; i++) {
-        if(asdf[i]) {
-            cout << (int)moves::source(asdf[i]) << " " << (int)moves::dest(asdf[i]) << endl;
-        }
-    }
+    CGame game1, game2;
+    game1.print();
+
+    mv move = moves::make(E2, E4, PAWN, NONE, NONE, NONE, REGULAR_MOVE);
+    game1.makeMove(move);
+    game1.unmakeMove(move);
+    cout << (game1 == game2) << endl;
     return 0;
 }

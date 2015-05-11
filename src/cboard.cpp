@@ -11,8 +11,8 @@
 using namespace std;
 
 // Constructor and destructor
-CBoard::CBoard(string brd, string clr, string cstl, string ep, string hm, string fm) {
-    setBoard(brd, clr, cstl, ep, hm, fm);
+CBoard::CBoard(string brd, string clr, string cstl, string ep) {
+    setBoard(brd, clr, cstl, ep);
 }
 
 CBoard::~CBoard() {
@@ -37,7 +37,7 @@ void CBoard::print() {
 }
 
 // setBoard sets board given an FEN string.
-void CBoard::setBoard(string brd, string clr, string cstl, string ep, string hm, string fm) {
+void CBoard::setBoard(string brd, string clr, string cstl, string ep) {
     map<string, ind> stringToPiece = {
         {"p", 1}, {"n", 2}, {"b", 3}, {"r", 4}, {"q", 5}, {"k", 6},
         {"P", 9}, {"N", 10}, {"B", 11}, {"R", 12}, {"Q", 13}, {"K", 14},
@@ -56,9 +56,9 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep, string hm,
             if(temp == "/") {
                 y++;
             } else {
-                ind piece = stringToPiece[temp];
-                pieces[piece > 8][piece % 8] |= exp_2(y);
-                board[y] = piece % 8;
+                ind color = stringToPiece[temp] > 8;
+                ind piece = stringToPiece[temp] % 8;
+                makePiece(color, piece, y, exp_2(y));
             }
         } else {
             y -= (atoi(temp.c_str()) - 1);
@@ -78,10 +78,9 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep, string hm,
     }
 
     // Set en passant data
-    if(ep == "-") {
-        enPassant = 0;
-    } else {
-        enPassant = exp_2(squares::index(ep));
+    enPassant = 0;
+    if(ep != "-") {
+        setEnPassant(squares::index(ep));
     }
 
     // Set occupancy bitboards
@@ -94,13 +93,14 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep, string hm,
     empty = ~occupied;
 }
 
-// == operator for CBoards.
+// operator== for CBoards.
 bool CBoard::operator==(const CBoard &other) const {
-    bool piecesEqual    = memcmp(pieces, other.pieces, sizeof(pieces[0][0]) * 2 * 7) == 0;
-    bool boardsEqual    = memcmp(board, other.board, sizeof(board[0]) * 64) == 0;
-    bool enPassantEqual = enPassant == other.enPassant;
-    bool wtmEqual       = wtm == other.wtm;
-    return piecesEqual && boardsEqual && enPassantEqual && wtmEqual;
+    return (memcmp(pieces, other.pieces, sizeof(pieces[0][0]) * 2 * 7) == 0)
+        && (memcmp(board, other.board, sizeof(board[0]) * 64) == 0)
+        && (memcmp(castling, other.castling, sizeof(castling[0] * 2)) == 0)
+        && (enPassant == other.enPassant)
+        && (wtm == other.wtm)
+        && (occupied == other.occupied);
 }
 
 // Moves a piece on the board, assumes target is empty. Does not udpate occupancy bitboard.
@@ -121,4 +121,9 @@ void CBoard::killPiece(bool color, ind piece, ind square, BB squareBB) {
     pieces[color][piece] ^= squareBB;
     pieces[color][ALL] ^= squareBB;
     board[square] = 0;
+}
+
+// Sets the enPassant square.
+void CBoard::setEnPassant(ind square) {
+    enPassant = (square == 64) ? 0 : exp_2(square);
 }

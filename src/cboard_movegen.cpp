@@ -29,6 +29,7 @@ void CBoard::moveGen(mv * moveList) {
             rookGenPinned(&moveList, pins, kingSquare, true);
         }
     }
+    closeMoveList(&moveList);
 }
 
 // Generates the non-capture pawn moves
@@ -429,4 +430,9 @@ void CBoard::serializePawn(mv **moveList, BB b, ind special, int delta) {
         }
         pawns ^= exp_2(i);
     }
+}
+
+// The end of a moveList array is signified by a 0 move. This helper adds that 0 move to the list.
+void CBoard::closeMoveList(mv **moveList) {
+    *((*moveList)++) = 0;
 }

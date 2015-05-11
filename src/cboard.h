@@ -11,33 +11,37 @@ using namespace std;
 // information like times, moves.history, etc.
 class CBoard {
 public:
+    // For debugging
     void print();
+
+    // The interface
     void setBoard(
         string brd="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
         string clr="w",
         string cstl="KQkq",
-        string ep="-",
-        string hm="0",
-        string fm="0"
+        string ep="-"
     );
     void moveGen(mv * moveList);
     void movePiece(bool color, ind attacker, ind source, ind dest, BB sourceBB, BB destBB);
     void makePiece(bool color, ind piece, ind square, BB squareBB);
     void killPiece(bool color, ind piece, ind square, BB squareBB);
+    void setEnPassant(ind square=64);
     bool operator==(const CBoard &other) const;
+
+    // Constructor and destructor
     CBoard(
         string brd="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
         string clr="w",
         string cstl="KQkq",
-        string ep="-",
-        string hm="0",
-        string fm="0"
+        string ep="-"
     );
     ~CBoard();
 
 #ifndef _TEST
 protected:
 #endif
+    // Move generation helpers functions. Despite being protected, these methods are unit tested due
+    // to their complexity.
     void pawnGen(mv ** moveList, BB pins, bool quietMoves);
     void pawnCaps(mv ** moveList, BB pins);
     void pawnGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMoves);
@@ -56,11 +60,14 @@ protected:
     void serialize(mv **moveList, BB b, ind source, ind special);
     void serializeFromDest(mv **moveList, BB b, ind dest, ind defender, ind special);
     void serializePawn(mv **moveList, BB b, ind special, int delta);
-    bool    wtm;
-    BB      pieces[2][7],
-            castling[2],
-            enPassant,
-            occupied,
-            empty;
-    ind     board[64];
+    void closeMoveList(mv **moveList);
+
+    // The state of the board.
+    bool wtm;
+    BB pieces[2][7];
+    BB castling[2];
+    BB enPassant;
+    BB occupied;
+    BB empty;
+    ind board[64];
 };

@@ -9,7 +9,14 @@ class CGame : public CBoard {
 public:
     void makeMove(mv m);
     void unmakeMove(mv m);
-    CGame();
-    CGame(string brd, string clr, string cstl, string ep, string hm, string fm);
+    bool operator==(const CGame &other) const;
+    CGame(
+        string brd="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+        string clr="w",
+        string cstl="KQkq",
+        string ep="-",
+        string hm="0",
+        string fm="0"
+    );
     ~CGame();
 };
