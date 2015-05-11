@@ -10,11 +10,7 @@
 
 using namespace std;
 
-// Constructor(s) and destructor(s)
-CBoard::CBoard() {
-    setBoard();
-}
-
+// Constructor and destructor
 CBoard::CBoard(string brd, string clr, string cstl, string ep, string hm, string fm) {
     setBoard(brd, clr, cstl, ep, hm, fm);
 }
@@ -38,11 +34,6 @@ void CBoard::print() {
         cout << "|" << endl;
         cout << "+---+---+---+---+---+---+---+---+" << endl;
     }
-}
-
-// setBoard with no arguments sets the board to the default position
-void CBoard::setBoard() {
-    setBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR", "w", "KQkq", "-", "0", "0");
 }
 
 // setBoard sets board given an FEN string.

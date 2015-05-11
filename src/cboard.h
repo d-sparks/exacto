@@ -12,15 +12,27 @@ using namespace std;
 class CBoard {
 public:
     void print();
-    void setBoard();
-    void setBoard(string brd, string clr, string cstl, string ep, string hm, string fm);
+    void setBoard(
+        string brd="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+        string clr="w",
+        string cstl="KQkq",
+        string ep="-",
+        string hm="0",
+        string fm="0"
+    );
     void moveGen(mv * moveList);
     void movePiece(bool color, ind attacker, ind source, ind dest, BB sourceBB, BB destBB);
     void makePiece(bool color, ind piece, ind square, BB squareBB);
     void killPiece(bool color, ind piece, ind square, BB squareBB);
     bool operator==(const CBoard &other) const;
-    CBoard();
-    CBoard(string brd, string clr, string cstl, string ep, string hm, string fm);
+    CBoard(
+        string brd="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+        string clr="w",
+        string cstl="KQkq",
+        string ep="-",
+        string hm="0",
+        string fm="0"
+    );
     ~CBoard();
 
 #ifndef _TEST
