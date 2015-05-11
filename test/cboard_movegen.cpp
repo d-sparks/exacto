@@ -32,7 +32,7 @@ int testPawnGen() {
     // |   | R |   |   |[K]| B |   | R |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q1N5/P1PQ2PP/1R2KB1R", "w", "Kkq", "-", "0", "12");
+    CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q1N5/P1PQ2PP/1R2KB1R", "w", "Kkq");
     board.pawnGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
     expectedMoves[0] = moves::make(H2, H3, PAWN, NONE, NONE, NONE, REGULAR_MOVE);
@@ -73,7 +73,7 @@ int testPawnGenPromotions() {
     // |   |   |   |   |   |   | R |   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("8/8/8/8/8/8/7p/6R1", "b", "", "-", "0", "0");
+    CBoard board("8/8/8/8/8/8/7p/6R1", "b", "");
     board.pawnGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
     for(ind special = PROMOTE_QUEEN; special <= PROMOTE_KNIGHT; special++) {
@@ -112,7 +112,7 @@ int testPawnCaps() {
     // |   | R |   |   |[K]| B |   | R |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q1N5/P1PQ2PP/1R2KB1R", "w", "Kkq", "-", "0", "12");
+    CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q1N5/P1PQ2PP/1R2KB1R", "w", "Kkq");
     board.pawnCaps(&caps, 0);
     mv expectedCaps[256] = { 0 };
     expectedCaps[0] = moves::make(F4, E5, PAWN, PAWN, NONE, NONE, REGULAR_MOVE);
@@ -148,7 +148,7 @@ int testPawnCapsEnPassant() {
     // |[K]|   |   |   |   |   |   |   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("8/8/8/3Pp3/8/8/8/K7", "w", "", "E6", "0", "0");
+    CBoard board("8/8/8/3Pp3/8/8/8/K7", "w", "", "E6");
     board.pawnCaps(&caps, 0);
     mv expectedCaps[256] = { 0 };
     expectedCaps[0] = moves::make(D5, E6, PAWN, PAWN, NONE, NONE, EN_PASSANT_CAP_W);
@@ -184,7 +184,7 @@ int testPawnGenPinned() {
     // |   |   |   |   |   |   |[K]|   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("8/b7/8/1pP3r1/8/7r/6P1/6K1", "w", "", "B6", "0", "0");
+    CBoard board("8/b7/8/1pP3r1/8/7r/6P1/6K1", "w", "", "B6");
     masks::generateOpposite();
     board.pawnGenPinned(&moves, exp_2(C5) | exp_2(G2), G1, true);
     mv expectedMoves[256] = { 0 };
@@ -223,7 +223,7 @@ int testKnightGen() {
     // | N | R |   |   |[K]| B |   | R |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q7/P1PQ2PP/NR2KB1R", "w", "Kkq", "-", "0", "12");
+    CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q7/P1PQ2PP/NR2KB1R", "w", "Kkq");
     board.knightGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
     expectedMoves[0] = moves::make(A1, B3, KNIGHT, NONE, NONE, NONE, REGULAR_MOVE);
@@ -266,7 +266,7 @@ int testKnightCaps() {
     // | N | R |   |   |[K]| B |   | R |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q7/P1PQ2PP/NR2KB1R", "w", "Kkq", "-", "0", "12");
+    CBoard board("rnb1kb1r/1p3p1p/p3pp2/4p3/3N1P2/q7/P1PQ2PP/NR2KB1R", "w", "Kkq");
     board.knightGen(&caps, 0, false);
     mv expectedCaps[256] = { 0 };
     expectedCaps[0] = moves::make(D4, E6, KNIGHT, PAWN, NONE, NONE, REGULAR_MOVE);
@@ -300,7 +300,7 @@ int testBishopGen() {
     // |   |   |   |   |   |   |   |   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("8/8/2P5/5p2/4b3/3p4/8/8", "b", "", "-", "0", "0");
+    CBoard board("8/8/2P5/5p2/4b3/3p4/8/8", "b", "");
     magics::populateBishopTable(E4);
     board.bishopGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
@@ -341,7 +341,7 @@ int testBishopGenCaps() {
     // |   |   |   |   |   |   |   |   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("8/8/2P5/5p2/4b3/3p4/8/8", "b", "", "-", "0", "0");
+    CBoard board("8/8/2P5/5p2/4b3/3p4/8/8", "b", "");
     magics::populateBishopTable(E4);
     board.bishopGen(&caps, 0, false);
     mv expectedCaps[256] = { 0 };
@@ -378,7 +378,7 @@ int testBishopGenQueen() {
     // |   |   |   |   |   | P |   | Q |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("8/8/8/8/8/5ppp/5P2/5P1Q", "w", "", "-", "0", "0");
+    CBoard board("8/8/8/8/8/5ppp/5P2/5P1Q", "w", "");
     magics::populateBishopTable(H1);
     board.bishopGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
@@ -416,7 +416,7 @@ int testBishopGenPinned() {
     // |   |   |   |   |   |   |   |   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("b7/8/2B5/8/4K3/8/8/8", "w", "", "-", "0", "0");
+    CBoard board("b7/8/2B5/8/4K3/8/8/8", "w", "");
     magics::populateBishopTable(C6);
     masks::generateOpposite();
     masks::generateInterceding();
@@ -457,7 +457,7 @@ int testRookGen() {
     // |   |   |   |   |   |   |   |   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("1p6/PR2p3/8/1P6/8/8/8/8", "w", "", "-", "0", "0");
+    CBoard board("1p6/PR2p3/8/1P6/8/8/8/8", "w", "");
     magics::populateRookTable(B7);
     board.rookGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
@@ -498,7 +498,7 @@ int testRookGenCaps() {
     // |   |   |   |   |   |   |   |   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("1p6/PR2p3/8/1P6/8/8/8/8", "w", "", "-", "0", "0");
+    CBoard board("1p6/PR2p3/8/1P6/8/8/8/8", "w", "");
     magics::populateRookTable(B7);
     board.rookGen(&caps, 0, false);
     mv expectedCaps[256] = { 0 };
@@ -536,7 +536,7 @@ int testRookGenQueen() {
     // |   |   |   |   |   |   |   | Q |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("8/8/8/8/8/8/7P/7Q", "w", "", "-", "0", "0");
+    CBoard board("8/8/8/8/8/8/7P/7Q", "w", "");
     magics::populateRookTable(H1);
     board.rookGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
@@ -579,7 +579,7 @@ int testRookGenPinned() {
     // | r |   | R |   |[K]|   |   |   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("8/8/8/8/8/8/8/r1R1K3", "w", "", "-", "0", "0");
+    CBoard board("8/8/8/8/8/8/8/r1R1K3", "w", "");
     magics::populateRookTable(C1);
     masks::generateOpposite();
     masks::generateInterceding();
@@ -617,7 +617,7 @@ int testBishopPins() {
     // |   |   |   |   |   |   |   |   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("q7/5b2/2P1P3/3K4/2P1P3/8/8/8", "w", "", "-", "0", "0");
+    CBoard board("q7/5b2/2P1P3/3K4/2P1P3/8/8/8", "w", "");
     magics::populateBishopTables();
     BB pins = board.bishopPins(D5);
     BB expectedPins = exp_2(C6) | exp_2(E6);
@@ -648,7 +648,7 @@ int testRookPins() {
     // |   |   |   |   |   |   |   |   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("4q3/8/8/4P3/r1P1KP2/8/8/8", "w", "", "-", "0", "0");
+    CBoard board("4q3/8/8/4P3/r1P1KP2/8/8/8", "w", "");
     magics::populateRookTables();
     BB pins = board.rookPins(E4);
     BB expectedPins = exp_2(C4) | exp_2(E5);
@@ -679,7 +679,7 @@ int testAttackSetGen() {
     // |   |   |   |   |   |   |   |   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("3k4/6P1/6pb/rn6/8/5q2/p4P2/8", "w", "", "-", "0", "0");
+    CBoard board("3k4/6P1/6pb/rn6/8/5q2/p4P2/8", "w", "");
     magics::populateBishopTables();
     magics::populateRookTables();
     BB attacks = board.attackSetGen(BLACK);
@@ -714,7 +714,7 @@ int testKingMoves() {
     // | R |   |   |   |[K]|   |   | R |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("k7/8/8/8/8/8/8/R3K2R", "w", "KQkq", "-", "0", "0");
+    CBoard board("k7/8/8/8/8/8/8/R3K2R");
     BB enemyAttacks = board.attackSetGen(BLACK);
     board.kingGen(&moves, E1, enemyAttacks, true);
     mv expectedMoves[256] = { 0 };
@@ -757,7 +757,7 @@ int testKingMovesCaps() {
     // | R |   |   |   |[K]|   |   | R |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("k7/8/8/8/8/8/5p2/R3K2R", "w", "KQkq", "-", "0", "0");
+    CBoard board("k7/8/8/8/8/8/5p2/R3K2R");
     BB enemyAttacks = board.attackSetGen(BLACK);
     board.kingGen(&caps, E1, enemyAttacks, false);
     mv expectedMoves[256] = { 0 };
@@ -794,7 +794,7 @@ int testKingMovesNoCastling() {
     // | R |   |   |   |[K]|   |   | R |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("k7/8/8/8/8/8/8/R3K2R", "w", "kq", "-", "0", "0");
+    CBoard board("k7/8/8/8/8/8/8/R3K2R", "w", "kq");
     BB enemyAttacks = board.attackSetGen(BLACK);
     board.kingGen(&moves, E1, enemyAttacks, true);
     mv expectedMoves[256] = { 0 };
@@ -835,7 +835,7 @@ int testGenerateMovesTo() {
     // |   |   |   |   |[K]|   |   |   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("4R1Q1/k7/8/3Pp3/5NB1/8/8/4K3", "w", "", "e6", "0", "0");
+    CBoard board("4R1Q1/k7/8/3Pp3/5NB1/8/8/4K3", "w", "", "e6");
     magics::populateBishopTables();
     magics::populateRookTables();
     board.generateMovesTo(&moves, E6, NONE, 0, 0);
@@ -877,7 +877,7 @@ int testGenerateMovesToCaps() {
     // |   |   |   |   |   |   |   |   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("4N3/6B1/5rR1/4PK2/8/8/8/8", "w", "", "-", "0", "0");
+    CBoard board("4N3/6B1/5rR1/4PK2/8/8/8/8", "w", "");
     magics::populateBishopTables();
     magics::populateRookTables();
     board.generateMovesTo(&moves, F6, ROOK, 0, 0);
@@ -918,7 +918,7 @@ int testEvasionGen() {
     // | k |   |   |   |   |   |   |   |
     // +---+---+---+---+---+---+---+---+
 
-    CBoard board("5Q1q/4B3/2r3K1/4pP2/6N1/8/8/k7", "w", "", "E6", "0", "0");
+    CBoard board("5Q1q/4B3/2r3K1/4pP2/6N1/8/8/k7", "w", "", "E6");
     magics::populateBishopTables();
     magics::populateRookTables();
     masks::generateOpposite();
@@ -940,7 +940,6 @@ int testEvasionGen() {
 
     return 1;
 }
-
 
 int main() {
     int t = 0;
