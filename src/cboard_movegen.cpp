@@ -10,17 +10,13 @@ using namespace std;
 
 // Generate legal moves given the current state of the board.
 void CBoard::moveGen(mv * moveList) {
-
-    // Determine pinned pieces
     ind kingSquare = bitscan(pieces[wtm][KING]);
     BB enemyAttacks = attackSetGen(!wtm);
-    BB pinnedByBishop = bishopPins(kingSquare);
-    BB pinnedByRook = rookPins(kingSquare);
-    BB pins = pinnedByRook | pinnedByBishop;
-
+    BB pins = bishopPins(kingSquare) | rookPins(kingSquare);
     bool inCheck = pieces[wtm][KING] & enemyAttacks;
-    if(inCheck) {
 
+    if(inCheck) {
+        evasionGen(&moveList, enemyAttacks, pins, kingSquare);
     } else {
         pawnGen(&moveList, pins, true);
         knightGen(&moveList, pins, true);
@@ -33,7 +29,6 @@ void CBoard::moveGen(mv * moveList) {
             rookGenPinned(&moveList, pins, kingSquare, true);
         }
     }
-
 }
 
 // Generates the non-capture pawn moves
