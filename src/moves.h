@@ -18,12 +18,8 @@
 #define PROMOTE_KNIGHT            4
 #define DOUBLE_PAWN_MOVE_W        5
 #define DOUBLE_PAWN_MOVE_B        6
-#define EN_PASSANT_CAP_W          7
-#define EN_PASSANT_CAP_B          8
-#define KINGSIDE_CASTLE_W         9
-#define QUEENSIDE_CASTLE_W        10
-#define KINGSIDE_CASTLE_B         11
-#define QUEENSIDE_CASTLE_B        12
+#define EN_PASSANT_CAP            7
+#define CASTLE                    9
 #define REMOVE_KINGSIDE_CASTLING  13
 #define REMOVE_QUEENSIDE_CASTLING 14
 #define REMOVE_ALL_CASTLING       15

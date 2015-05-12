@@ -151,7 +151,7 @@ int testPawnCapsEnPassant() {
     CBoard board("8/8/8/3Pp3/8/8/8/K7", "w", "", "E6");
     board.pawnCaps(&caps, 0);
     mv expectedCaps[256] = { 0 };
-    expectedCaps[0] = moves::make(D5, E6, PAWN, PAWN, NONE, NONE, EN_PASSANT_CAP_W);
+    expectedCaps[0] = moves::make(D5, E6, PAWN, PAWN, NONE, NONE, EN_PASSANT_CAP);
     sort(begin(capList), end(capList));
     sort(begin(expectedCaps), end(expectedCaps));
     ASSERT(!memcmp(capList, expectedCaps, sizeof(capList[0]) * 256), "Incorrect en passant pawn captures generation");
@@ -188,7 +188,7 @@ int testPawnGenPinned() {
     masks::generateOpposite();
     board.pawnGenPinned(&moves, exp_2(C5) | exp_2(G2), G1, true);
     mv expectedMoves[256] = { 0 };
-    expectedMoves[0] = moves::make(C5, B6, PAWN, PAWN, NONE, NONE, EN_PASSANT_CAP_W);
+    expectedMoves[0] = moves::make(C5, B6, PAWN, PAWN, NONE, NONE, EN_PASSANT_CAP);
     expectedMoves[1] = moves::make(G2, G3, PAWN, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[2] = moves::make(G2, G4, PAWN, NONE, NONE, NONE, DOUBLE_PAWN_MOVE_W);
     sort(begin(moveList), end(moveList));
@@ -723,8 +723,8 @@ int testKingMoves() {
     expectedMoves[2] = moves::make(E1, E2, KING, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[3] = moves::make(E1, F2, KING, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[4] = moves::make(E1, F1, KING, NONE, NONE, NONE, REGULAR_MOVE);
-    expectedMoves[5] = moves::make(E1, G1, KING, NONE, NONE, NONE, REGULAR_MOVE);
-    expectedMoves[6] = moves::make(E1, C1, KING, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[5] = moves::make(E1, G1, KING, NONE, NONE, NONE, CASTLE);
+    expectedMoves[6] = moves::make(E1, C1, KING, NONE, NONE, NONE, CASTLE);
     sort(begin(moveList), end(moveList));
     sort(begin(expectedMoves), end(expectedMoves));
     ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect king quiet moves");
@@ -840,7 +840,7 @@ int testGenerateMovesTo() {
     magics::populateRookTables();
     board.generateMovesTo(&moves, E6, NONE, 0, 0);
     mv expectedMoves[256] = { 0 };
-    expectedMoves[0] = moves::make(D5, E6, PAWN, PAWN, NONE, NONE, EN_PASSANT_CAP_W);
+    expectedMoves[0] = moves::make(D5, E6, PAWN, PAWN, NONE, NONE, EN_PASSANT_CAP);
     expectedMoves[1] = moves::make(F4, E6, KNIGHT, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[2] = moves::make(E8, E6, ROOK, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[3] = moves::make(G8, E6, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);
@@ -928,7 +928,7 @@ int testEvasionGen() {
     mv expectedMoves[256] = { 0 };
     expectedMoves[0] = moves::make(E7, F6, BISHOP, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[1] = moves::make(E7, D6, BISHOP, NONE, NONE, NONE, REGULAR_MOVE);
-    expectedMoves[2] = moves::make(F5, E6, PAWN, PAWN, NONE, NONE, EN_PASSANT_CAP_W);
+    expectedMoves[2] = moves::make(F5, E6, PAWN, PAWN, NONE, NONE, EN_PASSANT_CAP);
     expectedMoves[3] = moves::make(F5, F6, PAWN, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[4] = moves::make(G4, F6, KNIGHT, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[5] = moves::make(F8, F6, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);

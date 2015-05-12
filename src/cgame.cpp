@@ -32,7 +32,7 @@ void CGame::makeMove(mv * m) {
     BB destBB = exp_2(dest);
 
     // Move the actual piece
-    if(defender && special != EN_PASSANT_CAP_W && special != EN_PASSANT_CAP_B) {
+    if(defender && special != EN_PASSANT_CAP) {
         killPiece(!wtm, defender, dest, destBB);
     }
     movePiece(wtm, attacker, source, dest, sourceBB, destBB);
@@ -45,11 +45,9 @@ void CGame::makeMove(mv * m) {
 
     // Special move stuff
     switch(special) {
-    case EN_PASSANT_CAP_W:
-        killPiece(BLACK, PAWN, dest - 8, exp_2(dest - 8));
-        break;
-    case EN_PASSANT_CAP_B:
-        killPiece(BLACK, PAWN, dest + 8, exp_2(dest + 8));
+    case EN_PASSANT_CAP:
+        ind hangingPawn = wtm ? dest - 8 : dest + 8;
+        killPiece(!wtm, PAWN, hangingPawn, exp_2(hangingPawn));
         break;
     }
 
@@ -72,17 +70,15 @@ void CGame::unmakeMove(mv m) {
 
     // Special move stuff
     switch(special) {
-    case EN_PASSANT_CAP_W:
-        makePiece(BLACK, PAWN, dest - 8, exp_2(dest - 8));
-        break;
-    case EN_PASSANT_CAP_B:
-        makePiece(BLACK, PAWN, dest + 8, exp_2(dest + 8));
+    case EN_PASSANT_CAP:
+        ind hangingPawn = wtm ? dest - 8 : dest + 8;
+        makePiece(!wtm, PAWN, hangingPawn, exp_2(hangingPawn));
         break;
     }
 
     // Move the actual piece
     movePiece(wtm, attacker, dest, source, destBB, sourceBB);
-    if(defender && special != EN_PASSANT_CAP_W && special != EN_PASSANT_CAP_B) {
+    if(defender && special != EN_PASSANT_CAP) {
         makePiece(!wtm, defender, dest, destBB);
     }
 

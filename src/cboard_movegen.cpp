@@ -92,8 +92,7 @@ void CBoard::pawnCaps(mv **moveList, BB pins) {
             }
 
             // Finally, generate the moves.
-            ind flag = wtm ? EN_PASSANT_CAP_W : EN_PASSANT_CAP_B;
-            serializeFromDest(moveList, candidateSquares, enPassantSquare, PAWN, flag);
+            serializeFromDest(moveList, candidateSquares, enPassantSquare, PAWN, EN_PASSANT_CAP);
 
         } while(false);
     }
@@ -133,8 +132,7 @@ void CBoard::pawnGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMov
         if(pawnThreats & pieces[WHITE][ALL]) {
             serializeFromDest(moveList, exp_2(square), targetSquare, board[targetSquare], REGULAR_MOVE);
         } else if(pawnThreats & enPassant) {
-            ind special = wtm ? EN_PASSANT_CAP_W : EN_PASSANT_CAP_B;
-            serializeFromDest(moveList, exp_2(square), targetSquare, PAWN, special);
+            serializeFromDest(moveList, exp_2(square), targetSquare, PAWN, EN_PASSANT_CAP);
         }
 
         pawns &= pawns - 1;
@@ -227,7 +225,7 @@ void CBoard::kingGen(mv **moveList, ind kingSquare, BB enemyAttacks, bool quietM
         }
         moves = (moves & castling[wtm]) & validSquares;
         // TODO: add special flag by overloading serialize
-        serialize(moveList, moves, kingSquare);
+        serialize(moveList, moves, kingSquare, CASTLE);
     }
 }
 
@@ -289,9 +287,8 @@ void CBoard::generateMovesTo(mv **moveList, ind dest, ind defender, BB pins, BB 
         }
     } else if(dest == bitscan(enPassant)) {
         // Pawn en passant captures
-        ind special = wtm ? EN_PASSANT_CAP_W : EN_PASSANT_CAP_B;
-        serializeFromDest(moveList, pawns & ((potentialPawns & ~masks::FILE[7]) << 1), dest, PAWN, special);
-        serializeFromDest(moveList, pawns & ((potentialPawns & ~masks::FILE[0]) >> 1), dest, PAWN, special);
+        serializeFromDest(moveList, pawns & ((potentialPawns & ~masks::FILE[7]) << 1), dest, PAWN, EN_PASSANT_CAP);
+        serializeFromDest(moveList, pawns & ((potentialPawns & ~masks::FILE[0]) >> 1), dest, PAWN, EN_PASSANT_CAP);
     } else {
         if(pawns & potentialPawns) {
             // Pawn regular moves
