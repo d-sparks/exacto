@@ -7,7 +7,7 @@ using namespace std;
 
 class CGame : public CBoard {
 public:
-    void makeMove(mv m);
+    void makeMove(mv * m);
     void unmakeMove(mv m);
     bool operator==(const CGame &other) const;
     CGame(

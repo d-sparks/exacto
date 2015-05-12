@@ -9,7 +9,7 @@
 using namespace std;
 
 // Generate legal moves given the current state of the board.
-void CBoard::moveGen(mv * moveList) {
+void CBoard::moveGen(mv * moveList, bool quietMoves) {
     ind kingSquare = bitscan(pieces[wtm][KING]);
     BB enemyAttacks = attackSetGen(!wtm);
     BB pins = bishopPins(kingSquare) | rookPins(kingSquare);
@@ -18,15 +18,15 @@ void CBoard::moveGen(mv * moveList) {
     if(inCheck) {
         evasionGen(&moveList, enemyAttacks, pins, kingSquare);
     } else {
-        pawnGen(&moveList, pins, true);
-        knightGen(&moveList, pins, true);
-        bishopGen(&moveList, pins, true);
-        rookGen(&moveList, pins, true);
-        kingGen(&moveList, kingSquare, enemyAttacks, true);
+        pawnGen(&moveList, pins, quietMoves);
+        knightGen(&moveList, pins, quietMoves);
+        bishopGen(&moveList, pins, quietMoves);
+        rookGen(&moveList, pins, quietMoves);
+        kingGen(&moveList, kingSquare, enemyAttacks, quietMoves);
         if(pins) {
-            pawnGenPinned(&moveList, pins, kingSquare, true);
-            bishopGenPinned(&moveList, pins, kingSquare, true);
-            rookGenPinned(&moveList, pins, kingSquare, true);
+            pawnGenPinned(&moveList, pins, kingSquare, quietMoves);
+            bishopGenPinned(&moveList, pins, kingSquare, quietMoves);
+            rookGenPinned(&moveList, pins, kingSquare, quietMoves);
         }
     }
     closeMoveList(&moveList);

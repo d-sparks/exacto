@@ -22,22 +22,35 @@ bool CGame::operator==(const CGame &other) const {
 }
 
 // Makes a move, fully updating the gamestate and history.
-void CGame::makeMove(mv m) {
-    ind source = moves::source(m);
-    ind dest = moves::dest(m);
-    ind attacker = moves::attacker(m);
-    ind defender = moves::defender(m);
+void CGame::makeMove(mv * m) {
+    ind source = moves::source(*m);
+    ind dest = moves::dest(*m);
+    ind attacker = moves::attacker(*m);
+    ind defender = moves::defender(*m);
+    ind special = moves::special(*m);
     BB sourceBB = exp_2(source);
     BB destBB = exp_2(dest);
 
-    if(defender) {
+    // Move the actual piece
+    if(defender && special != EN_PASSANT_CAP_W && special != EN_PASSANT_CAP_B) {
         killPiece(!wtm, defender, dest, destBB);
     }
     movePiece(wtm, attacker, source, dest, sourceBB, destBB);
 
     // Set en passant square to 'none'
     if(enPassant) {
+        *m |= (BB)squares::file(bitscan(enPassant)) << 18;
         setEnPassant();
+    }
+
+    // Special move stuff
+    switch(special) {
+    case EN_PASSANT_CAP_W:
+        killPiece(BLACK, PAWN, dest - 8, exp_2(dest - 8));
+        break;
+    case EN_PASSANT_CAP_B:
+        killPiece(BLACK, PAWN, dest + 8, exp_2(dest + 8));
+        break;
     }
 
     wtm = !wtm;
@@ -50,15 +63,34 @@ void CGame::unmakeMove(mv m) {
     ind source = moves::source(m);
     ind dest = moves::dest(m);
     ind attacker = moves::attacker(m);
+    ind special = moves::special(m);
     ind defender = moves::defender(m);
     BB sourceBB = exp_2(source);
     BB destBB = exp_2(dest);
 
     wtm = !wtm;
 
+    // Special move stuff
+    switch(special) {
+    case EN_PASSANT_CAP_W:
+        makePiece(BLACK, PAWN, dest - 8, exp_2(dest - 8));
+        break;
+    case EN_PASSANT_CAP_B:
+        makePiece(BLACK, PAWN, dest + 8, exp_2(dest + 8));
+        break;
+    }
+
+    // Move the actual piece
     movePiece(wtm, attacker, dest, source, destBB, sourceBB);
-    if(defender) {
+    if(defender && special != EN_PASSANT_CAP_W && special != EN_PASSANT_CAP_B) {
         makePiece(!wtm, defender, dest, destBB);
+    }
+
+    // Reset en passant square
+    ind enPassantFile = moves::enPassant(m);
+    if(enPassantFile < 9) {
+        ind enPassantRank = wtm ? 5 : 2;
+        enPassant = exp_2(8 * enPassantRank + enPassantFile);
     }
 
     occupied = pieces[WHITE][ALL] | pieces[BLACK][ALL];
