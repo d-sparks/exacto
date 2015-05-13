@@ -5,6 +5,7 @@
 #include "assert.h"
 #include "../src/cgame.cpp"
 #include "../src/moves.cpp"
+#include "../src/magics.cpp"
 
 using namespace std;
 
@@ -32,6 +33,8 @@ int testMakeMoveUnmakeMove() {
 
     CGame game1("r2qk3/1P6/8/2Pp4/4P3/1N3b2/5PPP/R3K2R", "w", "KQq", "D6");
     CGame game2 = game1;
+    magics::populateBishopTables();
+    magics::populateRookTables();
     mv moveList[256] = { 0 };
     game1.moveGen(moveList, true);
     for(mv * move = moveList; *move; move++) {

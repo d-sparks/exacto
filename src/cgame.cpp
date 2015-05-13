@@ -56,6 +56,13 @@ void CGame::makeMove(mv * m) {
     case DOUBLE_PAWN_MOVE_B:
         setEnPassant(dest + 8);
         break;
+    case CASTLE: {
+        ind rookSource = dest > source ? dest + 2 : dest - 1;
+        ind rookDest = dest > source ? dest - 1 : dest + 1;
+        movePiece(wtm, ROOK, rookSource, rookDest, exp_2(rookSource), exp_2(rookDest));
+        // TODO: Kill castling rights
+        break;
+    }
     case PROMOTE_QUEEN:
     case PROMOTE_ROOK:
     case PROMOTE_BISHOP:
@@ -87,6 +94,12 @@ void CGame::unmakeMove(mv m) {
     case EN_PASSANT_CAP: {
         ind hangingPawn = wtm ? dest - 8 : dest + 8;
         makePiece(!wtm, PAWN, hangingPawn, exp_2(hangingPawn));
+        break;
+    }
+    case CASTLE: {
+        ind rookSource = dest > source ? dest + 2 : dest - 1;
+        ind rookDest = dest > source ? dest - 1 : dest + 1;
+        movePiece(wtm, ROOK, rookDest, rookSource, exp_2(rookDest), exp_2(rookSource));
         break;
     }
     case PROMOTE_QUEEN:
