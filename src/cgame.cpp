@@ -45,9 +45,16 @@ void CGame::makeMove(mv * m) {
 
     // Special move stuff
     switch(special) {
-    case EN_PASSANT_CAP:
+    case EN_PASSANT_CAP: {
         ind hangingPawn = wtm ? dest - 8 : dest + 8;
         killPiece(!wtm, PAWN, hangingPawn, exp_2(hangingPawn));
+        break;
+    }
+    case DOUBLE_PAWN_MOVE_W:
+        setEnPassant(dest - 8);
+        break;
+    case DOUBLE_PAWN_MOVE_B:
+        setEnPassant(dest + 8);
         break;
     }
 
