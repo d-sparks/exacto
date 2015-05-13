@@ -56,6 +56,13 @@ void CGame::makeMove(mv * m) {
     case DOUBLE_PAWN_MOVE_B:
         setEnPassant(dest + 8);
         break;
+    case PROMOTE_QUEEN:
+    case PROMOTE_ROOK:
+    case PROMOTE_BISHOP:
+    case PROMOTE_KNIGHT:
+        killPiece(wtm, PAWN, dest, destBB);
+        makePiece(wtm, special, dest, destBB);
+        break;
     }
 
     wtm = !wtm;
@@ -77,10 +84,19 @@ void CGame::unmakeMove(mv m) {
 
     // Special move stuff
     switch(special) {
-    case EN_PASSANT_CAP:
+    case EN_PASSANT_CAP: {
         ind hangingPawn = wtm ? dest - 8 : dest + 8;
         makePiece(!wtm, PAWN, hangingPawn, exp_2(hangingPawn));
         break;
+    }
+    case PROMOTE_QUEEN:
+    case PROMOTE_ROOK:
+    case PROMOTE_BISHOP:
+    case PROMOTE_KNIGHT:
+        killPiece(wtm, special, dest, destBB);
+        makePiece(wtm, PAWN, dest, destBB);
+        break;
+
     }
 
     // Move the actual piece

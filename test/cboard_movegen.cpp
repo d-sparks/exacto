@@ -76,7 +76,7 @@ int testPawnGenPromotions() {
     CBoard board("8/8/8/8/8/8/7p/6R1", "b", "");
     board.pawnGen(&moves, 0, true);
     mv expectedMoves[256] = { 0 };
-    for(ind special = PROMOTE_QUEEN; special <= PROMOTE_KNIGHT; special++) {
+    for(ind special = PROMOTE_KNIGHT; special <= PROMOTE_QUEEN; special++) {
         expectedMoves[special] = moves::make(H2, H1, PAWN, NONE, NONE, NONE, special);
         expectedMoves[100 + special] = moves::make(H2, G1, PAWN, ROOK, NONE, NONE, special);
     }
