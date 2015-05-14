@@ -127,3 +127,14 @@ void CBoard::killPiece(bool color, ind piece, ind square, BB squareBB) {
 void CBoard::setEnPassant(ind square) {
     enPassant = (square == 64) ? 0 : exp_2(square);
 }
+
+// Unsets the queenside castling rights for the color to move.
+void CBoard::removeQueensideCastlingRights() {
+    castling[wtm] &= ~masks::FILE[5];
+}
+
+// Unsets the kingside castling rights for the color to move.
+void CBoard::removeKingsideCastlingRights() {
+    castling[wtm] &= ~masks::FILE[1];
+}
+

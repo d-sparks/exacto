@@ -26,6 +26,8 @@ public:
     void makePiece(bool color, ind piece, ind square, BB squareBB);
     void killPiece(bool color, ind piece, ind square, BB squareBB);
     void setEnPassant(ind square=64);
+    void removeQueensideCastlingRights();
+    void removeKingsideCastlingRights();
     bool operator==(const CBoard &other) const;
 
     // Constructor and destructor

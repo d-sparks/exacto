@@ -60,7 +60,14 @@ void CGame::makeMove(mv * m) {
         ind rookSource = dest > source ? dest + 2 : dest - 1;
         ind rookDest = dest > source ? dest - 1 : dest + 1;
         movePiece(wtm, ROOK, rookSource, rookDest, exp_2(rookSource), exp_2(rookDest));
-        // TODO: Kill castling rights
+    }
+    case KING_MOVE: {
+        // kill castling rights
+        if(castling[wtm]) {
+            *m |= moves::castlingEncode(castling[wtm]) << 22;
+            removeKingsideCastlingRights();
+            removeQueensideCastlingRights();
+        }
         break;
     }
     case PROMOTE_QUEEN:

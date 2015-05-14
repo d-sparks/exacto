@@ -48,4 +48,13 @@ namespace moves {
     string algebraic(mv m) {
         return squares::algebraic[source(m)] + "-" + squares::algebraic[dest(m)] + " " + to_string(defender(m));
     }
+
+    mv castlingEncode(BB castlingData) {
+        mv out = 0;
+        out |= (BB)G1 << (22 - G1);
+        out |= (BB)C1 << (23 - C1);
+        out |= (BB)G8 >> (G8 - 24);
+        out |= (BB)C8 << (C8 - 25);
+        return out;
+    }
 }
