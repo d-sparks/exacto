@@ -52,11 +52,11 @@ void CBoard::pawnGen(mv **moveList, BB pins, bool quietMoves) {
 void CBoard::pawnCaps(mv **moveList, BB pins) {
     BB pawns = pieces[wtm][PAWN] & ~pins;
     if(wtm) {
-        serializePawn(moveList, ((pawns & ~masks::FILE[0]) << 9) & pieces[BLACK][ALL], REGULAR_MOVE, 9);
-        serializePawn(moveList, ((pawns & ~masks::FILE[7]) << 7) & pieces[BLACK][ALL], REGULAR_MOVE, 7);
+        serializePawn(moveList, ((pawns & ~masks::FILE[7]) << 9) & pieces[BLACK][ALL], REGULAR_MOVE, 9);
+        serializePawn(moveList, ((pawns & ~masks::FILE[0]) << 7) & pieces[BLACK][ALL], REGULAR_MOVE, 7);
     } else {
-        serializePawn(moveList, ((pawns & ~masks::FILE[0]) >> 7) & pieces[WHITE][ALL], REGULAR_MOVE, -7);
-        serializePawn(moveList, ((pawns & ~masks::FILE[7]) >> 9) & pieces[WHITE][ALL], REGULAR_MOVE, -9);
+        serializePawn(moveList, ((pawns & ~masks::FILE[7]) >> 7) & pieces[WHITE][ALL], REGULAR_MOVE, -7);
+        serializePawn(moveList, ((pawns & ~masks::FILE[0]) >> 9) & pieces[WHITE][ALL], REGULAR_MOVE, -9);
     }
     if(enPassant) {
         do {
@@ -211,7 +211,7 @@ void CBoard::kingGen(mv **moveList, ind kingSquare, BB enemyAttacks, bool quietM
     // Regular moves
     BB validSquares = ~enemyAttacks & (quietMoves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL]);
     BB moves = masks::KING_MOVES[kingSquare] & validSquares;
-    serialize(moveList, moves, kingSquare);
+    serialize(moveList, moves, kingSquare, KING_MOVE);
     // Castling
     if(quietMoves && castling[wtm] != 0) {
         // We extend our reach to the right by one square from each valid move found so far. If the
@@ -236,11 +236,11 @@ BB CBoard::attackSetGen(bool color) {
 
     // Pawns
     if(color == WHITE) {
-        attackSet |= (pieces[WHITE][PAWN] & ~masks::FILE[0]) << 9;
-        attackSet |= (pieces[WHITE][PAWN] & ~masks::FILE[7]) << 7;
+        attackSet |= (pieces[WHITE][PAWN] & ~masks::FILE[7]) << 9;
+        attackSet |= (pieces[WHITE][PAWN] & ~masks::FILE[0]) << 7;
     } else {
-        attackSet |= (pieces[BLACK][PAWN] & ~masks::FILE[0]) >> 7;
-        attackSet |= (pieces[BLACK][PAWN] & ~masks::FILE[7]) >> 9;
+        attackSet |= (pieces[BLACK][PAWN] & ~masks::FILE[7]) >> 7;
+        attackSet |= (pieces[BLACK][PAWN] & ~masks::FILE[0]) >> 9;
     }
     // Knights
     BB knights = pieces[color][KNIGHT];
@@ -279,16 +279,16 @@ void CBoard::generateMovesTo(mv **moveList, ind dest, ind defender, BB pins, BB 
     BB pawns = pieces[wtm][PAWN];
     if(defender) {
         // Pawn captures
-        if(pawns & ((potentialPawns & ~masks::FILE[7]) << 1)) {
+        if(pawns & ((potentialPawns & ~masks::FILE[0]) << 1)) {
             serializePawn(moveList, destBB, REGULAR_MOVE, wtm ? 7 : -9);
         }
-        if(pawns & ((potentialPawns & ~masks::FILE[0]) >> 1)) {
+        if(pawns & ((potentialPawns & ~masks::FILE[7]) >> 1)) {
             serializePawn(moveList, destBB, REGULAR_MOVE, wtm ? 9 : -7);
         }
     } else if(dest == bitscan(enPassant)) {
         // Pawn en passant captures
-        serializeFromDest(moveList, pawns & ((potentialPawns & ~masks::FILE[7]) << 1), dest, PAWN, EN_PASSANT_CAP);
-        serializeFromDest(moveList, pawns & ((potentialPawns & ~masks::FILE[0]) >> 1), dest, PAWN, EN_PASSANT_CAP);
+        serializeFromDest(moveList, pawns & ((potentialPawns & ~masks::FILE[0]) << 1), dest, PAWN, EN_PASSANT_CAP);
+        serializeFromDest(moveList, pawns & ((potentialPawns & ~masks::FILE[7]) >> 1), dest, PAWN, EN_PASSANT_CAP);
     } else {
         if(pawns & potentialPawns) {
             // Pawn regular moves

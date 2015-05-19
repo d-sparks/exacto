@@ -3,7 +3,9 @@
 #include <string.h>
 #include <map>
 #include "assert.h"
+#include "../src/inlines.h"
 #include "../src/cboard.cpp"
+#include "../src/masks.cpp"
 
 using namespace std;
 
@@ -68,12 +70,38 @@ int testMakePiece() {
     return 1;
 }
 
+// Tests the removal of queenside castling rights for the player to move.
+int testRemoveQueensideCastlingRights() {
+    cout << "Testing removeQueensideCastlingRights..." << endl;
+    CBoard board;
+
+    board.removeQueensideCastlingRights();
+    ASSERT(popcount(board.castling[board.wtm]) == 1, "Did not remove castling");
+    ASSERT((board.castling[board.wtm] & masks::FILE[1]) != 0, "Removed kingside castling");
+
+    return 1;
+}
+
+// Tests the removal of kingside castling rights for the player to move.
+int testRemoveKingsideCastlingRights() {
+    cout << "Testing removeKingsideCastlingRights..." << endl;
+    CBoard board;
+
+    board.removeKingsideCastlingRights();
+    ASSERT(popcount(board.castling[board.wtm]) == 1, "Did not remove castling");
+    ASSERT((board.castling[board.wtm] & masks::FILE[5]) != 0, "Removed queenside castling");
+
+    return 1;
+}
+
 int main() {
     int t = 0;
 
     t += testMovePiece();
     t += testKillPiece();
     t += testMakePiece();
+    t += testRemoveQueensideCastlingRights();
+    t += testRemoveKingsideCastlingRights();
 
     cout << endl;
     cout << t << " test(s) OK" << endl;

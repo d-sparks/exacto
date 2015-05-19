@@ -43,6 +43,9 @@ void CGame::makeMove(mv * m) {
         setEnPassant();
     }
 
+    // Record castling data
+    *m |= moves::castlingEncode(castling[wtm]);
+
     // Special move stuff
     switch(special) {
     case EN_PASSANT_CAP: {
@@ -64,7 +67,6 @@ void CGame::makeMove(mv * m) {
     case KING_MOVE: {
         // kill castling rights
         if(castling[wtm]) {
-            *m |= moves::castlingEncode(castling[wtm]) << 22;
             removeKingsideCastlingRights();
             removeQueensideCastlingRights();
         }
@@ -124,6 +126,9 @@ void CGame::unmakeMove(mv m) {
     if(defender && special != EN_PASSANT_CAP) {
         makePiece(!wtm, defender, dest, destBB);
     }
+
+    // Restore castling rights
+    castling[wtm] = moves::castlingDecode(moves::castling(m));
 
     // Reset en passant square
     ind enPassantFile = moves::enPassant(m);

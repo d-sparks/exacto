@@ -97,7 +97,7 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep) {
 bool CBoard::operator==(const CBoard &other) const {
     return (memcmp(pieces, other.pieces, sizeof(pieces[0][0]) * 2 * 7) == 0)
         && (memcmp(board, other.board, sizeof(board[0]) * 64) == 0)
-        && (memcmp(castling, other.castling, sizeof(castling[0] * 2)) == 0)
+        && (memcmp(castling, other.castling, sizeof(castling[0]) * 2) == 0)
         && (enPassant == other.enPassant)
         && (wtm == other.wtm)
         && (occupied == other.occupied);
