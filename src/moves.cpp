@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string.h>
 #include "bb.h"
+#include "inlines.h"
 #include "moves.h"
 #include "squares.cpp"
 
@@ -46,15 +47,27 @@ namespace moves {
     }
 
     string algebraic(mv m) {
-        return squares::algebraic[source(m)] + "-" + squares::algebraic[dest(m)] + " " + to_string(defender(m));
+        return squares::algebraic[source(m)] + "-" + squares::algebraic[dest(m)] + " " + to_string(special(m));
     }
 
+    // Castling is encoded into four bits in a move in the 22-25 indices, representing KQkq
+    // respectively.
     mv castlingEncode(BB castlingData) {
         mv out = 0;
-        out |= (BB)G1 << (22 - G1);
-        out |= (BB)C1 << (23 - C1);
-        out |= (BB)G8 >> (G8 - 24);
-        out |= (BB)C8 << (C8 - 25);
+        out |= (exp_2(G1) & castlingData) << (22 - G1);
+        out |= (exp_2(C1) & castlingData) << (23 - C1);
+        out |= (exp_2(G8) & castlingData) >> (G8 - 24);
+        out |= (exp_2(C8) & castlingData) >> (C8 - 25);
+        return out;
+    }
+
+    // Decodes a castlingCode as outputted by castlingEncode.
+    BB castlingDecode(ind castlingCode) {
+        BB out = 0;
+        out |= (BB)(1 & castlingCode) << (G1 - 0);
+        out |= (BB)(2 & castlingCode) << (C1 - 1);
+        out |= (BB)(4 & castlingCode) << (G8 - 2);
+        out |= (BB)(8 & castlingCode) << (C8 - 3);
         return out;
     }
 }

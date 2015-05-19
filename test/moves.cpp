@@ -24,10 +24,24 @@ int testEndToEnd() {
     return 1;
 }
 
+// Tests that castlingEncode and castlingDecode are inverses.
+int testCastlingEncoding() {
+    cout << "Testing castlingEncode/castlingDecode" << endl;
+
+    for(ind i = 0; i < 15; i++) {
+        BB decoded = moves::castlingDecode(i);
+        mv encoded = moves::castlingEncode(decoded);
+        ASSERT(moves::castling(encoded) == i, "Bad castling encoding for bitstring " + to_string((int)i));
+    }
+
+    return 1;
+}
+
 int main() {
     int t = 0;
 
     t += testEndToEnd();
+    t += testCastlingEncoding();
 
     cout << endl;
     cout << t << " test(s) OK" << endl;
