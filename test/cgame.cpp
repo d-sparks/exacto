@@ -1,7 +1,5 @@
 #define _TEST 1
 
-#include <string.h>
-// #include <map>
 #include "assert.h"
 #include "../src/cgame.cpp"
 #include "../src/moves.cpp"

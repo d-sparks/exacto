@@ -65,7 +65,6 @@ void CGame::makeMove(mv * m) {
         movePiece(wtm, ROOK, rookSource, rookDest, exp_2(rookSource), exp_2(rookDest));
     }
     case KING_MOVE: {
-        // kill castling rights
         if(castling[wtm]) {
             removeKingsideCastlingRights();
             removeQueensideCastlingRights();
@@ -79,6 +78,19 @@ void CGame::makeMove(mv * m) {
         killPiece(wtm, PAWN, dest, destBB);
         makePiece(wtm, special, dest, destBB);
         break;
+    }
+
+    // Remove castling rights for rook moves
+    BB castlingBB = castling[wtm];
+    if(castlingBB != 0 && attacker == ROOK) {
+        BB kingSide = castlingBB & masks::FILE[1];
+        if((kingSide >> 1) & sourceBB) {
+            removeKingsideCastlingRights();
+        }
+        BB queenSide = castlingBB & masks::FILE[5];
+        if((queenSide << 2) & sourceBB) {
+            removeQueensideCastlingRights();
+        }
     }
 
     wtm = !wtm;
