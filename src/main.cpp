@@ -20,12 +20,26 @@ void printVersion(string version) {
 
 int main() {
     printVersion("?.?");
-    CGame game1, game2;
-    game1.print();
+    CGame game;
 
-    mv move = moves::make(E2, E4, PAWN, NONE, NONE, NONE, REGULAR_MOVE);
-    game1.makeMove(move);
-    game1.unmakeMove(move);
-    cout << (game1 == game2) << endl;
+    string userInput;
+
+    for(cin >> userInput; true; cin >> userInput) {
+        if(userInput == "usermove") {
+            mv candidateMoves[256];
+            game.moveGen(candidateMoves);
+            mv move = moves::cinMove(candidateMoves);
+            game.makeMove(&move);
+        }
+
+        if(userInput == "print") {
+            game.print();
+        }
+
+        if(userInput == "quit" || userInput == "exit") {
+            break;
+        }
+    }
+
     return 0;
 }

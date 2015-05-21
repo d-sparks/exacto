@@ -9,6 +9,16 @@
 using namespace std;
 
 // Generate legal moves given the current state of the board.
+void CBoard::moveGen(mv * moveList) {
+    moveGen(moveList, true);
+}
+
+// Generate legal captures or check evasions given the current state of the board.
+void CBoard::capGen(mv * moveList) {
+    moveGen(moveList, false);
+}
+
+// Main coordinating function for moveGen.
 void CBoard::moveGen(mv * moveList, bool quietMoves) {
     ind kingSquare = bitscan(pieces[wtm][KING]);
     BB enemyAttacks = attackSetGen(!wtm);

@@ -21,6 +21,8 @@ public:
         string cstl="KQkq",
         string ep="-"
     );
+    void moveGen(mv * moveList);
+    void capGen(mv * moveList);
     void moveGen(mv * moveList, bool quietMoves);
     void movePiece(bool color, ind attacker, ind source, ind dest, BB sourceBB, BB destBB);
     void makePiece(bool color, ind piece, ind square, BB squareBB);

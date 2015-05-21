@@ -1,10 +1,12 @@
 #pragma once
 #include <iostream>
 #include <string.h>
+#include <vector>
 #include "bb.h"
 #include "inlines.h"
 #include "moves.h"
 #include "squares.cpp"
+#include "cgame.h"
 
 using namespace std;
 
@@ -70,4 +72,36 @@ namespace moves {
         out |= (BB)(8 & castlingCode) << (C8 - 3);
         return out;
     }
+
+    // Print a move
+    void print(mv move) {
+        cout << algebraic(move);
+    }
+
+    // Create a mv from cin input
+    mv cinMove(mv *candidateMoves) {
+        string moveString;
+        cin >> moveString;
+        string sourceString = moveString.substr(0,2);
+        string destString = moveString.substr(2,2);
+        ind sourceInd = squares::index(sourceString);
+        ind destInd = squares::index(destString);
+
+        vector<mv> matches;
+        mv out;
+
+        for(mv *move = candidateMoves; *move; move++) {
+            if(sourceInd == source(*move) && destInd == dest(*move)) {
+                matches.push_back(*move);
+            }
+        }
+
+        if(matches.size() == 1) {
+            out = matches.at(0);
+        } else {
+            // determine pawn promotion type
+        }
+        return out;
+    }
+
 }
