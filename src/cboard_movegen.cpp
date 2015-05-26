@@ -46,12 +46,13 @@ void CBoard::moveGen(mv * moveList, bool quietMoves) {
 void CBoard::pawnGen(mv **moveList, BB pins, bool quietMoves) {
     pawnCaps(moveList, pins);
     if(quietMoves) {
+        BB pawns = pieces[wtm][PAWN] & ~pins;
         if(wtm) {
-            BB b = (pieces[WHITE][PAWN] << 8) & ~occupied;
+            BB b = (pawns << 8) & ~occupied;
             serializePawn(moveList, b, REGULAR_MOVE, 8);
             serializePawn(moveList, ((b & masks::RANK[2]) << 8) & ~occupied, DOUBLE_PAWN_MOVE_W, 16);
         } else {
-            BB b = (pieces[BLACK][PAWN] >> 8) & ~occupied;
+            BB b = (pawns >> 8) & ~occupied;
             serializePawn(moveList, b, REGULAR_MOVE, -8);
             serializePawn(moveList, ((b & masks::RANK[5]) >> 8) & ~occupied, DOUBLE_PAWN_MOVE_B, -16);
         }
@@ -118,7 +119,7 @@ void CBoard::pawnGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMov
         BB pawnShift;
         if(wtm) {
             pawnShift = exp_2(square) << 8;
-            if(quietMoves && squares::file(square) == squares::file(kingSquare)) {
+            if(quietMoves && (squares::file(square) == squares::file(kingSquare))) {
                 BB moves = pawnShift & ~occupied;
                 serializePawn(moveList, moves, REGULAR_MOVE, 8);
                 if(moves & masks::RANK[2]) {
@@ -127,7 +128,7 @@ void CBoard::pawnGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMov
             }
         } else {
             pawnShift = exp_2(square) >> 8;
-            if(quietMoves && squares::file(square) == squares::file(kingSquare)) {
+            if(quietMoves && (squares::file(square) == squares::file(kingSquare))) {
                 BB moves = pawnShift & ~occupied;
                 serializePawn(moveList, moves, REGULAR_MOVE, -8);
                 if(moves & masks::RANK[5]) {

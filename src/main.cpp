@@ -21,6 +21,9 @@ void printVersion(string version) {
 int main() {
     printVersion("?.?");
     CGame game;
+    magics::populateRookTables();
+    magics::populateBishopTables();
+
 
     string userInput;
 
@@ -34,6 +37,12 @@ int main() {
 
         if(userInput == "print") {
             game.print();
+        }
+
+        if(userInput == "divide") {
+            int depth;
+            cin >> depth;
+            divide(&game, depth);
         }
 
         if(userInput == "quit" || userInput == "exit") {

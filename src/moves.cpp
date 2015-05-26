@@ -49,7 +49,7 @@ namespace moves {
     }
 
     string algebraic(mv m) {
-        return squares::algebraic[source(m)] + "-" + squares::algebraic[dest(m)] + " " + to_string(special(m));
+        return squares::algebraic[source(m)] + squares::algebraic[dest(m)];
     }
 
     // Castling is encoded into four bits in a move in the 22-25 indices, representing KQkq

@@ -118,8 +118,8 @@ void CBoard::makePiece(bool color, ind piece, ind square, BB squareBB) {
 
 // Assumes target square is non-empty. Does not update occupancy bitboard.
 void CBoard::killPiece(bool color, ind piece, ind square, BB squareBB) {
-    pieces[color][piece] ^= squareBB;
-    pieces[color][ALL] ^= squareBB;
+    pieces[color][piece] &= ~squareBB;
+    pieces[color][ALL] &= ~squareBB;
     board[square] = 0;
 }
 

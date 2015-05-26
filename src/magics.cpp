@@ -150,14 +150,14 @@ namespace magics {
 
     // Generate bishop move table for all squares.
     void populateBishopTables() {
-        for(ind square = 0; square < 63; square++) {
+        for(ind square = 0; square < 64; square++) {
             populateBishopTable(square);
         }
     }
 
     // Generate rook move table for all squares.
     void populateRookTables() {
-        for(ind square = 0; square < 63; square++) {
+        for(ind square = 0; square < 64; square++) {
             populateRookTable(square);
         }
     }

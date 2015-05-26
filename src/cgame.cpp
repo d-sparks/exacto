@@ -151,3 +151,49 @@ void CGame::unmakeMove(mv m) {
 
     occupied = pieces[WHITE][ALL] | pieces[BLACK][ALL];
 }
+
+// Browses the game tree and counts the number of nodes
+BB perft(CGame * game, int depth) {
+    BB nodes = 1;
+
+    if(depth > 0) {
+        mv moves[256];
+        game->moveGen(moves);
+        for(mv *move = moves; *move; move++) {
+            game->makeMove(move);
+            nodes += perft(game, depth - 1);
+            game->unmakeMove(*move);
+        }
+    }
+
+    return nodes;
+}
+
+// Browse game tree and count nodes, list descendent counts for each child
+BB divide(CGame * game, int depth) {
+    BB nodes = 0;
+    BB descendents = 0;
+
+    mv moves[256];
+    int numOfMoves = 0;
+    game->moveGen(moves);
+    for(mv *move = moves; *move; move++) {
+        numOfMoves++;
+        game->makeMove(move);
+        cout << moves::algebraic(*move) << " ";
+        if(depth >= 2) {
+            descendents = perft(game, depth - 1) - perft(game, depth - 2);
+        } else {
+            descendents = 1;
+        }
+        game->unmakeMove(*move);
+        cout << descendents << endl;
+        nodes += descendents;
+    }
+
+    cout << "total " << nodes << endl;
+    cout << "moves " << numOfMoves << endl;
+
+    return nodes;
+}
+
