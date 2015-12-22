@@ -357,8 +357,15 @@ void CBoard::evasionGen(mv **moveList, BB enemyAttacks, BB pins, ind kingSquare)
         }
     }
 
-    // In any case, the king can move to safe squares
+    // In any case, the king can move to safe squares. The for loop here covers the case of the a
+    // sliding piece aimed at a king - it is not safe to move to the opposite square in that case.
     BB kingMoves = masks::KING_MOVES[kingSquare] & ~pieces[wtm][ALL] & ~enemyAttacks;
+    for(BB x = kingMoves; x; x &= x - 1) {
+        ind i = bitscan(x);
+        if(masks::OPPOSITE[i][kingSquare] & (attackers[BISHOP] | attackers[ROOK])) {
+            kingMoves &= x - 1;
+        }
+    }
     serialize(moveList, kingMoves, kingSquare);
 }
 
