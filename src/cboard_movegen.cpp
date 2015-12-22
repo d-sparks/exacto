@@ -140,7 +140,7 @@ void CBoard::pawnGenPinned(mv **moveList, BB pins, ind kingSquare, bool quietMov
         // Captures
         BB pawnThreats = ((pawnShift << 1) | (pawnShift >> 1)) & masks::OPPOSITE[kingSquare][square];
         ind targetSquare = bitscan(pawnThreats);
-        if(pawnThreats & pieces[WHITE][ALL]) {
+        if(pawnThreats & pieces[!wtm][ALL]) {
             serializeFromDest(moveList, exp_2(square), targetSquare, board[targetSquare], REGULAR_MOVE);
         } else if(pawnThreats & enPassant) {
             serializeFromDest(moveList, exp_2(square), targetSquare, PAWN, EN_PASSANT_CAP);
@@ -288,12 +288,13 @@ void CBoard::generateMovesTo(mv **moveList, ind dest, ind defender, BB pins, BB 
     BB destBB = exp_2(dest);
     BB potentialPawns = wtm ? destBB >> 8 : destBB << 8;
     BB pawns = pieces[wtm][PAWN];
+
     if(defender) {
         // Pawn captures
-        if(pawns & ((potentialPawns & ~masks::FILE[0]) << 1)) {
+        if(pawns & ((potentialPawns & ~masks::FILE[7]) << 1)) {
             serializePawn(moveList, destBB, REGULAR_MOVE, wtm ? 7 : -9);
         }
-        if(pawns & ((potentialPawns & ~masks::FILE[7]) >> 1)) {
+        if(pawns & ((potentialPawns & ~masks::FILE[0]) >> 1)) {
             serializePawn(moveList, destBB, REGULAR_MOVE, wtm ? 9 : -7);
         }
     } else if(dest == bitscan(enPassant)) {
@@ -306,9 +307,9 @@ void CBoard::generateMovesTo(mv **moveList, ind dest, ind defender, BB pins, BB 
             serializePawn(moveList, destBB, REGULAR_MOVE, wtm ? 8 : -8);
         } else if(potentialPawns & ~occupied) {
             // Pawn double moves
-            if(wtm && squares::file(dest) == 3) {
+            if(wtm && squares::rank(dest) == 3) {
                 serializeFromDest(moveList, pawns & (potentialPawns >> 8), dest, NONE, DOUBLE_PAWN_MOVE_W);
-            } else if(!wtm && squares::file(dest) == 4) {
+            } else if(!wtm && squares::rank(dest) == 4) {
                 serializeFromDest(moveList, pawns & (potentialPawns << 8), dest, NONE, DOUBLE_PAWN_MOVE_B);
             }
         }
@@ -343,9 +344,9 @@ void CBoard::evasionGen(mv **moveList, BB enemyAttacks, BB pins, ind kingSquare)
 
     // If only one piece is attacking the king, can intercept or capture
     if(popcount(attackers[ALL]) == 1) {
-        BB intercept = 0;
+        BB intercept = attackers[ALL];
         if(attackers[BISHOP] | attackers[ROOK]) {
-            intercept = masks::INTERCEDING[kingSquare][bitscan(attackers[ALL])];
+            intercept |= masks::INTERCEDING[kingSquare][bitscan(attackers[ALL])];
         }
 
         // Generate interception moves
