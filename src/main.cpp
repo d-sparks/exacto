@@ -4,6 +4,7 @@
 #include "bb.cpp"
 #include "cgame.cpp"
 #include "moves.cpp"
+#include "masks.cpp"
 
 using namespace std;
 
@@ -23,7 +24,8 @@ int main() {
     CGame game;
     magics::populateRookTables();
     magics::populateBishopTables();
-
+    masks::generateOpposite();
+    masks::generateInterceding();
 
     string userInput;
 
