@@ -234,7 +234,7 @@ void CBoard::kingGen(mv **moveList, ind kingSquare, BB enemyAttacks, bool quietM
         if(~occupied & (exp_2(kingSquare) << 3)) {
             moves |= moves << 1;
         }
-        moves = (moves & castling[wtm]) & validSquares;
+        moves &= castling[wtm] & validSquares & ~occupied;
         // TODO: add special flag by overloading serialize
         serialize(moveList, moves, kingSquare, CASTLE);
     }
