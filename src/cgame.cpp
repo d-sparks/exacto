@@ -66,8 +66,8 @@ void CGame::makeMove(mv * m) {
     }
     case KING_MOVE: {
         if(castling[wtm]) {
-            removeKingsideCastlingRights();
-            removeQueensideCastlingRights();
+            removeKingsideCastlingRights(wtm);
+            removeQueensideCastlingRights(wtm);
         }
         break;
     }
@@ -85,11 +85,11 @@ void CGame::makeMove(mv * m) {
     if(castlingBB != 0 && attacker == ROOK) {
         BB kingSide = castlingBB & masks::FILE[1];
         if((kingSide >> 1) & sourceBB) {
-            removeKingsideCastlingRights();
+            removeKingsideCastlingRights(wtm);
         }
         BB queenSide = castlingBB & masks::FILE[5];
         if((queenSide << 2) & sourceBB) {
-            removeQueensideCastlingRights();
+            removeQueensideCastlingRights(wtm);
         }
     }
 

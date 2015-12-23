@@ -75,7 +75,7 @@ int testRemoveQueensideCastlingRights() {
     cout << "Testing removeQueensideCastlingRights..." << endl;
     CBoard board;
 
-    board.removeQueensideCastlingRights();
+    board.removeQueensideCastlingRights(board.wtm);
     ASSERT(popcount(board.castling[board.wtm]) == 1, "Did not remove castling");
     ASSERT((board.castling[board.wtm] & masks::FILE[1]) != 0, "Removed kingside castling");
 
@@ -87,7 +87,7 @@ int testRemoveKingsideCastlingRights() {
     cout << "Testing removeKingsideCastlingRights..." << endl;
     CBoard board;
 
-    board.removeKingsideCastlingRights();
+    board.removeKingsideCastlingRights(board.wtm);
     ASSERT(popcount(board.castling[board.wtm]) == 1, "Did not remove castling");
     ASSERT((board.castling[board.wtm] & masks::FILE[5]) != 0, "Removed queenside castling");
 

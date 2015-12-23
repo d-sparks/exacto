@@ -129,12 +129,12 @@ void CBoard::setEnPassant(ind square) {
 }
 
 // Unsets the queenside castling rights for the color to move.
-void CBoard::removeQueensideCastlingRights() {
-    castling[wtm] &= ~masks::FILE[5];
+void CBoard::removeQueensideCastlingRights(bool color) {
+    castling[color] &= ~masks::FILE[5];
 }
 
 // Unsets the kingside castling rights for the color to move.
-void CBoard::removeKingsideCastlingRights() {
-    castling[wtm] &= ~masks::FILE[1];
+void CBoard::removeKingsideCastlingRights(bool color) {
+    castling[color] &= ~masks::FILE[1];
 }
 
