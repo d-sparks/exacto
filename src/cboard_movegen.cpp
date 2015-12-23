@@ -332,9 +332,9 @@ void CBoard::evasionGen(mv **moveList, BB enemyAttacks, BB pins, ind kingSquare)
 
     // Find all pieces attacking the king
     if(wtm) {
-        attackers[PAWN] = pieces[BLACK][PAWN] & (pieces[WHITE][KING] >> 7 | pieces[WHITE][KING] >> 9);
+        attackers[PAWN] = pieces[BLACK][PAWN] & (pieces[WHITE][KING] << 7 | pieces[WHITE][KING] << 9);
     } else {
-        attackers[PAWN] = pieces[WHITE][PAWN] & (pieces[BLACK][KING] << 7 | pieces[BLACK][KING] << 9);
+        attackers[PAWN] = pieces[WHITE][PAWN] & (pieces[BLACK][KING] >> 7 | pieces[BLACK][KING] >> 9);
     }
     attackers[PAWN] &= masks::KING_MOVES[kingSquare];
     attackers[KNIGHT] = masks::KNIGHT_MOVES[kingSquare] & pieces[!wtm][KNIGHT];

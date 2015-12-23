@@ -47,6 +47,17 @@ int main() {
             divide(&game, depth);
         }
 
+        if(userInput == "setboard") {
+            string POS, WTM, CAS, EPT, HMC, FMC;
+            cin >> POS;
+            cin >> WTM;
+            cin >> CAS;
+            cin >> EPT;
+            // cin >> HMC;
+            // cin >> FMC;
+            game.setBoard(POS, WTM, CAS, EPT);
+        }
+
         if(userInput == "quit" || userInput == "exit") {
             break;
         }
