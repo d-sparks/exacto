@@ -150,7 +150,7 @@ func main() {
 	label1 := flag.String("label1", "engine1", "label for engine1 loglines")
 	label2 := flag.String("label2", "engine2", "label for engine2 loglines")
 	headers1 := flag.Int("headers1", 7, "number of header loglines to ignore (engine 1)")
-	headers2 := flag.Int("headers2", 7, "number of header loglines to ignore (engine 2)")
+	headers2 := flag.Int("headers2", 9, "number of header loglines to ignore (engine 2)")
 	commands1 := flag.String("commands1", "force", "comma-separated init commands (engine 1)")
 	commands2 := flag.String("commands2", "force", "comma-separated init commands (engine 2)")
 	// fenFile := flag.String("fen", "", "path to FEN file")
@@ -165,5 +165,9 @@ func main() {
 
 	// set boards if necessary
 
-	fmt.Println(getDifferingMoveSequence(5, process1, process2))
+	fmt.Println(getDifferingMoveSequence(3, process1, process2))
+
+	// exit
+	process1.Stdin <- "exit"
+	process2.Stdin <- "exit"
 }
