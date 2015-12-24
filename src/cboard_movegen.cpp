@@ -89,7 +89,7 @@ void CBoard::pawnCaps(mv **moveList, BB pins) {
             // If control has reached this point, we know either that there are two pawns that are
             // in the above configuration.
 
-            BB epRank = masks::RANK[wtm ? 5 : 2];
+            BB epRank = masks::RANK[wtm ? 4 : 3];
             bool kingOnEPRank = (pieces[wtm][KING] & epRank) != 0;
             bool horizontalOnEPRank = ((pieces[!wtm][ROOK] | pieces[!wtm][ROOK]) & epRank) != 0;
 
@@ -98,7 +98,7 @@ void CBoard::pawnCaps(mv **moveList, BB pins) {
             // check, then we deduce: if there are exactly four pieces on this rank, we are in the above
             // situation.
 
-            if(kingOnEPRank && horizontalOnEPRank && popcount(occupied) == 4) {
+            if(kingOnEPRank && horizontalOnEPRank && (popcount(occupied & epRank) == 4)) {
                 break;
             }
 
