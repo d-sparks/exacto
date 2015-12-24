@@ -95,12 +95,23 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep) {
 
 // operator== for CBoards.
 bool CBoard::operator==(const CBoard &other) const {
-    return (memcmp(pieces, other.pieces, sizeof(pieces[0][0]) * 2 * 7) == 0)
-        && (memcmp(board, other.board, sizeof(board[0]) * 64) == 0)
-        && (memcmp(castling, other.castling, sizeof(castling[0]) * 2) == 0)
-        && (enPassant == other.enPassant)
-        && (wtm == other.wtm)
-        && (occupied == other.occupied);
+    bool piecesEq = memcmp(pieces, other.pieces, sizeof(pieces[0][0]) * 2 * 7) == 0;
+    bool boardEq = memcmp(board, other.board, sizeof(board[0]) * 64) == 0;
+    bool castlingEq = memcmp(castling, other.castling, sizeof(castling[0]) * 2) == 0;
+    bool enPassantEq = enPassant == other.enPassant;
+    bool wtmEq = wtm == other.wtm;
+    bool occupiedEq = occupied == other.occupied;
+
+    #if _TEST == 2
+    if(!piecesEq) cout << "Pieces unequal" << endl;
+    if(!boardEq) cout << "Boards unequal" << endl;
+    if(!castlingEq) cout << "Castling unequal" << endl;
+    if(!enPassantEq) cout << "En passant unequal" << endl;
+    if(!wtmEq) cout << "White-to-move unequal" << endl;
+    if(!occupiedEq) cout << "Occupied unequal" << endl;
+    #endif
+
+    return piecesEq && boardEq && castlingEq && enPassantEq && wtmEq && occupiedEq;
 }
 
 // Moves a piece on the board, assumes target is empty. Does not udpate occupancy bitboard.
