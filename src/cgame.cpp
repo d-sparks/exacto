@@ -38,10 +38,12 @@ void CGame::makeMove(mv * m) {
     movePiece(wtm, attacker, source, dest, sourceBB, destBB);
 
     // Set en passant square to 'none'
+    mv enPassantFile = 9;
     if(enPassant) {
-        *m |= (BB)squares::file(bitscan(enPassant)) << 18;
-        setEnPassant();
+        enPassantFile = squares::file(bitscan(enPassant));
     }
+    *m |= enPassantFile << 18;
+    setEnPassant();
 
     // Record castling data
     *m |= moves::castlingEncode(castling[wtm]);
@@ -147,6 +149,8 @@ void CGame::unmakeMove(mv m) {
     if(enPassantFile < 9) {
         ind enPassantRank = wtm ? 5 : 2;
         enPassant = exp_2(8 * enPassantRank + enPassantFile);
+    } else {
+        enPassant = 0;
     }
 
     occupied = pieces[WHITE][ALL] | pieces[BLACK][ALL];
