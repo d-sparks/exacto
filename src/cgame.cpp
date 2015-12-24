@@ -46,7 +46,7 @@ void CGame::makeMove(mv * m) {
     setEnPassant();
 
     // Record castling data
-    *m |= moves::castlingEncode(castling[wtm]);
+    *m |= moves::castlingEncode(castling[WHITE] | castling[BLACK]);
 
     // Special move stuff
     switch(special) {
@@ -92,6 +92,15 @@ void CGame::makeMove(mv * m) {
         BB queenSide = castlingBB & masks::FILE[5];
         if((queenSide << 2) & sourceBB) {
             removeQueensideCastlingRights(wtm);
+        }
+    }
+
+    // Or for captures of a rook
+    if(defender == ROOK) {
+        if(dest == wtm? H8 : H1) {
+            removeKingsideCastlingRights(!wtm);
+        } else if(dest == wtm? A8 : A1) {
+            removeQueensideCastlingRights(!wtm);
         }
     }
 
@@ -142,7 +151,9 @@ void CGame::unmakeMove(mv m) {
     }
 
     // Restore castling rights
-    castling[wtm] = moves::castlingDecode(moves::castling(m));
+    BB castlingData = moves::castlingDecode(moves::castling(m));
+    castling[WHITE] = castlingData & masks::RANK[0];
+    castling[BLACK] = castlingData & masks::RANK[7];
 
     // Reset en passant square
     ind enPassantFile = moves::enPassant(m);
