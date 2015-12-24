@@ -97,9 +97,9 @@ void CGame::makeMove(mv * m) {
 
     // Or for captures of a rook
     if(defender == ROOK) {
-        if(dest == wtm? H8 : H1) {
+        if(dest == (wtm? H8 : H1)) {
             removeKingsideCastlingRights(!wtm);
-        } else if(dest == wtm? A8 : A1) {
+        } else if(dest == (wtm? A8 : A1)) {
             removeQueensideCastlingRights(!wtm);
         }
     }
