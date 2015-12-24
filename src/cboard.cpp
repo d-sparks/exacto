@@ -20,20 +20,42 @@ CBoard::~CBoard() {
 
 // print prints a graphical representation of the board.
 void CBoard::print() {
+    bool castlingWK = (castling[WHITE] & exp_2(G1)) != 0;
+    bool castlingWQ = (castling[WHITE] & exp_2(C1)) != 0;
+    bool castlingBK = (castling[BLACK] & exp_2(G8)) != 0;
+    bool castlingBQ = (castling[BLACK] & exp_2(C8)) != 0;
+
     string piecesToStrings[16] = {
         "   ", " p ", " n ", " b ", " r ", " q ", "[k]", "",
         "   ", " P ", " N ", " B ", " R ", " Q ", "[K]"
     };
-    cout << "+---+---+---+---+---+---+---+---+" << endl;
+    map<int, string> sideBar = {
+        {7, wtm? "White to move" : "Black to move"},
+        {6, "Static evaluation: "},
+        {5, "Q-search value: "},
+        {4, "Repititions: "},
+        {3, "Castling     Kingside/Queenside"},
+        {2, (string)"White:    " +
+            "      " + (castlingWK? "Yes" : "No") +
+            "      " + (castlingWQ? "Yes" : "No")},
+        {1, (string)"Black:    " +
+            "      " + (castlingBK? "Yes" : "No") +
+            "      " + (castlingBQ? "Yes" : "No")},
+    };
+
+    cout << endl;
     for (ind i = 7; i < 255; i--) {
+        cout << "     +---+---+---+---+---+---+---+---+" << endl;
+        cout << "  " << (int)(i + 1) << "  ";
         for (ind j = 7; j < 255; j--) {
             ind square = 8 * i + j;
             ind colorModifier = (pieces[WHITE][ALL] & exp_2(square))? 8 : 0;
             cout << "|" << piecesToStrings[colorModifier + board[square]];
         }
-        cout << "|" << endl;
-        cout << "+---+---+---+---+---+---+---+---+" << endl;
+        cout << "|     " << sideBar[i] << endl;
     }
+    cout << "     +---+---+---+---+---+---+---+---+" << endl;
+    cout << "       A   B   C   D   E   F   G   H  " << endl;
 }
 
 // setBoard sets board given an FEN string.
