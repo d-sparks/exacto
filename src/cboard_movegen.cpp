@@ -287,7 +287,7 @@ void CBoard::generateMovesTo(mv **moveList, ind dest, ind defender, BB pins, BB 
     // Pawn moves
     BB destBB = exp_2(dest);
     BB potentialPawns = wtm ? destBB >> 8 : destBB << 8;
-    BB pawns = pieces[wtm][PAWN];
+    BB pawns = pieces[wtm][PAWN] & ~pins;
 
     if(defender) {
         // Pawn captures
@@ -316,13 +316,19 @@ void CBoard::generateMovesTo(mv **moveList, ind dest, ind defender, BB pins, BB 
     }
 
     // Knights, bishops, and rooks are very simple.
-    BB knights = masks::KNIGHT_MOVES[dest] & pieces[wtm][KNIGHT];
+    BB knights = masks::KNIGHT_MOVES[dest] & pieces[wtm][KNIGHT] & ~pins;
     serializeFromDest(moveList, knights, dest, defender, REGULAR_MOVE);
-    BB bishops = magics::bishopMoves(dest, occupied) & (pieces[wtm][BISHOP] | pieces[wtm][QUEEN]);
+    BB bishops = magics::bishopMoves(dest, occupied) & (pieces[wtm][BISHOP] | pieces[wtm][QUEEN]) & ~pins;
     serializeFromDest(moveList, bishops, dest, defender, REGULAR_MOVE);
-    BB rooks = magics::rookMoves(dest, occupied) & (pieces[wtm][ROOK] | pieces[wtm][QUEEN]);
+    BB rooks = magics::rookMoves(dest, occupied) & (pieces[wtm][ROOK] | pieces[wtm][QUEEN]) & ~pins;
     serializeFromDest(moveList, rooks, dest, defender, REGULAR_MOVE);
 
+    // Pinned pieces separately
+    if(pins) {
+        // Pawns are annoying
+        // Rooks and bishops less so
+        // TODO!
+    }
 }
 
 // Assumes the king is in check and generates all legal ways to evade the check: move the king, kill
@@ -376,11 +382,11 @@ BB CBoard::bishopPins(ind kingSquare) {
     while(candidatePins) {
         ind i = bitscan(candidatePins);
         BB candidateMoves = magics::bishopMoves(i, occupied);
-        candidatePins &= candidatePins - 1;
         BB kingXRayAttacks = magics::bishopMoves(kingSquare, occupied & ~exp_2(i));
         if(candidateMoves & kingXRayAttacks & (pieces[!wtm][BISHOP] | pieces[!wtm][QUEEN])) {
             pins |= exp_2(i);
         }
+        candidatePins &= candidatePins - 1;
     }
     return pins;
 }
