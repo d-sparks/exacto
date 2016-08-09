@@ -8,4 +8,4 @@ by Daniel Sparks
 
 [License](text/license.txt)
 
-When I wrote this, I was a hobbiest programmer. See the [dev branch](https://github.com/d-sparks/exacto/tree/dev) for how I am approaching further development on Exacto.
+When I wrote 0.e, I was a hobbiest programmer. See [Dev](https://github.com/d-sparks/exacto/pull/1) for how I am approaching further development on Exacto.
