@@ -70,12 +70,22 @@ type divide struct {
 func readDivide(c chan string) divide {
 	output := map[string]string{}
 	var move, count string
-	for move != "moves" {
+	for {
 		line := <-c
 		split := strings.Split(line, " ")
 		if len(split) >= 2 {
 			move, count = split[0], split[1]
-			output[move] = count
+			if move == "moves" || count == "moves\n" {
+				break
+			}
+			if move == "Force" {
+				continue
+			}
+			if count == "total\n" {
+				count, move = move, "total"
+			}
+			move = strings.Replace(move, ":", "", -1)
+			output[move] = strings.Trim(count, " \n:")
 		}
 	}
 	total := output["total"]
@@ -133,7 +143,7 @@ func getDifferingMoveSequence(depth int, p1, p2 process) string {
 
 	p1.Stdin <- "usermove " + move
 	p2.Stdin <- "usermove " + move
-	return move + " " + getDifferingMoveSequence(depth-1, p1, p2)
+	return "usermove " + move + " " + getDifferingMoveSequence(depth-1, p1, p2)
 }
 
 func getEngineProcess(path, label string, headerLines int, commands ...string) process {
@@ -168,11 +178,15 @@ func main() {
 	process1 := getEngineProcess(*engine1, *label1, *headers1, sliceCommands1...)
 	process2 := getEngineProcess(*engine2, *label2, *headers2, sliceCommands2...)
 
-	// set boards if necessary
+	fen := "setboard 8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - - -"
 
-	fmt.Println("\n" + getDifferingMoveSequence(4, process1, process2))
+	// set boards if necessary
+	process1.Stdin <- fen
+	process2.Stdin <- fen
+
+	fmt.Println("\n" + fen + " " + getDifferingMoveSequence(5, process1, process2))
 
 	// exit
-	process1.Stdin <- "exit"
-	process2.Stdin <- "exit"
+	go func() { process1.Stdin <- "quit" }()
+	go func() { process2.Stdin <- "quit" }()
 }
