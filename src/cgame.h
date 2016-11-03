@@ -9,6 +9,7 @@ class CGame : public CBoard {
 public:
     void makeMove(mv * m);
     void unmakeMove(mv m);
+    int evaluate();
     bool operator==(const CGame &other) const;
     CGame(
         string brd="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
@@ -19,4 +20,7 @@ public:
         string fm="0"
     );
     ~CGame();
+private:
+    int halfMoves;
+    int moveNumber;
 };

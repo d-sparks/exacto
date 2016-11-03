@@ -4,12 +4,15 @@
 #include "moves.cpp"
 #include "cboard.cpp"
 #include "cgame.h"
+#include "cgame_evaluate.cpp"
 
 using namespace std;
 
 // Constructor and destructor
 CGame::CGame(string brd, string clr, string cstl, string ep, string hm, string fm)
     : CBoard(brd, clr, cstl, ep) {
+        halfMoves = atoi(hm.c_str());
+        moveNumber = atoi(fm.c_str());
 }
 
 CGame::~CGame() {
@@ -104,6 +107,11 @@ void CGame::makeMove(mv * m) {
         }
     }
 
+    // Increment half-move clock
+    if(defender || (attacker == PAWN)) {
+        halfMoves++;
+    }
+
     wtm = !wtm;
     occupied = pieces[WHITE][ALL] | pieces[BLACK][ALL];
 }
@@ -120,6 +128,11 @@ void CGame::unmakeMove(mv m) {
     BB destBB = exp_2(dest);
 
     wtm = !wtm;
+
+    //  Decrement half-move clock
+    if(defender || (attacker == PAWN)) {
+        halfMoves--;
+    }
 
     // Special move stuff
     switch(special) {
