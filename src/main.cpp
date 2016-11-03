@@ -47,6 +47,12 @@ int main() {
             divide(&game, depth);
         }
 
+        if(userInput == "perft") {
+            int depth;
+            cin >> depth;
+            cout << perft(&game, depth) - perft(&game, depth - 1) << endl;
+        }
+
         if(userInput == "setboard") {
             string POS, WTM, CAS, EPT, HMC, FMC;
             cin >> POS;
