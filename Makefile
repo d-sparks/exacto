@@ -20,7 +20,7 @@ clean:
 bin:
 	mkdir -p bin
 
-test: $(TESTS)
+test: clean build $(TESTS)
 	@printf "\nOK\n\n"
 
 $(TESTS):
