@@ -168,8 +168,8 @@ func main() {
 	headers2 := flag.Int("headers2", 7, "number of header loglines to ignore (engine 2)")
 	commands1 := flag.String("commands1", "force", "comma-separated init commands (engine 1)")
 	commands2 := flag.String("commands2", "force", "comma-separated init commands (engine 2)")
-	// fenFile := flag.String("fen", "", "path to FEN file")
-	// depth := flag.Int("depth", 4, "depth to search each position")
+	fen := flag.String("fen", "", "fen string")
+	depth := flag.Int("depth", 4, "depth to search each position")
 	flag.Parse()
 
 	sliceCommands1 := strings.Split(*commands1, ",")
@@ -178,13 +178,11 @@ func main() {
 	process1 := getEngineProcess(*engine1, *label1, *headers1, sliceCommands1...)
 	process2 := getEngineProcess(*engine2, *label2, *headers2, sliceCommands2...)
 
-	fen := "setboard 8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - - -"
-
 	// set boards if necessary
-	process1.Stdin <- fen
-	process2.Stdin <- fen
+	process1.Stdin <- "setboard " + *fen
+	process2.Stdin <- "setboard " + *fen
 
-	fmt.Println("\n" + fen + " " + getDifferingMoveSequence(5, process1, process2))
+	fmt.Println("\n" + *fen + " " + getDifferingMoveSequence(*depth, process1, process2))
 
 	// exit
 	go func() { process1.Stdin <- "quit" }()
