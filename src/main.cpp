@@ -3,6 +3,7 @@
 #include <string.h>
 #include "bb.cpp"
 #include "cgame.cpp"
+#include "cexacto.cpp"
 #include "moves.cpp"
 #include "masks.cpp"
 
@@ -22,6 +23,7 @@ void printVersion(string version) {
 int main() {
     printVersion("?.?");
     CGame game;
+    CExacto exacto(game);
     magics::populateRookTables();
     magics::populateBishopTables();
     masks::generateOpposite();

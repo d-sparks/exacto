@@ -4,7 +4,6 @@
 #include "moves.cpp"
 #include "cboard.cpp"
 #include "cgame.h"
-#include "cgame_evaluate.cpp"
 
 using namespace std;
 
