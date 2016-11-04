@@ -25,4 +25,7 @@
 #define REMOVE_QUEENSIDE_CASTLING 14
 #define REMOVE_ALL_CASTLING       15
 
+#define KINGSIDE                  0
+#define QUEENSIDE                 1
+
 typedef uint32_t mv;

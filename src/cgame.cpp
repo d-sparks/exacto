@@ -47,9 +47,6 @@ void CGame::makeMove(mv * m) {
     *m |= enPassantFile << 18;
     setEnPassant();
 
-    // Record castling data
-    *m |= moves::castlingEncode(castling[WHITE] | castling[BLACK]);
-
     // Special move stuff
     switch(special) {
     case EN_PASSANT_CAP: {
@@ -69,9 +66,13 @@ void CGame::makeMove(mv * m) {
         movePiece(wtm, ROOK, rookSource, rookDest, exp_2(rookSource), exp_2(rookDest));
     }
     case KING_MOVE: {
-        if(castling[wtm]) {
+        if(castling[wtm] & masks::FILE[1]) {
             removeKingsideCastlingRights(wtm);
+            moves::encodeKingsideCastlingChange(m, wtm);
+        }
+        if(castling[wtm] & masks::FILE[5]) {
             removeQueensideCastlingRights(wtm);
+            moves::encodeQueensideCastlingChange(m, wtm);
         }
         break;
     }
@@ -90,19 +91,35 @@ void CGame::makeMove(mv * m) {
         BB kingSide = castlingBB & masks::FILE[1];
         if((kingSide >> 1) & sourceBB) {
             removeKingsideCastlingRights(wtm);
+            moves::encodeKingsideCastlingChange(m, wtm);
         }
         BB queenSide = castlingBB & masks::FILE[5];
         if((queenSide << 2) & sourceBB) {
             removeQueensideCastlingRights(wtm);
+            moves::encodeQueensideCastlingChange(m, wtm);
         }
     }
 
     // Or for captures of a rook
-    if(defender == ROOK) {
-        if(dest == (wtm? H8 : H1)) {
-            removeKingsideCastlingRights(!wtm);
-        } else if(dest == (wtm? A8 : A1)) {
-            removeQueensideCastlingRights(!wtm);
+    if(defender == ROOK && castling[!wtm] != 0) {
+        if(wtm) {
+            if(dest == H8 && (castling[BLACK] & exp_2(G8)) != 0) {
+                removeKingsideCastlingRights(BLACK);
+                moves::encodeKingsideCastlingChange(m, BLACK);
+            }
+            if(dest == A8 && (castling[BLACK] & exp_2(C8)) != 0) {
+                removeQueensideCastlingRights(BLACK);
+                moves::encodeQueensideCastlingChange(m, BLACK);
+            }
+        } else {
+            if(dest == H1 && (castling[WHITE] & exp_2(G1)) != 0) {
+                removeKingsideCastlingRights(WHITE);
+                moves::encodeKingsideCastlingChange(m, WHITE);
+            }
+            if(dest == A1 && (castling[WHITE] & exp_2(C1)) != 0) {
+                removeQueensideCastlingRights(WHITE);
+                moves::encodeQueensideCastlingChange(m, WHITE);
+            }
         }
     }
 
@@ -163,9 +180,11 @@ void CGame::unmakeMove(mv m) {
     }
 
     // Restore castling rights
-    BB castlingData = moves::castlingDecode(moves::castling(m));
-    castling[WHITE] = castlingData & masks::RANK[0];
-    castling[BLACK] = castlingData & masks::RANK[7];
+    ind castlingData = moves::castling(m);
+    if(castlingData & 1) grantKingsideCastlingRights(WHITE);
+    if(castlingData & 2) grantQueensideCastlingRights(WHITE);
+    if(castlingData & 4) grantKingsideCastlingRights(BLACK);
+    if(castlingData & 8) grantQueensideCastlingRights(BLACK);
 
     // Reset en passant square
     ind enPassantFile = moves::enPassant(m);

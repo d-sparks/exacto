@@ -49,7 +49,13 @@ namespace moves {
     }
 
     string algebraic(mv m) {
-        return squares::algebraic[source(m)] + squares::algebraic[dest(m)];
+        ind promoData = special(m);
+        string out = squares::algebraic[source(m)] + squares::algebraic[dest(m)];
+        if(promoData == PROMOTE_BISHOP) out += "B";
+        if(promoData == PROMOTE_KNIGHT) out += "N";
+        if(promoData == PROMOTE_ROOK) out += "R";
+        if(promoData == PROMOTE_QUEEN) out += "Q";
+        return out;
     }
 
     // Castling is encoded into four bits in a move in the 22-25 indices, representing KQkq
@@ -61,6 +67,16 @@ namespace moves {
         out |= (exp_2(G8) & castlingData) >> (G8 - 24);
         out |= (exp_2(C8) & castlingData) >> (C8 - 25);
         return out;
+    }
+
+    // Mutates the given move by setting the relevant bit indicating castling rights change.
+    void encodeKingsideCastlingChange(mv* move, bool color) {
+        *move |= mv(1) << 24 - 2 * color;
+    }
+
+    // Mutates the given move by setting the relevant bit indicating castling rights change.
+    void encodeQueensideCastlingChange(mv* move, bool color) {
+        *move |= mv(1) << 25 - 2 * color;
     }
 
     // Decodes a castlingCode as outputted by castlingEncode.

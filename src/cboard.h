@@ -30,6 +30,8 @@ public:
     void setEnPassant(ind square=64);
     void removeQueensideCastlingRights(bool color);
     void removeKingsideCastlingRights(bool color);
+    void grantQueensideCastlingRights(bool color);
+    void grantKingsideCastlingRights(bool color);
     bool operator==(const CBoard &other) const;
 
     // Constructor and destructor
@@ -74,4 +76,5 @@ protected:
     BB occupied;
     BB empty;
     ind board[64];
+    uint64_t hashDigest;
 };

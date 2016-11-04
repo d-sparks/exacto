@@ -3,8 +3,12 @@
 namespace zobrist {
 
     uint64_t const wtm = 0x6ed49c46f19bb8ea;
-    uint64_t const castling[4] = {
-        0x2ec4712b0bfdfcd6, 0x6c6f5767fff27330, 0x071083b972d80c0c, 0x8d8325e82c4fdcdc
+    uint64_t const castling[2][2] = {
+        {
+            0x2ec4712b0bfdfcd6, 0x6c6f5767fff27330,
+        }, {
+            0x071083b972d80c0c, 0x8d8325e82c4fdcdc
+        }
     };
     uint64_t const en_passant[8] = {
         0x2ec4712b0bfdfcd6, 0x6c6f5767fff27330, 0x071083b972d80c0c, 0x8d8325e82c4fdcdc,

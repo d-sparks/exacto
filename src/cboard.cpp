@@ -7,6 +7,7 @@
 #include "bb.cpp"
 #include "cboard_movegen.cpp"
 #include "squares.cpp"
+#include "zobrist_keys.cpp"
 
 using namespace std;
 
@@ -69,6 +70,7 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep) {
     memset(pieces, 0, sizeof(pieces[0][0]) * 2 * 7);
     memset(board, 0, sizeof(board[0]) * 64);
     memset(castling, 0, sizeof(castling[0]) * 2);
+    hashDigest = 0;
 
     // Parse FEN board and set pieces, board arrays
     for(ind x = 0, y = 63; x < brd.length(); x++, y--) {
@@ -88,15 +90,18 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep) {
     }
     // Set color to move
     wtm = (clr == "w" || clr == "W");
+    if(wtm) {
+        hashDigest = hashDigest ^ zobrist::wtm;
+    }
 
     // Set castling data
     for(ind i = 0; i < cstl.length(); i++) {
         string temp = cstl;
         temp = temp.substr(i, 1);
-        if(temp == "K") castling[WHITE] |= exp_2(G1);
-        if(temp == "Q") castling[WHITE] |= exp_2(C1);
-        if(temp == "k") castling[BLACK] |= exp_2(G8);
-        if(temp == "q") castling[BLACK] |= exp_2(C8);
+        if(temp == "K") grantKingsideCastlingRights(WHITE);
+        if(temp == "Q") grantQueensideCastlingRights(WHITE);
+        if(temp == "k") grantKingsideCastlingRights(BLACK);
+        if(temp == "q") grantQueensideCastlingRights(BLACK);
     }
 
     // Set en passant data
@@ -117,23 +122,16 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep) {
 
 // operator== for CBoards.
 bool CBoard::operator==(const CBoard &other) const {
-    bool piecesEq = memcmp(pieces, other.pieces, sizeof(pieces[0][0]) * 2 * 7) == 0;
-    bool boardEq = memcmp(board, other.board, sizeof(board[0]) * 64) == 0;
-    bool castlingEq = memcmp(castling, other.castling, sizeof(castling[0]) * 2) == 0;
-    bool enPassantEq = enPassant == other.enPassant;
-    bool wtmEq = wtm == other.wtm;
-    bool occupiedEq = occupied == other.occupied;
+    bool equal = true;
+    equal &= memcmp(pieces, other.pieces, sizeof(pieces[0][0]) * 2 * 7) == 0;
+    equal &= memcmp(board, other.board, sizeof(board[0]) * 64) == 0;
+    equal &= memcmp(castling, other.castling, sizeof(castling[0]) * 2) == 0;
+    equal &= enPassant == other.enPassant;
+    equal &= wtm == other.wtm;
+    equal &= occupied == other.occupied;
+    // equal &= hashDigest == other.hashDigest;
 
-    #if _TEST == 2
-    if(!piecesEq) cout << "Pieces unequal" << endl;
-    if(!boardEq) cout << "Boards unequal" << endl;
-    if(!castlingEq) cout << "Castling unequal" << endl;
-    if(!enPassantEq) cout << "En passant unequal" << endl;
-    if(!wtmEq) cout << "White-to-move unequal" << endl;
-    if(!occupiedEq) cout << "Occupied unequal" << endl;
-    #endif
-
-    return piecesEq && boardEq && castlingEq && enPassantEq && wtmEq && occupiedEq;
+    return equal;
 }
 
 // Moves a piece on the board, assumes target is empty. Does not udpate occupancy bitboard.
@@ -147,6 +145,7 @@ void CBoard::makePiece(bool color, ind piece, ind square, BB squareBB) {
     pieces[color][piece] |= squareBB;
     pieces[color][ALL] |= squareBB;
     board[square] = piece;
+    hashDigest ^= zobrist::pieces[color][piece][square];
 }
 
 // Assumes target square is non-empty. Does not update occupancy bitboard.
@@ -154,20 +153,47 @@ void CBoard::killPiece(bool color, ind piece, ind square, BB squareBB) {
     pieces[color][piece] &= ~squareBB;
     pieces[color][ALL] &= ~squareBB;
     board[square] = 0;
+    hashDigest ^= zobrist::pieces[color][piece][square];
 }
 
 // Sets the enPassant square.
 void CBoard::setEnPassant(ind square) {
-    enPassant = (square == 64) ? 0 : exp_2(square);
+    if(square == 64) {
+        enPassant = 0;
+    } else {
+        enPassant = exp_2(square);
+        hashDigest ^= zobrist::en_passant[square % 8];
+    }
 }
 
 // Unsets the queenside castling rights for the color to move.
 void CBoard::removeQueensideCastlingRights(bool color) {
-    castling[color] &= ~masks::FILE[5];
+    if(castling[color] & masks::FILE[5]) {
+        hashDigest ^= zobrist::castling[color][QUEENSIDE];
+        castling[color] &= ~masks::FILE[5];
+    }
 }
 
 // Unsets the kingside castling rights for the color to move.
 void CBoard::removeKingsideCastlingRights(bool color) {
-    castling[color] &= ~masks::FILE[1];
+    if(castling[color] & masks::FILE[1]) {
+        hashDigest ^= zobrist::castling[color][KINGSIDE];
+        castling[color] &= ~masks::FILE[1];
+    }
 }
 
+// Sets the queenside castling rights for the color to move.
+void CBoard::grantQueensideCastlingRights(bool color) {
+    if(!(castling[color] & masks::FILE[5])) {
+        hashDigest ^= zobrist::castling[color][QUEENSIDE];
+        castling[color] |= exp_2(color? C1 : C8);
+    }
+}
+
+// Sets the kingside castling rights for the color to move.
+void CBoard::grantKingsideCastlingRights(bool color) {
+    if(!(castling[color] & masks::FILE[1])) {
+        hashDigest ^= zobrist::castling[color][KINGSIDE];
+        castling[color] |=  exp_2(color? G1 : G8);
+    }
+}

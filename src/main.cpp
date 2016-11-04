@@ -29,6 +29,8 @@ int main() {
     masks::generateOpposite();
     masks::generateInterceding();
 
+    cout << exacto.search(&game, 0, 0, 3) << endl;
+
     string userInput;
 
     for(cin >> userInput; true; cin >> userInput) {
