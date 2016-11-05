@@ -1,5 +1,6 @@
 #pragma once
 #include "cgame.h"
+#include "chash.h"
 
 class CExacto {
 public:
@@ -10,5 +11,6 @@ public:
     CExacto(CGame initGame);
     ~CExacto();
 
+    CHash hash;
     CGame game;
 };

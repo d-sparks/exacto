@@ -28,4 +28,6 @@
 #define KINGSIDE                  0
 #define QUEENSIDE                 1
 
+#define BOGUS_MOVE                0xfffffff
+
 typedef uint32_t mv;
