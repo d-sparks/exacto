@@ -43,9 +43,9 @@ void CGame::makeMove(mv * m) {
     mv enPassantFile = 9;
     if(enPassant) {
         enPassantFile = squares::file(bitscan(enPassant));
+        *m |= enPassantFile << 18;
+        setEnPassant();
     }
-    *m |= enPassantFile << 18;
-    setEnPassant();
 
     // Special move stuff
     switch(special) {
@@ -190,9 +190,9 @@ void CGame::unmakeMove(mv m) {
     ind enPassantFile = moves::enPassant(m);
     if(enPassantFile < 9) {
         ind enPassantRank = wtm ? 5 : 2;
-        enPassant = exp_2(8 * enPassantRank + enPassantFile);
-    } else {
-        enPassant = 0;
+        setEnPassant(8 * enPassantRank + enPassantFile);
+    } else if(enPassant) {
+        setEnPassant();
     }
 
     occupied = pieces[WHITE][ALL] | pieces[BLACK][ALL];

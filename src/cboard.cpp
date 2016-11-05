@@ -129,7 +129,7 @@ bool CBoard::operator==(const CBoard &other) const {
     equal &= enPassant == other.enPassant;
     equal &= wtm == other.wtm;
     equal &= occupied == other.occupied;
-    // equal &= hashDigest == other.hashDigest;
+    equal &= hashDigest == other.hashDigest;
 
     return equal;
 }
@@ -158,6 +158,9 @@ void CBoard::killPiece(bool color, ind piece, ind square, BB squareBB) {
 
 // Sets the enPassant square.
 void CBoard::setEnPassant(ind square) {
+    if(enPassant != 0) {
+        hashDigest ^= zobrist::en_passant[bitscan(enPassant) % 8];
+    }
     if(square == 64) {
         enPassant = 0;
     } else {
