@@ -8,7 +8,7 @@ using namespace std;
 class CGame : public CBoard {
 friend class CExacto;
 public:
-    void makeMove(mv * m);
+    void makeMove(mv* m);
     void unmakeMove(mv m);
     bool operator==(const CGame &other) const;
     CGame(

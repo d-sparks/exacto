@@ -9,7 +9,7 @@
 
 using namespace std;
 
-// printVersion is the classis exacto greeting, dating back to 0.a.
+// printVersion is the classic exacto greeting, dating back to 0.a.
 void printVersion(string version) {
     cout << endl;
     cout << "   exacto[" << version << "]          " << endl;
@@ -39,6 +39,10 @@ int main() {
             game.moveGen(candidateMoves);
             mv move = moves::cinMove(candidateMoves);
             game.makeMove(&move);
+        }
+
+        if(userInput == "go") {
+            exacto.go(&game);
         }
 
         if(userInput == "print") {
