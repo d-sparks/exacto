@@ -42,6 +42,11 @@ void CBoard::moveGen(mv * moveList, bool quietMoves) {
     closeMoveList(&moveList);
 }
 
+// Returns true if the king is in check.
+bool CBoard::inCheck() {
+    return (pieces[wtm][KING] & attackSetGen(!wtm)) != 0;
+}
+
 // Generates the non-capture pawn moves
 void CBoard::pawnGen(mv **moveList, BB pins, bool quietMoves) {
     pawnCaps(moveList, pins);

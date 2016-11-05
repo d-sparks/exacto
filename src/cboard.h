@@ -32,6 +32,7 @@ public:
     void removeKingsideCastlingRights(bool color);
     void grantQueensideCastlingRights(bool color);
     void grantKingsideCastlingRights(bool color);
+    bool inCheck();
     bool operator==(const CBoard &other) const;
 
     // Constructor and destructor

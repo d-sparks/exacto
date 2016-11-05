@@ -1,7 +1,6 @@
 #pragma once
 #include "moves.h"
 
-
 #define HASH_EXACT 11
 #define HASH_BETA 10
 #define HASH_ALPHA 9

@@ -2,8 +2,8 @@
 #include "cexacto.h"
 #include "cgame.h"
 
-int CExacto::evaluate(CGame* game) {
-    int score = 0;
+int16_t CExacto::evaluate(CGame* game) {
+    int16_t score = 0;
 
     score += popcount(game->pieces[WHITE][PAWN]) * PAWN_VAL;
     score += popcount(game->pieces[WHITE][KNIGHT]) * KNIGHT_VAL;
