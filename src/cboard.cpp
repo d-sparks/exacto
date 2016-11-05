@@ -70,7 +70,7 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep) {
     memset(pieces, 0, sizeof(pieces[0][0]) * 2 * 7);
     memset(board, 0, sizeof(board[0]) * 64);
     memset(castling, 0, sizeof(castling[0]) * 2);
-    hashDigest = 0;
+    hashKey = 0;
 
     // Parse FEN board and set pieces, board arrays
     for(ind x = 0, y = 63; x < brd.length(); x++, y--) {
@@ -91,7 +91,7 @@ void CBoard::setBoard(string brd, string clr, string cstl, string ep) {
     // Set color to move
     wtm = (clr == "w" || clr == "W");
     if(wtm) {
-        hashDigest = hashDigest ^ zobrist::wtm;
+        hashKey = hashKey ^ zobrist::wtm;
     }
 
     // Set castling data
@@ -129,7 +129,7 @@ bool CBoard::operator==(const CBoard &other) const {
     equal &= enPassant == other.enPassant;
     equal &= wtm == other.wtm;
     equal &= occupied == other.occupied;
-    equal &= hashDigest == other.hashDigest;
+    equal &= hashKey == other.hashKey;
 
     return equal;
 }
@@ -145,7 +145,7 @@ void CBoard::makePiece(bool color, ind piece, ind square, BB squareBB) {
     pieces[color][piece] |= squareBB;
     pieces[color][ALL] |= squareBB;
     board[square] = piece;
-    hashDigest ^= zobrist::pieces[color][piece][square];
+    hashKey ^= zobrist::pieces[color][piece][square];
 }
 
 // Assumes target square is non-empty. Does not update occupancy bitboard.
@@ -153,26 +153,26 @@ void CBoard::killPiece(bool color, ind piece, ind square, BB squareBB) {
     pieces[color][piece] &= ~squareBB;
     pieces[color][ALL] &= ~squareBB;
     board[square] = 0;
-    hashDigest ^= zobrist::pieces[color][piece][square];
+    hashKey ^= zobrist::pieces[color][piece][square];
 }
 
 // Sets the enPassant square.
 void CBoard::setEnPassant(ind square) {
     if(enPassant != 0) {
-        hashDigest ^= zobrist::en_passant[bitscan(enPassant) % 8];
+        hashKey ^= zobrist::en_passant[bitscan(enPassant) % 8];
     }
     if(square == 64) {
         enPassant = 0;
     } else {
         enPassant = exp_2(square);
-        hashDigest ^= zobrist::en_passant[square % 8];
+        hashKey ^= zobrist::en_passant[square % 8];
     }
 }
 
 // Unsets the queenside castling rights for the color to move.
 void CBoard::removeQueensideCastlingRights(bool color) {
     if(castling[color] & masks::FILE[5]) {
-        hashDigest ^= zobrist::castling[color][QUEENSIDE];
+        hashKey ^= zobrist::castling[color][QUEENSIDE];
         castling[color] &= ~masks::FILE[5];
     }
 }
@@ -180,7 +180,7 @@ void CBoard::removeQueensideCastlingRights(bool color) {
 // Unsets the kingside castling rights for the color to move.
 void CBoard::removeKingsideCastlingRights(bool color) {
     if(castling[color] & masks::FILE[1]) {
-        hashDigest ^= zobrist::castling[color][KINGSIDE];
+        hashKey ^= zobrist::castling[color][KINGSIDE];
         castling[color] &= ~masks::FILE[1];
     }
 }
@@ -188,7 +188,7 @@ void CBoard::removeKingsideCastlingRights(bool color) {
 // Sets the queenside castling rights for the color to move.
 void CBoard::grantQueensideCastlingRights(bool color) {
     if(!(castling[color] & masks::FILE[5])) {
-        hashDigest ^= zobrist::castling[color][QUEENSIDE];
+        hashKey ^= zobrist::castling[color][QUEENSIDE];
         castling[color] |= exp_2(color? C1 : C8);
     }
 }
@@ -196,7 +196,7 @@ void CBoard::grantQueensideCastlingRights(bool color) {
 // Sets the kingside castling rights for the color to move.
 void CBoard::grantKingsideCastlingRights(bool color) {
     if(!(castling[color] & masks::FILE[1])) {
-        hashDigest ^= zobrist::castling[color][KINGSIDE];
+        hashKey ^= zobrist::castling[color][KINGSIDE];
         castling[color] |=  exp_2(color? G1 : G8);
     }
 }

@@ -76,5 +76,5 @@ protected:
     BB occupied;
     BB empty;
     ind board[64];
-    uint64_t hashDigest;
+    uint64_t hashKey;
 };
