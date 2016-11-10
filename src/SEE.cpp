@@ -1,22 +1,22 @@
 #pragma once
 #include "SEE.h"
-#include "cexacto_evaluate.cpp"
+#include "cexacto_evaluate.h"
+#include "cgame.h"
 #include "bb.cpp"
 #include "moves.cpp"
 #include "squares.cpp"
-#include "cgame.cpp"
 
 namespace SEE {
 
-    uint16_t pieceValues[7] = {
+    int16_t pieceValues[7] = {
         0, PAWN_VAL, KNIGHT_VAL, BISHOP_VAL, ROOK_VAL, QUEEN_VAL, MATESCORE,
     };
 
     int16_t see(CGame* game, mv move) {
         BB sourceBB = exp_2(moves::source(move));
         ind dest = moves::dest(move);
-        ind attacker = moves::attacker(move);
-        int16_t score = pieceValues[moves::defender(move)];
+        ind attacker = moves::attacker(move) % 8;
+        int16_t score = pieceValues[moves::defender(move) % 8];
 
         makeMove(game, sourceBB, attacker);
         score -= next(game, pieceValues[attacker], dest);
@@ -55,7 +55,7 @@ namespace SEE {
         do {
             bool wtm = board->wtm;
             // Pawns
-            candidates = masks::PAWN_CHECKS[!wtm][square] & board->pieces[wtm][PAWN];
+            candidates = masks::PAWN_CHECKS[wtm][square] & board->pieces[wtm][PAWN];
             if(candidates != 0) break;
             // Knights
             candidates = masks::KNIGHT_MOVES[square] & board->pieces[wtm][KNIGHT];
