@@ -3,6 +3,7 @@
 #include "moves.h"
 #include "pieces.h"
 #include "bb.h"
+#include "SEE.h"
 
 using namespace std;
 
@@ -13,6 +14,12 @@ class CBoard {
 public:
     // For debugging
     void print();
+
+    // For SEE
+    friend int16_t SEE::next(CBoard* board, int16_t previousVal, ind square);
+    friend void SEE::makeMove(CBoard* board, BB sourceBB, ind attacker);
+    friend void SEE::unmakeMove(CBoard* board, BB sourceBB, ind attacker);
+    friend ind SEE::leastValuableAttackerSquare(CBoard* board, ind square);
 
     // The interface
     void setBoard(

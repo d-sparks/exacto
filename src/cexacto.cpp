@@ -14,7 +14,7 @@ CExacto::~CExacto() {
 }
 
 void CExacto::go(CGame* game) {
-    search(game, -10000, 10000, 3);
+    cout << "Value: " << search(game, -INFNTY, INFNTY, 3, 0) << endl;
     mv move = hash.getSugg(game->hashKey);
     std::cout << moves::algebraic(move) << endl;
     game->makeMove(&move);

@@ -26,10 +26,9 @@ int main() {
     CExacto exacto(game);
     magics::populateRookTables();
     magics::populateBishopTables();
-    masks::generateOpposite();
-    masks::generateInterceding();
+    masks::init();
 
-    cout << exacto.search(&game, -10000, 10000, 3) << endl;
+    cout << exacto.search(&game, -10000, 10000, 3, 0) << endl;
 
     string userInput;
 
