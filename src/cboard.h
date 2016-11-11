@@ -42,6 +42,8 @@ public:
     bool inCheck();
     bool operator==(const CBoard &other) const;
 
+    uint64_t hashKey;
+
     // Constructor and destructor
     CBoard(
         string brd="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
@@ -84,5 +86,4 @@ protected:
     BB occupied;
     BB empty;
     ind board[64];
-    uint64_t hashKey;
 };

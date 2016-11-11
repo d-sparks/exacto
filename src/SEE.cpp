@@ -55,7 +55,7 @@ namespace SEE {
         do {
             bool wtm = board->wtm;
             // Pawns
-            candidates = masks::PAWN_CHECKS[wtm][square] & board->pieces[wtm][PAWN];
+            candidates = masks::PAWN_CHECKS[!wtm][square] & board->pieces[wtm][PAWN];
             if(candidates != 0) break;
             // Knights
             candidates = masks::KNIGHT_MOVES[square] & board->pieces[wtm][KNIGHT];
