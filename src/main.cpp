@@ -29,6 +29,7 @@ int main() {
     masks::init();
 
     cout << exacto.search(&game, -10000, 10000, 3, 0) << endl;
+    cout << exacto.search(&game, -10000, 10000, 4, 0) << endl;
 
     string userInput;
 

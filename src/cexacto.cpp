@@ -43,3 +43,22 @@ void CExacto::sortMoves(CGame* game, mv* moves) {
         scores[j] = score;
     }
 }
+
+void CExacto::sortCaps(CGame* game, mv* moves) {
+    int numMoves = 0;
+    while(moves[numMoves]) {
+        numMoves++;
+    }
+    int16_t scores[numMoves];
+    for(int i = 0; i < numMoves; i++) {
+        mv move = moves[i];
+        int16_t score = SEE::see(game, move);
+        int j = i;
+        for(; j > 0 && score > scores[j-1]; j--) {
+            scores[j] = scores[j - 1];
+            moves[j] = moves[j - 1];
+        }
+        moves[j] = move;
+        scores[j] = score;
+    }
+}

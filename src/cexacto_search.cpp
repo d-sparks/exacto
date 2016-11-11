@@ -39,6 +39,9 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
         return game->inCheck()? -MATESCORE + ply : DRAWSCORE;
     }
 
+    // Sort the moves
+    sortMoves(game, mvs);
+
     // PVS algorithm: iterate over each child, recurse.
     for(ind i = 0; mvs[i]; i++) {
         mv move = mvs[i];
@@ -102,6 +105,9 @@ int16_t CExacto::qsearch(CGame* game, int16_t alpha, int16_t beta, int16_t ply) 
     } else {
         game->capGen(mvs);
     }
+
+    // Sort moves
+    sortCaps(game, mvs);
 
     // This is basic alphabeta.
     for(ind i = 0; mvs[i]; i++) {

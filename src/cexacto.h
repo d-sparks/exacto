@@ -11,6 +11,7 @@ public:
     int16_t search(CGame* game, int16_t alpha, int16_t beta, int16_t depth, int16_t ply);
     int16_t qsearch(CGame* game, int16_t alpha, int16_t beta, int16_t ply);
     void sortMoves(CGame* game, mv* moves);
+    void sortCaps(CGame* game, mv* moves);
 
     // Presumably later the constructor will accept hash table size and parallelism.
     CExacto(CGame initGame);
