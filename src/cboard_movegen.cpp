@@ -397,7 +397,7 @@ void CBoard::evasionGen(mv **moveList, BB enemyAttacks, BB pins, ind kingSquare)
             kingMoves &= x - 1;
         }
     }
-    serialize(moveList, kingMoves, kingSquare);
+    serialize(moveList, kingMoves, kingSquare, KING_MOVE);
 }
 
 // Gets the pieces that are currently pinned to the king by a diagonally moving piece.

@@ -932,8 +932,8 @@ int testEvasionGen() {
     expectedMoves[3] = moves::make(F5, F6, PAWN, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[4] = moves::make(G4, F6, KNIGHT, NONE, NONE, NONE, REGULAR_MOVE);
     expectedMoves[5] = moves::make(F8, F6, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);
-    expectedMoves[6] = moves::make(G6, F7, KING, NONE, NONE, NONE, REGULAR_MOVE);
-    expectedMoves[7] = moves::make(G6, G5, KING, NONE, NONE, NONE, REGULAR_MOVE);
+    expectedMoves[6] = moves::make(G6, F7, KING, NONE, NONE, NONE, KING_MOVE);
+    expectedMoves[7] = moves::make(G6, G5, KING, NONE, NONE, NONE, KING_MOVE);
     sort(begin(moveList), end(moveList));
     sort(begin(expectedMoves), end(expectedMoves));
     ASSERT(!memcmp(moveList, expectedMoves, sizeof(moveList[0]) * 256), "Incorrect evasions");

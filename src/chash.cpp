@@ -7,6 +7,7 @@ CHash::CHash(int sizeInMB) {
     flag = NULL;
     depth = NULL;
     val = NULL;
+    entries = 0;
     setDimension(sizeInMB);
 }
 
@@ -15,28 +16,12 @@ CHash::~CHash() {
 }
 
 void CHash::setDimension(int sizeInMB) {
-    delete lock;
-    delete sugg;
-    delete depth;
-    delete flag;
-    delete val;
     if(sizeInMB > 0) {
         // Number of entries is sizeInMB * 1024^2 / (8 + 4 + 1 + 2 + 2)
         // or 61680 * sizeInMB;
         entries = 1024 * 1024 * sizeInMB / 17;
-        lock = new uint64_t[entries];
-        sugg = new mv[entries];
-        depth = new int16_t[entries];
-        flag = new uint8_t[entries];
-        val = new int16_t[entries];
-        for(int i = 0; i < entries; i++) {
-            lock[i] = 0;
-            sugg[i] = 0;
-            flag[i] = 0;
-            depth[i] = 0;
-            val[i] = 0;
-        }
     }
+    clearTable();
 }
 
 void CHash::record(uint64_t key, mv sugg, int16_t depth, uint8_t flag, int16_t val) {
@@ -65,3 +50,24 @@ uint8_t CHash::probe(uint64_t key, int16_t depth) {
     return HASH_MISS;
 }
 
+void CHash::clearTable() {
+    delete lock;
+    delete sugg;
+    delete depth;
+    delete flag;
+    delete val;
+    if(entries > 0) {
+        lock = new uint64_t[entries];
+        sugg = new mv[entries];
+        depth = new int16_t[entries];
+        flag = new uint8_t[entries];
+        val = new int16_t[entries];
+        for(int i = 0; i < entries; i++) {
+            lock[i] = 0;
+            sugg[i] = 0;
+            flag[i] = 0;
+            depth[i] = 0;
+            val[i] = 0;
+        }
+    }
+}
