@@ -7,6 +7,10 @@
 //   - Transposition table pruning
 //   - TODO: many more
 int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth, int16_t ply) {
+
+    // Time management
+    nodes++;
+
     // Transposition table pruning.
     uint8_t hashLookup = hash.probe(game->hashKey, depth);
     if(hashLookup) {
@@ -46,7 +50,7 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
     for(ind i = 0; mvs[i]; i++) {
         mv move = mvs[i];
         game->makeMove(&move);
-        int score = -search(game, -beta, -alpha, depth - 1, ply + 1);
+        int score = -search(game, -beta, -bestScore, depth - 1, ply + 1);
         game->unmakeMove(move);
 
         // If score >= beta, the opponent has a better move than the one they played, so we can stop
@@ -81,6 +85,10 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
 // traversed, things like checks, pawn promotions and captures. In the event of being in check, all
 // evasions are searched.
 int16_t CExacto::qsearch(CGame* game, int16_t alpha, int16_t beta, int16_t ply) {
+
+    // Time control
+    nodes++;
+
     // Check for a draw by repition or 50 move rule.
     if(drawnByRepitionOr50MoveRule(game)) {
         return DRAWSCORE;

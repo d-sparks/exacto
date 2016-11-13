@@ -159,13 +159,13 @@ void CBoard::killPiece(bool color, ind piece, ind square, BB squareBB) {
 // Sets the enPassant square.
 void CBoard::setEnPassant(ind square) {
     if(enPassant != 0) {
-        hashKey ^= zobrist::en_passant[bitscan(enPassant) % 8];
+        hashKey ^= zobrist::en_passant[squares::file(bitscan(enPassant))];
     }
     if(square == 64) {
         enPassant = 0;
     } else {
         enPassant = exp_2(square);
-        hashKey ^= zobrist::en_passant[square % 8];
+        hashKey ^= zobrist::en_passant[squares::file(square)];
     }
 }
 

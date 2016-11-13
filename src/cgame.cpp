@@ -43,9 +43,9 @@ void CGame::makeMove(mv * m) {
     mv enPassantFile = 9;
     if(enPassant) {
         enPassantFile = squares::file(bitscan(enPassant));
-        *m |= enPassantFile << 18;
         setEnPassant();
     }
+    *m |= enPassantFile << 18;
 
     // Special move stuff
     switch(special) {

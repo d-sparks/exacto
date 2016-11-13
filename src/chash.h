@@ -20,6 +20,7 @@ public:
     void setDimension(int sizeInMB);
     void record(uint64_t key, mv sugg, int16_t depth, uint8_t flag, int16_t val);
     uint8_t probe(uint64_t key, int16_t depth);
+    void clearTable();
     // These do not check the key matches the lock
     inline int16_t getVal(uint64_t key) { return val[key % entries]; };
     inline mv getSugg(uint64_t key) { return sugg[key % entries]; };
