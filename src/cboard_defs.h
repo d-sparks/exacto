@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include <string>
 #include "bb.h"
 
 #define WHITE 1
