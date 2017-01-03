@@ -46,12 +46,26 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
     // Sort the moves
     sortMoves(game, mvs);
 
+#ifdef _DEBUG
+    CGame reference = game;
+#endif
+
     // PVS algorithm: iterate over each child, recurse.
     for(ind i = 0; mvs[i]; i++) {
         mv move = mvs[i];
         game->makeMove(&move);
         int score = -search(game, -beta, -bestScore, depth - 1, ply + 1);
         game->unmakeMove(move);
+
+#ifdef _DEBUG
+        if (game != reference) {
+            print();
+            for (ind j = 0; mvs[j]; j++) {
+                cout << moves::algebraic(mvs[j]) << endl;
+            }
+            throw 1;
+        }
+#endif
 
         // If score >= beta, the opponent has a better move than the one they played, so we can stop
         // searching. We note in the transposition table that we only have a lower bound on the
