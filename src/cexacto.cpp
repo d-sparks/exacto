@@ -9,7 +9,10 @@
 
 CExacto::CExacto(CGame initGame) {
   game = initGame;
+  post = false;
+#ifndef _DEBUG
   post = true;
+#endif
 }
 
 CExacto::~CExacto() {}
@@ -58,7 +61,12 @@ void CExacto::go(CGame* game) {
     }
   }
 
+#ifndef _DEBUG
   cout << "move " << moves::algebraic(bestMove) << endl;
+#endif
+#ifdef _DEBUG
+  cout << " usermove " << moves::algebraic(bestMove);
+#endif
   game->makeMove(&bestMove);
 }
 

@@ -3,7 +3,7 @@ CC := c++
 CFLAGS := -std=c++0x -O3
 TESTS := $(shell ls -d test/*cpp | sed -e "s/test\///g" | sed -e "s/.cpp//g")
 
-.PHONY: build run test clean $(TESTS)
+.PHONY: build run test clean debug $(TESTS)
 
 all: build
 
@@ -15,7 +15,13 @@ run: build
 
 clean:
 	rm -rf bin
+	rm -rf util/bin
 	rm -rf test/bin
+
+debug: clean
+	@mkdir -p util/bin
+	$(CC) $(CFLAGS) -o util/bin/debug util/debug.cpp
+	@util/bin/debug
 
 bin:
 	mkdir -p bin

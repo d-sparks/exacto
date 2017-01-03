@@ -48,7 +48,7 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
   sortMoves(game, mvs);
 
 #ifdef _DEBUG
-  CGame reference = game;
+  CGame reference = *game;
 #endif
 
   // PVS algorithm: iterate over each child, recurse.
@@ -59,8 +59,11 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
     game->unmakeMove(move);
 
 #ifdef _DEBUG
-    if (game != reference) {
-      print();
+    if (!(*game == reference)) {
+      cout << endl << "Game: " << endl;
+      game->print();
+      cout << "Reference: " << endl;
+      reference.print();
       for (ind j = 0; mvs[j]; j++) {
         cout << moves::algebraic(mvs[j]) << endl;
       }
@@ -69,10 +72,8 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
 #endif
 
     // If score >= beta, the opponent has a better move than the one they
-    // played, so we can stop
-    // searching. We note in the transposition table that we only have a lower
-    // bound on the
-    // score of this node. (Fail high.)
+    // played, so we can stop searching. We note in the transposition table that
+    // we only have a lower bound on the score of this node. (Fail high.)
     if (score >= beta) {
       hash.record(game->hashKey, bestMove, depth, score, HASH_BETA);
       return score;
@@ -86,10 +87,8 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
   }
 
   // If bestScore == alpha, no move improved alpha, meaning we can't be sure a
-  // descendent didn't
-  // fail high, so we note that we only know an upper bound on the score for
-  // this node. (Fail
-  // low.)
+  // descendent didn't fail high, so we note that we only know an upper bound on
+  // the score for this node. (Fail low.)
   if (bestScore == alpha) {
     hash.record(game->hashKey, bestMove, depth, alpha, HASH_ALPHA);
     return alpha;
@@ -101,10 +100,8 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
 }
 
 // qsearch ("quiescence search") is alphabeta except that only exciting or
-// "loud" nodes are
-// traversed, things like checks, pawn promotions and captures. In the event of
-// being in check, all
-// evasions are searched.
+// "loud" nodes are traversed, things like checks, pawn promotions and captures.
+// In the event of being in check, all evasions are searched.
 int16_t CExacto::qsearch(CGame* game, int16_t alpha, int16_t beta,
                          int16_t ply) {
   // Time control
