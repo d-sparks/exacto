@@ -46,12 +46,12 @@ int testSortMoves() {
       {moves::make(G7, E5, BISHOP, NONE, NONE, NONE, NONE), -BISHOP_VAL}};
   exacto.hash.record(game.hashKey, expected[0].first, 1, HASH_EXACT, 0);
   exacto.sortMoves(&game, moveList);
+  ASSERT(game == gameRef, "Corrupted position");
   for (int i = 0; i < 8; i++) {
     cout << "..." << moves::algebraic(moveList[i]) << " should be "
          << moves::algebraic(expected[i].first) << endl;
     ASSERT(moveList[i] == expected[i].first, "Bad move sort");
   }
-  ASSERT(game == gameRef, "Corrupted position");
 
   return 1;
 }

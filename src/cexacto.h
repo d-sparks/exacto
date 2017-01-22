@@ -23,6 +23,9 @@ class CExacto {
   CHash hash;
   CGame game;
 
+  // TODO: maybe move out of this class
+  string extractPV(CGame* game, int depth);
+
  protected:
   bool post;
   bool terminateSearch;

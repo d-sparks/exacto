@@ -130,6 +130,7 @@ void CGame::makeMove(mv *m) {
   }
 
   wtm = !wtm;
+  hashKey ^= zobrist::wtm;
   occupied = pieces[WHITE][ALL] | pieces[BLACK][ALL];
 }
 
@@ -143,6 +144,7 @@ void CGame::unmakeMove(mv m) {
   BB sourceBB = exp_2(source);
   BB destBB = exp_2(dest);
 
+  hashKey ^= zobrist::wtm;
   wtm = !wtm;
 
   //  Decrement half-move clock

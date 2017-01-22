@@ -2,9 +2,10 @@
 #include "cexacto.h"
 #include "cgame.h"
 
-// search is an implementation is PVS ("principle variation search") with
-// various pruning
-// heuristics:
+using namespace std;
+
+// search is an implementation of PVS ("principle variation search") with
+// various pruning heuristics:
 //   - Transposition table pruning
 //   - TODO: many more
 int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
@@ -16,7 +17,7 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
   uint8_t hashLookup = hash.probe(game->hashKey, depth);
   if (hashLookup) {
     int16_t hashVal = hash.getVal(game->hashKey);
-    if (hashLookup == HASH_EXACT ||
+    if ((hashLookup == HASH_EXACT) ||
         (hashLookup == HASH_BETA && hashVal >= beta) ||
         (hashLookup == HASH_ALPHA && hashVal < alpha)) {
       return hashVal;
@@ -60,7 +61,6 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
 
 #ifdef _DEBUG
     if (!(*game == reference)) {
-      cout << endl << "Game: " << endl;
       game->print();
       cout << "Reference: " << endl;
       reference.print();
@@ -75,7 +75,7 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
     // played, so we can stop searching. We note in the transposition table that
     // we only have a lower bound on the score of this node. (Fail high.)
     if (score >= beta) {
-      hash.record(game->hashKey, bestMove, depth, score, HASH_BETA);
+      hash.record(game->hashKey, bestMove, depth, HASH_BETA, score);
       return score;
     }
 
@@ -90,12 +90,12 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
   // descendent didn't fail high, so we note that we only know an upper bound on
   // the score for this node. (Fail low.)
   if (bestScore == alpha) {
-    hash.record(game->hashKey, bestMove, depth, alpha, HASH_ALPHA);
+    hash.record(game->hashKey, bestMove, depth, HASH_ALPHA, bestScore);
     return alpha;
   }
 
   // Record the result in the hash table and return the score.
-  hash.record(game->hashKey, bestMove, depth, bestScore, HASH_EXACT);
+  hash.record(game->hashKey, bestMove, depth, HASH_EXACT, bestScore);
   return bestScore;
 }
 

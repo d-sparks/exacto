@@ -18,7 +18,8 @@ class CHash {
   // The transposition table: 17 bytes per entry
   // Thus, a table of size N megabytes has 61680*N entries.
   void setDimension(int sizeInMB);
-  void record(uint64_t key, mv sugg, int16_t depth, uint8_t flag, int16_t val);
+  void record(uint64_t key_, mv sugg_, int16_t depth_, uint8_t flag_,
+              int16_t val_);
   uint8_t probe(uint64_t key, int16_t depth);
   void clearTable();
   // These do not check the key matches the lock
@@ -32,4 +33,11 @@ class CHash {
   uint8_t* flag;
   int16_t* depth;
   int16_t* val;
+
+  // PV table
+  uint64_t* PV_lock;
+  mv* PV_move;
+  #define PV_SIZE 32768
+  inline mv getPV(uint64_t key) { return PV_move[key % PV_SIZE]; }
+
 };

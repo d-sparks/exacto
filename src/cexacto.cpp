@@ -51,7 +51,7 @@ void CExacto::go(CGame* game) {
     if (post) {
       cout << depth << "\t";
       cout << "Score: " << score << "\t";
-      cout << "Move: " << moves::algebraic(bestMove) << "\t";
+      cout << "PV: " << extractPV(game, depth) << "\t";
       cout << "NPS: " << NPS << "\t";
       cout << "Branching: " << branchingFactor << endl;
     }
@@ -120,4 +120,35 @@ void CExacto::sortCaps(CGame* game, mv* moves) {
     moves[j] = move;
     scores[j] = score;
   }
+}
+
+string CExacto::extractPV(CGame* game, int depth) {
+  // At depth 0 or if no hash entry, return.
+  if (depth == 0 || hash.probe(game->hashKey, depth) != HASH_EXACT) {
+    return "";
+  }
+
+  // Check if hashed suggestion is legal
+  mv hashMove = hash.getSugg(game->hashKey);
+  mv PVMove = hash.getPV(game->hashKey);
+  bool hashLegal = false;
+  bool PVLegal = false;
+  mv legalMoves[256] = {0};
+  game->moveGen(legalMoves);
+  for (int i = 0; legalMoves[i]; ++i) {
+    hashLegal |= (moves::algebraic(hashMove) == moves::algebraic(legalMoves[i]));
+    hashLegal |= (moves::algebraic(PVMove) == moves::algebraic(legalMoves[i]));
+  }
+  if (!hashLegal && !PVLegal) {
+    return "";
+  }
+
+  // Recurse
+  mv move = PVLegal? PVMove : hashMove;
+  string pv = moves::algebraic(move);
+  game->makeMove(&move);
+  pv += " " + extractPV(game, depth - 1);
+  game->unmakeMove(move);
+  
+  return pv;
 }

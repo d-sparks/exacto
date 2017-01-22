@@ -9,6 +9,8 @@ CHash::CHash(int sizeInMB) {
   depth = NULL;
   val = NULL;
   entries = 0;
+  PV_lock = NULL;
+  PV_move = NULL;
   setDimension(sizeInMB);
 }
 
@@ -23,29 +25,33 @@ void CHash::setDimension(int sizeInMB) {
   clearTable();
 }
 
-void CHash::record(uint64_t key, mv sugg, int16_t depth, uint8_t flag,
-                   int16_t val) {
-  uint64_t digest = key % entries;
+void CHash::record(uint64_t key_, mv sugg_, int16_t depth_, uint8_t flag_,
+                   int16_t val_) {
+  uint64_t digest = key_ % entries;
   // collision resolution. Replace if either of these hold:
   // - Given flag > stored flag
   // - Given flag = stored flag && given depth >= stored depth
   // otherwise, mark the entry as old
-  uint8_t storedFlag = this->flag[digest];
-  if (flag > storedFlag ||
-      (flag == storedFlag && depth >= this->depth[digest])) {
-    this->lock[digest] = key;
-    this->sugg[digest] = sugg;
-    this->flag[digest] = flag;
-    this->depth[digest] = depth;
-    this->val[digest] = val;
+  uint8_t storedFlag = flag[digest];
+  if ((flag_ > storedFlag) ||
+      (flag_ == storedFlag && depth_ >= depth[digest])) {
+    lock[digest] = key_;
+    sugg[digest] = sugg_;
+    flag[digest] = flag_;
+    depth[digest] = depth_;
+    val[digest] = val_;
   } else {
-    this->flag[digest] &= MARK_AS_OLD;
+    flag[digest] &= MARK_AS_OLD;
+  }
+  if (flag_ == HASH_EXACT) {
+    PV_lock[key_ % PV_SIZE] = key_;
+    PV_move[key_ % PV_SIZE] = sugg_;
   }
 }
 
-uint8_t CHash::probe(uint64_t key, int16_t depth) {
-  uint64_t digest = key % entries;
-  if (this->lock[digest] == key && this->depth[digest] >= depth) {
+uint8_t CHash::probe(uint64_t key_, int16_t depth_) {
+  uint64_t digest = key_ % entries;
+  if (lock[digest] == key_ && depth[digest] >= depth_) {
     return flag[digest];
   }
   return HASH_MISS;
@@ -67,8 +73,16 @@ void CHash::clearTable() {
       lock[i] = 0;
       sugg[i] = 0;
       flag[i] = 0;
-      depth[i] = 0;
+      depth[i] = -1;
       val[i] = 0;
+    }
+    delete PV_lock;
+    delete PV_move;
+    PV_lock = new uint64_t[PV_SIZE];
+    PV_move = new mv[PV_SIZE];
+    for (int i = 0; i < PV_SIZE; i++) {
+      PV_lock[i] = 0;
+      PV_move[i] = 0;
     }
   }
 }
