@@ -108,7 +108,7 @@ void CBoard::pawnCaps(mv **moveList, BB pins) {
 
       // At this point we know that our king, an enemy horizontal sliding piece,
       // and our two pawns are on this rank. The pawns must be adjacent, and
-      // since we are assuming we are not in check, then  we check for this
+      // since we are assuming we are not in check, then we check for this
       // weird pin.
 
       if ((kingOnEPRank != 0) && (horizontalOnEPRank != 0) &&
@@ -417,7 +417,7 @@ void CBoard::evasionGen(mv **moveList, BB enemyAttacks, BB pins,
       ind attackerSquare = bitscan(attackers[PAWN]);
       BB candidatePawns = masks::KING_MOVES[enPassantSquare] &
                           masks::KING_MOVES[attackerSquare];
-      candidatePawns &= pieces[wtm][PAWN];
+      candidatePawns &= pieces[wtm][PAWN] & ~pins;
       if (candidatePawns) {
         serializeFromDest(moveList, candidatePawns, enPassantSquare, PAWN,
                           EN_PASSANT_CAP);
