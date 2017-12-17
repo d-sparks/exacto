@@ -33,7 +33,7 @@ func NewProcess(command, label string) process {
 	stdinChan := make(chan string)
 	go func() {
 		for s := range stdinChan {
-			fmt.Printf("send %s to %s\n", s, label)
+			fmt.Printf("send `%s` to `%s`\n", s, label)
 			_, err := stdinWriter.WriteString(s + "\n")
 			panicIfErr(err)
 			stdinWriter.Flush()
@@ -151,7 +151,6 @@ func getEngineProcess(path, label string, headerLines int, commands ...string) p
 	process.Stdin <- "force"
 	for i := 0; i < headerLines; i++ {
 		<-process.Stdout
-
 	}
 	for _, command := range commands {
 		process.Stdin <- command
@@ -160,12 +159,12 @@ func getEngineProcess(path, label string, headerLines int, commands ...string) p
 }
 
 func main() {
-	engine1 := flag.String("engine1", "", "path to engine1 executable")
-	engine2 := flag.String("engine2", "", "path to engine2 executable")
-	label1 := flag.String("label1", "engine1", "label for engine1 loglines")
-	label2 := flag.String("label2", "engine2", "label for engine2 loglines")
-	headers1 := flag.Int("headers1", 7, "number of header loglines to ignore (engine 1)")
-	headers2 := flag.Int("headers2", 7, "number of header loglines to ignore (engine 2)")
+	engine1 := flag.String("engine1", "bin/exacto", "path to engine1 executable")
+	engine2 := flag.String("engine2", "bin/exacto-0.e", "path to engine2 executable")
+	label1 := flag.String("label1", "dev", "label for engine1 loglines")
+	label2 := flag.String("label2", "master", "label for engine2 loglines")
+	headers1 := flag.Int("headers1", 8, "number of header loglines to ignore (engine 1)")
+	headers2 := flag.Int("headers2", 10, "number of header loglines to ignore (engine 2)")
 	commands1 := flag.String("commands1", "force", "comma-separated init commands (engine 1)")
 	commands2 := flag.String("commands2", "force", "comma-separated init commands (engine 2)")
 	fen := flag.String("fen", "", "fen string")
@@ -188,3 +187,4 @@ func main() {
 	go func() { process1.Stdin <- "quit" }()
 	go func() { process2.Stdin <- "quit" }()
 }
+
