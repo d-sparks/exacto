@@ -1,5 +1,11 @@
-#pragma once
+#ifndef exacto_src_moves_h
+#define exacto_src_moves_h
+
 #include <stdint.h>
+#include <string>
+
+#include "bitboard.h"
+#include "defines.h"
 
 // Moves are stored as bitstrings. The bits represent (LSB on right):
 
@@ -11,23 +17,60 @@
 // [00000011110000000000000000000000]: castling data (4 bits - KQkq)
 // [11111100000000000000000000000000]: special data (6 bits)
 
-#define REGULAR_MOVE 0
-#define PROMOTE_KNIGHT 2
-#define PROMOTE_BISHOP 3
-#define PROMOTE_ROOK 4
-#define PROMOTE_QUEEN 5
-#define DOUBLE_PAWN_MOVE_W 8
-#define DOUBLE_PAWN_MOVE_B 9
-#define EN_PASSANT_CAP 10
-#define CASTLE 11
-#define KING_MOVE 12
-#define REMOVE_KINGSIDE_CASTLING 13
-#define REMOVE_QUEENSIDE_CASTLING 14
-#define REMOVE_ALL_CASTLING 15
+namespace exacto {
 
-#define KINGSIDE 0
-#define QUEENSIDE 1
+typedef uint32_t Move;
 
-#define BOGUS_MOVE 0xfffffff
+namespace moves {
 
-typedef uint32_t mv;
+ind source(Move m);
+
+ind dest(Move m);
+
+ind attacker(Move m);
+
+ind defender(Move m);
+
+ind en_passant(Move m);
+
+ind castling(Move m);
+
+ind special(Move m);
+
+Move make(Move source,
+          Move dest,
+          Move attacker,
+          Move defender,
+          Move en_passant,
+          Move castling,
+          Move special);
+
+// Returns the algebraic notation for the given move. (E.g. e2e4.)
+std::string algebraic(Move m);
+
+// Castling is encoded into four bits in a move in the 22-25 indices,
+// representing KQkq respectively.
+Move EncodeCastling(Bitboard castling_data);
+
+// Mutates the given move by setting the relevant bit indicating castling rights
+// change.
+void EncodeKingsideCastlingChange(Move* move, bool color);
+
+// Mutates the given move by setting the relevant bit indicating castling rights
+// change.
+void EncodeQueensideCastlingChange(Move* move, bool color);
+
+// Decodes a castlingCode as outputted by EncodeCastling.
+Bitboard DecodeCastling(ind castlingCode);
+
+// Print a move
+void print(Move move);
+
+// Create a Move from cin input
+bool ReadMoveFromStdin(Move* candidateMoves, Move* output);
+
+}  // namespace squares
+
+}  // namespace exacto
+
+#endif  // exacto_src_moves_h

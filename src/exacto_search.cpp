@@ -1,22 +1,23 @@
-#pragma once
-#include "cexacto.h"
-#include "cgame.h"
+#include "exacto.h"
 
-using namespace std;
+#include "board.h"
+#include "game.h"
+
+namespace exacto {
 
 // search is an implementation of PVS ("principle variation search") with
 // various pruning heuristics:
 //   - Transposition table pruning
 //   - TODO: many more
-int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
+int16_t Exacto::Search(Game* game, int16_t alpha, int16_t beta, int16_t depth,
                         int16_t ply) {
   // Time management
   nodes++;
 
   // Transposition table pruning.
-  uint8_t hashLookup = hash.probe(game->hashKey, depth);
+  uint8_t hashLookup = hash.probe(game->hash_key, depth);
   if (hashLookup) {
-    int16_t hashVal = hash.getVal(game->hashKey);
+    int16_t hashVal = hash.get_val(game->hash_key);
     if ((hashLookup == HASH_EXACT) ||
         (hashLookup == HASH_BETA && hashVal >= beta) ||
         (hashLookup == HASH_ALPHA && hashVal < alpha)) {
@@ -25,38 +26,38 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
   }
 
   // Check for a draw by repition or 50 move rule.
-  if (drawnByRepitionOr50MoveRule(game)) {
+  if (drawn_by_repition_or_50_move_rule(game)) {
     return DRAWSCORE;
   }
 
   // At depth = 0, call qsearch to continue searching exciting moves.
   if (depth == 0) {
-    return qsearch(game, alpha, beta, ply);
+    return QSearch(game, alpha, beta, ply);
   }
 
   // Generate legal moves to determine children nodes.
-  mv mvs[256] = {0};
+  Move Moves[256] = {0};
   int bestScore = alpha;
-  mv bestMove = BOGUS_MOVE;
-  game->moveGen(mvs);
+  Move bestMove = BOGUS_MOVE;
+  game->MoveGen(Moves);
 
   // If there are no legal moves, this node is either checkmate or stalemate.
-  if (mvs[0] == NONE) {
-    return game->inCheck() ? -MATESCORE + ply : DRAWSCORE;
+  if (Moves[0] == NONE) {
+    return game->in_check() ? -MATESCORE + ply : DRAWSCORE;
   }
 
   // Sort the moves
-  sortMoves(game, mvs);
+  SortMoves(game, Moves);
 
 #ifdef _DEBUG
-  CGame reference = *game;
+  Game reference = *game;
 #endif
 
   // PVS algorithm: iterate over each child, recurse.
-  for (ind i = 0; mvs[i]; i++) {
-    mv move = mvs[i];
+  for (ind i = 0; Moves[i]; i++) {
+    Move move = Moves[i];
     game->makeMove(&move);
-    int score = -search(game, -beta, -bestScore, depth - 1, ply + 1);
+    int score = -Search(game, -beta, -bestScore, depth - 1, ply + 1);
     game->unmakeMove(move);
 
 #ifdef _DEBUG
@@ -64,8 +65,8 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
       game->print();
       cout << "Reference: " << endl;
       reference.print();
-      for (ind j = 0; mvs[j]; j++) {
-        cout << moves::algebraic(mvs[j]) << endl;
+      for (ind j = 0; Moves[j]; j++) {
+        cout << moves::algebraic(Moves[j]) << endl;
       }
       throw 1;
     }
@@ -75,7 +76,7 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
     // played, so we can stop searching. We note in the transposition table that
     // we only have a lower bound on the score of this node. (Fail high.)
     if (score >= beta) {
-      hash.record(game->hashKey, bestMove, depth, HASH_BETA, score);
+      hash.record(game->hash_key, bestMove, depth, HASH_BETA, score);
       return score;
     }
 
@@ -90,29 +91,29 @@ int16_t CExacto::search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
   // descendent didn't fail high, so we note that we only know an upper bound on
   // the score for this node. (Fail low.)
   if (bestScore == alpha) {
-    hash.record(game->hashKey, bestMove, depth, HASH_ALPHA, bestScore);
+    hash.record(game->hash_key, bestMove, depth, HASH_ALPHA, bestScore);
     return alpha;
   }
 
   // Record the result in the hash table and return the score.
-  hash.record(game->hashKey, bestMove, depth, HASH_EXACT, bestScore);
+  hash.record(game->hash_key, bestMove, depth, HASH_EXACT, bestScore);
   return bestScore;
 }
 
 // qsearch ("quiescence search") is alphabeta except that only exciting or
 // "loud" nodes are traversed, things like checks, pawn promotions and captures.
 // In the event of being in check, all evasions are searched.
-int16_t CExacto::qsearch(CGame* game, int16_t alpha, int16_t beta,
+int16_t Exacto::QSearch(Game* game, int16_t alpha, int16_t beta,
                          int16_t ply) {
   // Time control
   nodes++;
 
   // Check for a draw by repition or 50 move rule.
-  if (drawnByRepitionOr50MoveRule(game)) {
+  if (drawn_by_repition_or_50_move_rule(game)) {
     return DRAWSCORE;
   }
 
-  int16_t score = evaluate(game);
+  int16_t score = Evaluate(game);
   if (score >= beta) {
     return score;
   }
@@ -121,25 +122,25 @@ int16_t CExacto::qsearch(CGame* game, int16_t alpha, int16_t beta,
   }
 
   // If in check, search all evasions. Otherwise, only loud moves.
-  mv mvs[256] = {0};
-  if (game->inCheck()) {
-    game->moveGen(mvs);
+  Move Moves[256] = {0};
+  if (game->in_check()) {
+    game->MoveGen(Moves);
     // If no evasions exist, this node is checkmate.
-    if (mvs[0] == NONE) {
+    if (Moves[0] == NONE) {
       return -MATESCORE + ply;
     }
   } else {
-    game->capGen(mvs);
+    game->CapGen(Moves);
   }
 
   // Sort moves
-  sortCaps(game, mvs);
+  SortCaps(game, Moves);
 
   // This is basic alphabeta.
-  for (ind i = 0; mvs[i]; i++) {
-    mv move = mvs[i];
+  for (ind i = 0; Moves[i]; i++) {
+    Move move = Moves[i];
     game->makeMove(&move);
-    int score = -qsearch(game, -beta, -alpha, ply + 1);
+    int score = -QSearch(game, -beta, -alpha, ply + 1);
     game->unmakeMove(move);
     if (score >= beta) {
       return score;
@@ -151,3 +152,5 @@ int16_t CExacto::qsearch(CGame* game, int16_t alpha, int16_t beta,
 
   return alpha;
 }
+
+}  // namespace exacto

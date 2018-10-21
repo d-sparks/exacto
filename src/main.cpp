@@ -1,48 +1,55 @@
 #include <stdint.h>
 #include <iostream>
 #include <string>
-#include "bb.cpp"
-#include "cexacto.cpp"
-#include "cgame.cpp"
-#include "masks.cpp"
-#include "moves.cpp"
 
-using namespace std;
+#include "bitboard.h"
+#include "exacto.h"
+#include "defines.h"
+#include "game.h"
+#include "magics.h"
+#include "masks.h"
+#include "moves.h"
 
-// printVersion is the classic exacto greeting, dating back to 0.a.
-void printVersion(string version) {
-  cout << endl;
-  cout << "   exacto[" << version << "]          " << endl;
-  cout << " <<------------------------------->>  " << endl;
-  cout << "             by Daniel Sparks, USA    " << endl;
-  cout << endl;
-  cout << "Type 'game' for gameplay commands, or 'help' for all commands."
-       << endl;
-  cout << endl;
+using namespace exacto;
+
+namespace {
+
+// greet is the classic exacto greeting, dating back to 0.a.
+void greet(const std::string& version) {
+  std::cout << std::endl
+            << "   exacto[" << version << "]          " << std::endl
+            << " <<------------------------------->>  " << std::endl
+            << "             by Daniel Sparks, USA    " << std::endl
+            << std::endl
+            << "Type 'game' for gameplay commands, or 'help' for all commands."
+            << std::endl << std::endl;
 }
 
+}  // namespace
+
 int main() {
-  printVersion("?.?");
-  CGame game;
-  CExacto exacto(game);
+  greet("?.?");
+  Game game;
+  Exacto exacto(game);
   magics::populateRookTables();
   magics::populateBishopTables();
   masks::init();
 
-  cout << exacto.search(&game, -10000, 10000, 1, 0) << endl;
+  std::cout << exacto.Search(&game, -10000, 10000, 1, 0) << std::endl;
 
-  string userInput;
+  std::string userInput;
 
-  for (cin >> userInput; true; cin >> userInput) {
+  for (std::cin >> userInput; true; std::cin >> userInput) {
     if (userInput == "usermove") {
-      mv candidateMoves[256];
-      game.moveGen(candidateMoves);
-      mv move = moves::cinMove(candidateMoves);
+      Move candidateMoves[256];
+      game.MoveGen(candidateMoves);
+      Move move;
+      moves::ReadMoveFromStdin(candidateMoves, &move);
       game.makeMove(&move);
     }
 
     if (userInput == "go") {
-      exacto.go(&game);
+      exacto.Go(&game);
     }
 
     if (userInput == "print") {
@@ -51,28 +58,28 @@ int main() {
 
     if (userInput == "divide") {
       int depth;
-      cin >> depth;
+      std::cin >> depth;
       divide(&game, depth);
     }
 
     if (userInput == "perft") {
       int depth;
-      cin >> depth;
-      cout << perft(&game, depth) - perft(&game, depth - 1) << endl;
+      std::cin >> depth;
+      std::cout << perft(&game, depth) - perft(&game, depth - 1) << std::endl;
     }
 
     if (userInput == "clear") {
-      exacto.hash.clearTable();
+      exacto.hash.clear_table();
     }
 
     if (userInput == "setboard") {
-      string POS, WTM, CAS, EPT, HMC, FMC;
-      cin >> POS;
-      cin >> WTM;
-      cin >> CAS;
-      cin >> EPT;
-      // cin >> HMC;
-      // cin >> FMC;
+      std::string POS, WTM, CAS, EPT, HMC, FMC;
+      std::cin >> POS;
+      std::cin >> WTM;
+      std::cin >> CAS;
+      std::cin >> EPT;
+      // std::cin >> HMC;
+      // std::cin >> FMC;
       game.setBoard(POS, WTM, CAS, EPT);
     }
 

@@ -1,23 +1,25 @@
-#include "../src/chash.cpp"
+#include "../src/hash.h"
+
 #include "assert.h"
 
+using namespace exacto;
 using namespace std;
 
-// Tests that setDimensions produces appropriate number of entriesa
-int testSetDimensions() {
-  cout << "Testing setDimensions gives correct # of entries..." << endl;
+// Tests that set_dimensions produces appropriate number of entriesa
+int TestSetDimensions() {
+  cout << "Testing set_dimensions gives correct # of entries..." << endl;
 
-  CHash hash(17);
+  Hash hash(17);
   int expectedEntries = 1024 * 1024;
   ASSERT(hash.entries == expectedEntries,
-         "setDimension gives wrong # of entries");
+         "set_dimension gives wrong # of entries");
 }
 
 // Checks that a basic record works
-int testRecordHappyPath() {
+int TestRecordHappyPath() {
   cout << "Testing record records results..." << endl;
 
-  CHash hash(5);
+  Hash hash(5);
   uint64_t exampleKey = hash.entries + 1;
 
   hash.record(exampleKey, BOGUS_MOVE, 0, HASH_EXACT, 0);
@@ -25,10 +27,10 @@ int testRecordHappyPath() {
 }
 
 // Checks that flag takes precedence
-int testRecordFlagOrder() {
+int TestRecordFlagOrder() {
   cout << "Testing record respects flag precedence..." << endl;
 
-  CHash hash(5);
+  Hash hash(5);
   uint64_t exampleKey1 = hash.entries + 1;
   uint64_t exampleKey2 = 2 * hash.entries + 1;
   hash.record(exampleKey1, BOGUS_MOVE, 0, HASH_BETA, 0);
@@ -38,10 +40,10 @@ int testRecordFlagOrder() {
 }
 
 // Checks that record marks entry as old if not recording
-int testRecordMarkFlagOld() {
+int TestRecordMarkFlagOld() {
   cout << "Testing record marks flag as old if not recording..." << endl;
 
-  CHash hash(5);
+  Hash hash(5);
   uint64_t exampleKey1 = hash.entries + 1;
   uint64_t exampleKey2 = 2 * hash.entries + 1;
   hash.record(exampleKey1, BOGUS_MOVE, 0, HASH_BETA, 0);
@@ -51,10 +53,10 @@ int testRecordMarkFlagOld() {
 }
 
 // Checks that record respects depth
-int testRecordRespectsDepth() {
+int TestRecordRespectsDepth() {
   cout << "Testing record respects depth..." << endl;
 
-  CHash hash(5);
+  Hash hash(5);
   uint64_t exampleKey1 = hash.entries + 1;
   uint64_t exampleKey2 = 2 * hash.entries + 1;
   hash.record(exampleKey1, BOGUS_MOVE, 3, HASH_EXACT, 0);
@@ -66,11 +68,11 @@ int testRecordRespectsDepth() {
 int main() {
   int t = 0;
 
-  t += testSetDimensions();
-  t += testRecordHappyPath();
-  t += testRecordFlagOrder();
-  t += testRecordMarkFlagOld();
-  t += testRecordRespectsDepth();
+  t += TestSetDimensions();
+  t += TestRecordHappyPath();
+  t += TestRecordFlagOrder();
+  t += TestRecordMarkFlagOld();
+  t += TestRecordRespectsDepth();
 
   cout << endl;
   cout << t << " test(s) OK" << endl;

@@ -1,11 +1,22 @@
-#include "../src/cexacto.cpp"
-#include "../src/moves.cpp"
+#include "../src/exacto.h"
+
+#include <iostream>
+
+#include "../src/board.h"
+#include "../src/game.h"
+#include "../src/hash.h"
+#include "../src/magics.h"
+#include "../src/masks.h"
+#include "../src/moves.h"
+#include "../src/SEE.h"
+#include "../src/squares.h"
 #include "assert.h"
 
+using namespace exacto;
 using namespace std;
 
 // Tests that moves are sorted appropriately
-int testSortMoves() {
+int TestSortMoves() {
   cout << "Testing that sort moves sorts correctly..." << endl;
 
   // +---+---+---+---+---+---+---+---+
@@ -26,12 +37,12 @@ int testSortMoves() {
   // |   |   |   |   |   | b | R |[K]|
   // +---+---+---+---+---+---+---+---+
 
-  CGame game("4kr1q/6B1/7B/6P1/6P1/2p2pp1/6n1/5bRK", "w", "-", "-");
-  CGame gameRef("4kr1q/6B1/7B/6P1/6P1/2p2pp1/6n1/5bRK", "w", "-", "-");
-  CExacto exacto(game);
-  mv moveList[256] = {0};
-  game.moveGen(moveList, true);
-  pair<mv, int16_t> expected[9] = {
+  Game game("4kr1q/6B1/7B/6P1/6P1/2p2pp1/6n1/5bRK", "w", "-", "-");
+  Game gameRef("4kr1q/6B1/7B/6P1/6P1/2p2pp1/6n1/5bRK", "w", "-", "-");
+  Exacto exacto(game);
+  Move move_list[256] = {0};
+  game.MoveGen(move_list, true);
+  pair<Move, int16_t> expected[9] = {
       {moves::make(G7, D4, BISHOP, NONE, NONE, NONE, NONE), MATESCORE},
       {moves::make(G7, H8, BISHOP, QUEEN, NONE, NONE, NONE),
        QUEEN_VAL - BISHOP_VAL},
@@ -44,13 +55,13 @@ int testSortMoves() {
       {moves::make(G1, G2, ROOK, KNIGHT, NONE, NONE, NONE),
        KNIGHT_VAL - ROOK_VAL},
       {moves::make(G7, E5, BISHOP, NONE, NONE, NONE, NONE), -BISHOP_VAL}};
-  exacto.hash.record(game.hashKey, expected[0].first, 1, HASH_EXACT, 0);
-  exacto.sortMoves(&game, moveList);
+  exacto.hash.record(game.hash_key, expected[0].first, 1, HASH_EXACT, 0);
+  exacto.SortMoves(&game, move_list);
   ASSERT(game == gameRef, "Corrupted position");
   for (int i = 0; i < 8; i++) {
-    cout << "..." << moves::algebraic(moveList[i]) << " should be "
+    cout << "..." << moves::algebraic(move_list[i]) << " should be "
          << moves::algebraic(expected[i].first) << endl;
-    ASSERT(moveList[i] == expected[i].first, "Bad move sort");
+    ASSERT(move_list[i] == expected[i].first, "Bad move sort");
   }
 
   return 1;
@@ -63,7 +74,7 @@ int main() {
   magics::populateRookTables();
   masks::init();
 
-  t += testSortMoves();
+  t += TestSortMoves();
 
   cout << endl;
   cout << t << " test(s) OK" << endl;

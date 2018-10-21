@@ -1,15 +1,18 @@
-#pragma once
+#include "masks.h"
+
 #include <map>
-#include "cboard.h"
+
+#include "board.h"
 #include "inlines.h"
 
-using namespace std;
+namespace exacto {
 
 namespace masks {
 
 // Increments square by a delta and returns true if that square is still on the
 // board.
-bool wrapIter(int *square, int delta) {
+// TODO: move this to a better place
+bool WrapIter(int *square, int delta) {
   *square += delta;
   // Check for overflowing on the top or bottom of the board
   bool wrapped = *square < 0 || *square >= 64;
@@ -20,17 +23,26 @@ bool wrapIter(int *square, int delta) {
   return !wrapped;
 }
 
-BB promoRank(bool color) {
-  return color ? (BB)0xFF00000000000000 : (BB)0x00000000000000FF;
+// Initialize dynamically set mask tables.
+void init() {
+  GenerateInterceding();
+  GenerateOpposite();
+  GeneratePawnChecks();
 }
 
-BB const RANK[8] = {0x00000000000000FF, 0x000000000000FF00, 0x0000000000FF0000,
-                    0x00000000FF000000, 0x000000FF00000000, 0x0000FF0000000000,
-                    0x00FF000000000000, 0xFF00000000000000};
+Bitboard promo_rank(bool color) {
+  return color ? (Bitboard)0xFF00000000000000 : (Bitboard)0x00000000000000FF;
+}
 
-BB const FILE[8] = {0x0101010101010101, 0x0202020202020202, 0x0404040404040404,
-                    0x0808080808080808, 0x1010101010101010, 0x2020202020202020,
-                    0x4040404040404040, 0x8080808080808080};
+const Bitboard RANK[8] = {0x00000000000000FF, 0x000000000000FF00,
+                          0x0000000000FF0000, 0x00000000FF000000,
+                          0x000000FF00000000, 0x0000FF0000000000,
+                          0x00FF000000000000, 0xFF00000000000000};
+
+const Bitboard FILE[8] = {0x0101010101010101, 0x0202020202020202,
+                          0x0404040404040404, 0x0808080808080808,
+                          0x1010101010101010, 0x2020202020202020,
+                          0x4040404040404040, 0x8080808080808080};
 
 // Knight moves[i] 0 0 0 0 0 0 0 0 King moves[i] 0 0 0 0 0 0 0 0
 //                 0 0 0 1 0 1 0 0               0 0 1 1 1 0 0 0
@@ -41,7 +53,7 @@ BB const FILE[8] = {0x0101010101010101, 0x0202020202020202, 0x0404040404040404,
 //                 0 0 0 0 0 0 0 0               0 0 0 0 0 0 0 0
 //                 0 0 0 0 0 0 0 0               0 0 0 0 0 0 0 0
 
-BB const KNIGHT_MOVES[64] = {
+const Bitboard KNIGHT_MOVES[64] = {
     0x0000000000020400, 0x0000000000050800, 0x00000000000a1100,
     0x0000000000142200, 0x0000000000284400, 0x0000000000508800,
     0x0000000000a01000, 0x0000000000402000, 0x0000000002040004,
@@ -65,7 +77,7 @@ BB const KNIGHT_MOVES[64] = {
     0x0044280000000000, 0x0088500000000000, 0x0010a00000000000,
     0x0020400000000000};
 
-BB const KING_MOVES[64] = {
+const Bitboard KING_MOVES[64] = {
     0x0000000000000302, 0x0000000000000705, 0x0000000000000e0a,
     0x0000000000001c14, 0x0000000000003828, 0x0000000000007050,
     0x000000000000e0a0, 0x000000000000c040, 0x0000000000030203,
@@ -98,7 +110,7 @@ BB const KING_MOVES[64] = {
 //                 0 0 0 0 0 0 0 0               1 0 0 0 0 0 0 0
 //                 0 0 0 0 0 0 0 0               0 0 0 0 0 0 0 0
 
-BB const BISHOP_MASKS[64] = {
+const Bitboard BISHOP_MASKS[64] = {
     0x0040201008040200, 0x0000402010080400, 0x0000004020100a00,
     0x0000000040221400, 0x0000000002442800, 0x0000000204085000,
     0x0000020408102000, 0x0002040810204000, 0x0020100804020000,
@@ -122,7 +134,7 @@ BB const BISHOP_MASKS[64] = {
     0x0028440200000000, 0x0050080402000000, 0x0020100804020000,
     0x0040201008040200};
 
-BB const ROOK_MASKS[64] = {
+Bitboard const ROOK_MASKS[64] = {
     0x000101010101017e, 0x000202020202027c, 0x000404040404047a,
     0x0008080808080876, 0x001010101010106e, 0x002020202020205e,
     0x004040404040403e, 0x008080808080807e, 0x0001010101017e00,
@@ -155,16 +167,16 @@ BB const ROOK_MASKS[64] = {
 //                   0 0 0 0 0 0 0 0                0 0 0 0 0 0 1 0
 //                   0 0 0 0 0 0 0 0                0 0 0 0 0 0 0 1
 
-BB INTERCEDING[64][64] = {0};
-BB OPPOSITE[64][64] = {0};
+Bitboard INTERCEDING[64][64] = {0};
+Bitboard OPPOSITE[64][64] = {0};
 
-void generateInterceding() {
+void GenerateInterceding() {
   int deltas[8] = {-1, -7, -8, -9, 1, 9, 8, 7};
   for (ind source = 0; source < 64; source++) {
     for (ind direction = 0; direction < 8; direction++) {
       int dest = source;
-      BB interceding = 0;
-      while (wrapIter(&dest, deltas[direction])) {
+      Bitboard interceding = 0;
+      while (WrapIter(&dest, deltas[direction])) {
         INTERCEDING[source][dest] = interceding;
         interceding |= exp_2(dest);
       }
@@ -172,21 +184,21 @@ void generateInterceding() {
   }
 }
 
-void generateOpposite() {
+void GenerateOpposite() {
   int deltas[8] = {-1, -7, -8, -9, 1, 9, 8, 7};
   for (ind dest = 0; dest < 64; dest++) {
     for (ind direction = 0; direction < 8; direction++) {
-      BB opposite = 0;
+      Bitboard opposite = 0;
 
       // Set the "opposite" bits
       int t = dest;
-      while (wrapIter(&t, -deltas[direction])) {
+      while (WrapIter(&t, -deltas[direction])) {
         opposite |= exp_2(t);
       }
 
       // Fill OPPOSITE with this bitmap for each source square.
       int source = dest;
-      while (wrapIter(&source, deltas[direction])) {
+      while (WrapIter(&source, deltas[direction])) {
         OPPOSITE[source][dest] = opposite;
       }
     }
@@ -203,11 +215,11 @@ void generateOpposite() {
 //                      0 0 0 0 0 0 0 0                      0 0 0 0 0 0 0 0
 //                      0 0 0 0 0 0 0 0                      0 0 0 0 0 0 0 0
 
-BB PAWN_CHECKS[2][64] = {0};
+Bitboard PAWN_CHECKS[2][64] = {0};
 
-void generatePawnChecks() {
+void GeneratePawnChecks() {
   for (int i = 0; i < 64; i++) {
-    BB square = exp_2(i);
+    Bitboard square = exp_2(i);
     PAWN_CHECKS[WHITE][i] =
         ((square & ~FILE[0]) << 7) | ((square & ~FILE[7]) << 9);
     PAWN_CHECKS[BLACK][i] =
@@ -215,10 +227,6 @@ void generatePawnChecks() {
   }
 }
 
-// Initialize dynamically set mask tables.
-void init() {
-  generateInterceding();
-  generateOpposite();
-  generatePawnChecks();
-}
-};
+}  // namespace masks
+
+}  // namespace exacto

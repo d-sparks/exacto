@@ -1,20 +1,20 @@
-#include "../src/masks.cpp"
-#include "../src/bb.h"
+#include "../src/masks.h"
+#include "../src/bitboard.h"
 #include "../src/squares.h"
 #include "assert.h"
 
-using namespace std;
+using namespace exacto;
 
-// Test generateInterceding
+// Test GenerateInterceding
 int testGenerateInterceding() {
-  cout << "Testing generateInterceding..." << endl;
+  cout << "Testing GenerateInterceding..." << endl;
 
-  BB expectedA8H1 =
+  Bitboard expectedA8H1 =
       0b0000000001000000001000000001000000001000000001000000001000000000;
-  BB expectedE4G4 =
+  Bitboard expectedE4G4 =
       0b0000000000000000000000000000000000000100000000000000000000000000;
-  BB expectedE5G4 = 0;
-  masks::generateInterceding();
+  Bitboard expectedE5G4 = 0;
+  masks::GenerateInterceding();
   ASSERT(masks::INTERCEDING[A8][H1] == expectedA8H1,
          "Wrong 'interceding squares' mask for A8,H1");
   ASSERT(masks::INTERCEDING[H1][A8] == expectedA8H1,
@@ -31,16 +31,16 @@ int testGenerateInterceding() {
   return 1;
 }
 
-// Test generateOpposite
+// Test GenerateOpposite
 int testGenerateOpposite() {
-  cout << "Testing generateOpposite..." << endl;
+  cout << "Testing GenerateOpposite..." << endl;
 
-  BB expectedA8B7 =
+  Bitboard expectedA8B7 =
       0b0000000000000000001000000001000000001000000001000000001000000001;
-  BB expectedF1G1 =
+  Bitboard expectedF1G1 =
       0b0000000000000000000000000000000000000000000000000000000000000001;
-  BB expectedE5G4 = 0;
-  masks::generateOpposite();
+  Bitboard expectedE5G4 = 0;
+  masks::GenerateOpposite();
   ASSERT(masks::OPPOSITE[A8][B7] == expectedA8B7,
          "Wrong 'opposite squares' mask for A8,B7");
   ASSERT(masks::OPPOSITE[F1][G1] == expectedF1G1,

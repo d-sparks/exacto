@@ -1,23 +1,18 @@
-#pragma once
+#include "magics.h"
+
 #include <vector>
-#include "bb.cpp"
+
+#include "bitboard.h"
+#include "defines.h"
 #include "inlines.h"
-#include "masks.cpp"
+#include "masks.h"
 
-using namespace std;
-
-#define BISHOP_MAGIC_BITS 9
-#define BISHOP_SHIFT 55  // 64-BISHOP_MAGIC_BITS
-#define EXP2_BISHOP_MAGIC_BITS 512
-#define ROOK_MAGIC_BITS 12
-#define ROOK_SHIFT 52  // 64-ROOK_MAGIC_BITS
-#define EXP2_ROOK_MAGIC_BITS 4096
+namespace exacto {
 
 namespace magics {
 
-// 9 bit bishop magics (generated with exacto 0.e)
-BB BISHOP_MOVES[64][EXP2_BISHOP_MAGIC_BITS];
-BB const BISHOP_MAGICS[64] = {
+Bitboard BISHOP_MOVES[64][EXP2_BISHOP_MAGIC_BITS];
+const Bitboard BISHOP_MAGICS[64] = {
     0x0150510001100a407, 0x01020040820240400, 0x04801400808800208,
     0x020469c0108004001, 0x00002390084002941, 0x011a120201808041c,
     0x00185000b00900080, 0x00801801080984001, 0x00040022a84420201,
@@ -42,8 +37,8 @@ BB const BISHOP_MAGICS[64] = {
     0x00000508204090680};
 
 // 11 bit rook magics (generated with exaxcto 0.e)
-BB ROOK_MOVES[64][EXP2_ROOK_MAGIC_BITS];
-BB const ROOK_MAGICS[64] = {
+Bitboard ROOK_MOVES[64][EXP2_ROOK_MAGIC_BITS];
+Bitboard const ROOK_MAGICS[64] = {
     0x00a8002c000108020, 0x00100084000802070, 0x08180048020009000,
     0x00102002110000800, 0x00100023302040800, 0x0220012000884b108,
     0x02010158412000040, 0x00880004024800100, 0x01a41800010400020,
@@ -68,34 +63,34 @@ BB const ROOK_MAGICS[64] = {
     0x0800011040280c422};
 
 // The magic formula, helper for bishops
-BB hashBishop(BB bb, ind square) {
+Bitboard hashBishop(Bitboard bb, ind square) {
   return (bb * BISHOP_MAGICS[square]) >> BISHOP_SHIFT;
 }
 
 // The magic formula, helper for rooks
-BB hashRook(BB bb, ind square) {
+Bitboard hashRook(Bitboard bb, ind square) {
   return (bb * ROOK_MAGICS[square]) >> ROOK_SHIFT;
 }
 
-// bishopMoves gives the moves for a bishop given an occupancy bitboard and a
+// bishopMoves gives the moves for a bishop given an occupancy Bitboard and a
 // square
-BB bishopMoves(ind square, BB occupancy) {
+Bitboard bishopMoves(ind square, Bitboard occupancy) {
   occupancy &= masks::BISHOP_MASKS[square];
   return BISHOP_MOVES[square][hashBishop(occupancy, square)];
 }
 
-// rookMoves gives the moves for a bishop given an occupancy bitboard and a
+// rookMoves gives the moves for a bishop given an occupancy Bitboard and a
 // square
-BB rookMoves(ind square, BB occupancy) {
+Bitboard rookMoves(ind square, Bitboard occupancy) {
   occupancy = occupancy & masks::ROOK_MASKS[square];
   return ROOK_MOVES[square][hashRook(occupancy, square)];
 }
 
 // generateSubsets finds all sub-bitstrings of a given bitstring. It is used to
-// generate occupancy bitboards for magics. It works by going through indices x
+// generate occupancy Bitboards for magics. It works by going through indices x
 // = 0, ..., 2^(popcount(b)) - 1, associating each such x to a sub-bitstring of
 // b by shifting the bits of x to the indexes of the nonzero bits of b.
-void generateSubsets(BB b, vector<BB>* subsets) {
+void generateSubsets(Bitboard b, std::vector<Bitboard>* subsets) {
   ind pop = popcount(b);
 
   ind indices[pop];
@@ -106,8 +101,8 @@ void generateSubsets(BB b, vector<BB>* subsets) {
     b &= ~exp_2(i);
   }
 
-  for (BB x = 0; x < exp_2(pop); x++) {
-    BB subset = 0;
+  for (Bitboard x = 0; x < exp_2(pop); x++) {
+    Bitboard subset = 0;
     for (ind i = 0; i < pop; i++) {
       if (x & exp_2(i)) {
         subset |= exp_2(indices[i]);
@@ -117,16 +112,16 @@ void generateSubsets(BB b, vector<BB>* subsets) {
   }
 }
 
-// Generate the moves for a given occupancy bitboard, square and set of
+// Generate the moves for a given occupancy Bitboard, square and set of
 // directions.
-BB generateMovesFromOccupancy(ind square, BB occupancy, BB mask,
+Bitboard generateMovesFromOccupancy(ind square, Bitboard occupancy, Bitboard mask,
                               int directionDeltas[4]) {
-  BB moveBoard = 0;
+  Bitboard moveBoard = 0;
   for (ind direction = 0; direction < 4; direction++) {
     int delta = directionDeltas[direction];
     int nextSquare = square;
-    while (masks::wrapIter(&nextSquare, delta)) {
-      BB nextMove = exp_2(nextSquare);
+    while (masks::WrapIter(&nextSquare, delta)) {
+      Bitboard nextMove = exp_2(nextSquare);
       moveBoard |= nextMove;
       if ((occupancy & nextMove) != 0 || (mask & nextMove) == 0) {
         break;
@@ -139,13 +134,13 @@ BB generateMovesFromOccupancy(ind square, BB occupancy, BB mask,
 // Populate the bishop move table for a certain square and a certain number of
 // bits.
 void populateBishopTable(ind square) {
-  BB mask = masks::BISHOP_MASKS[square];
-  vector<BB> occupancyBoards;
+  Bitboard mask = masks::BISHOP_MASKS[square];
+  std::vector<Bitboard> occupancyBoards;
   generateSubsets(mask, &occupancyBoards);
-  for (int i = 0; i < occupancyBoards.size(); i++) {
-    BB occupancy = occupancyBoards.at(i);
+  for (int i = 0; i < occupancyBoards.size(); ++i) {
+    Bitboard occupancy = occupancyBoards.at(i);
     int directionDeltas[4] = {7, 9, -7, -9};
-    BB moveBoard =
+    Bitboard moveBoard =
         generateMovesFromOccupancy(square, occupancy, mask, directionDeltas);
     BISHOP_MOVES[square][hashBishop(occupancy, square)] = moveBoard;
   }
@@ -154,13 +149,13 @@ void populateBishopTable(ind square) {
 // Populate the rook move table for a certain square and a certain number of
 // bits.
 void populateRookTable(ind square) {
-  BB mask = masks::ROOK_MASKS[square];
-  vector<BB> occupancyBoards;
+  Bitboard mask = masks::ROOK_MASKS[square];
+  std::vector<Bitboard> occupancyBoards;
   generateSubsets(mask, &occupancyBoards);
   for (int i = 0; i < occupancyBoards.size(); i++) {
-    BB occupancy = occupancyBoards.at(i);
+    Bitboard occupancy = occupancyBoards.at(i);
     int directionDeltas[4] = {1, 8, -1, -8};
-    BB moveBoard =
+    Bitboard moveBoard =
         generateMovesFromOccupancy(square, occupancy, mask, directionDeltas);
     ROOK_MOVES[square][hashRook(occupancy, square)] = moveBoard;
   }
@@ -179,4 +174,7 @@ void populateRookTables() {
     populateRookTable(square);
   }
 }
-}
+
+}  // namespace magics
+
+}  // namespace exacto

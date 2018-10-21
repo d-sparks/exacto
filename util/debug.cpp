@@ -13,7 +13,7 @@ using namespace std;
 
 int main() {
   CGame game;
-  CExacto exacto(game);
+  Exacto exacto(game);
   magics::populateRookTables();
   magics::populateBishopTables();
   masks::init();

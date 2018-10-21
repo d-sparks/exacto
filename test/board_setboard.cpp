@@ -1,15 +1,23 @@
 #define _TEST 1
 
-#include "../src/cboard.cpp"
-#include <string.h>
+#include "../src/board.h"
+
+#include <string>
 #include <map>
-#include "../src/bb.cpp"
+
+#include "../src/bitboard.h"
+#include "../src/inlines.h"
+#include "../src/magics.h"
+#include "../src/masks.h"
+#include "../src/moves.h"
+#include "../src/squares.h"
 #include "assert.h"
 
+using namespace exacto;
 using namespace std;
 
 // Test setBoard
-int testSetBoardDefaultPosition() {
+int TestSetBoardDefaultPosition() {
   cout << "Testing setBoard in default position..." << endl;
 
   map<ind, ind> expectedBoard = {
@@ -21,44 +29,44 @@ int testSetBoardDefaultPosition() {
       {G7, PAWN},   {F7, PAWN},   {E7, PAWN},   {D7, PAWN},   {C7, PAWN},
       {B7, PAWN},   {A7, PAWN}};
 
-  CBoard board;
-  for (ind i = H1; i < totalSquares; i++) {
+  Board board;
+  for (ind i = H1; i < NUM_SQUARES; i++) {
     ASSERT(board.board[i] == expectedBoard[i],
            "Wrong piece index " + to_string(i));
   }
-  ASSERT(board.pieces[BLACK][ALL] == (BB)0xFFFF000000000000,
-         "Black occupancy bitboard incorrect");
-  ASSERT(board.pieces[BLACK][PAWN] == (BB)0x00FF000000000000,
-         "Black pawns bitboard incorrect");
+  ASSERT(board.pieces[BLACK][ALL] == (Bitboard)0xFFFF000000000000,
+         "Black occupancy Bitboard incorrect");
+  ASSERT(board.pieces[BLACK][PAWN] == (Bitboard)0x00FF000000000000,
+         "Black pawns Bitboard incorrect");
   ASSERT(board.pieces[BLACK][KNIGHT] == (exp_2(G8) | exp_2(B8)),
-         "Black knights bitboard incorrect");
+         "Black knights Bitboard incorrect");
   ASSERT(board.pieces[BLACK][BISHOP] == (exp_2(F8) | exp_2(C8)),
-         "Black bishops bitboard incorrect");
+         "Black bishops Bitboard incorrect");
   ASSERT(board.pieces[BLACK][ROOK] == (exp_2(H8) | exp_2(A8)),
-         "Black bishops bitboard incorrect");
+         "Black bishops Bitboard incorrect");
   ASSERT(board.pieces[BLACK][QUEEN] == exp_2(D8),
-         "Black queens bitboard incorrect");
+         "Black queens Bitboard incorrect");
   ASSERT(board.pieces[BLACK][KING] == exp_2(E8),
-         "Black kings bitboard incorrect");
-  ASSERT(board.pieces[WHITE][ALL] == (BB)0x000000000000FFFF,
-         "White occupancy bitboard incorrect");
-  ASSERT(board.pieces[WHITE][PAWN] == (BB)0x000000000000FF00,
-         "White pawns bitboard incorrect");
+         "Black kings Bitboard incorrect");
+  ASSERT(board.pieces[WHITE][ALL] == (Bitboard)0x000000000000FFFF,
+         "White occupancy Bitboard incorrect");
+  ASSERT(board.pieces[WHITE][PAWN] == (Bitboard)0x000000000000FF00,
+         "White pawns Bitboard incorrect");
   ASSERT(board.pieces[WHITE][KNIGHT] == (exp_2(G1) | exp_2(B1)),
-         "White knights bitboard incorrect");
+         "White knights Bitboard incorrect");
   ASSERT(board.pieces[WHITE][BISHOP] == (exp_2(F1) | exp_2(C1)),
-         "White bishops bitboard incorrect");
+         "White bishops Bitboard incorrect");
   ASSERT(board.pieces[WHITE][ROOK] == (exp_2(H1) | exp_2(A1)),
-         "White bishops bitboard incorrect");
+         "White bishops Bitboard incorrect");
   ASSERT(board.pieces[WHITE][QUEEN] == exp_2(D1),
-         "White queens bitboard incorrect");
+         "White queens Bitboard incorrect");
   ASSERT(board.pieces[WHITE][KING] == exp_2(E1),
-         "White kings bitboard incorrect");
-  ASSERT(board.occupied == (BB)0xFFFF00000000FFFF,
-         "Occupancy bitboard incorrect");
-  ASSERT(board.empty == (BB)0x0000FFFFFFFF0000, "Empty bitboard incorrect");
+         "White kings Bitboard incorrect");
+  ASSERT(board.occupied == (Bitboard)0xFFFF00000000FFFF,
+         "Occupancy Bitboard incorrect");
+  ASSERT(board.empty == (Bitboard)0x0000FFFFFFFF0000, "Empty Bitboard incorrect");
   ASSERT(board.wtm, "Should be white to move");
-  ASSERT(board.enPassant == (BB)0, "Shouldn't have enPassant square");
+  ASSERT(board.en_passant == (Bitboard)0, "Shouldn't have en_passant square");
   ASSERT(board.castling[BLACK] == (exp_2(G8) | exp_2(C8)),
          "Wrong castling data for black");
   ASSERT(board.castling[WHITE] == (exp_2(G1) | exp_2(C1)),
@@ -67,34 +75,34 @@ int testSetBoardDefaultPosition() {
 }
 
 // Test setBoard's accuracy with en passant squares
-int testSetBoardEnPassant() {
+int TestSetBoardEnPassant() {
   cout << "Testing setBoard: en passant" << endl;
-  for (ind i = H1; i < totalSquares; i++) {
-    CBoard board("8/8/8/8/8/8/8/8", "w", "KQkq", squares::algebraic[i]);
-    ASSERT(board.enPassant == exp_2(i),
-           "Bad enPassant loading " + squares::algebraic[i]);
+  for (ind i = H1; i < NUM_SQUARES; i++) {
+    Board board("8/8/8/8/8/8/8/8", "w", "KQkq", squares::algebraic[i]);
+    ASSERT(board.en_passant == exp_2(i),
+           "Bad en_passant loading " + squares::algebraic[i]);
   }
   return 1;
 }
 
 // Test setBoard's accuracy with castling data
-int testSetBoardCastling() {
+int TestSetBoardCastling() {
   cout << "Testing setBoard: castling" << endl;
 
   // No castling rights
-  CBoard board("8/8/8/8/8/8/8/8", "w", "");
-  ASSERT(board.castling[WHITE] == (BB)0, "Castling failed: '-'");
-  ASSERT(board.castling[BLACK] == (BB)0, "Castling failed: '-'");
+  Board board("8/8/8/8/8/8/8/8", "w", "");
+  ASSERT(board.castling[WHITE] == (Bitboard)0, "Castling failed: '-'");
+  ASSERT(board.castling[BLACK] == (Bitboard)0, "Castling failed: '-'");
 
   // Kingside only
-  board = CBoard("8/8/8/8/8/8/8/8", "w", "Kk");
+  board = Board("8/8/8/8/8/8/8/8", "w", "Kk");
   ASSERT(board.castling[WHITE] == exp_2(squares::index("G1")),
          "Castling failed: '-'");
   ASSERT(board.castling[BLACK] == exp_2(squares::index("G8")),
          "Castling failed: '-'");
 
   // Queenside only
-  board = CBoard("8/8/8/8/8/8/8/8", "w", "Qq");
+  board = Board("8/8/8/8/8/8/8/8", "w", "Qq");
   ASSERT(board.castling[WHITE] == exp_2(squares::index("C1")),
          "Castling failed: '-'");
   ASSERT(board.castling[BLACK] == exp_2(squares::index("C8")),
@@ -104,19 +112,19 @@ int testSetBoardCastling() {
 }
 
 // Test setBoard's accuracy with color to move
-int testSetBoardColorToMove() {
+int TestSetBoardColorToMove() {
   cout << "Testing setBoard: color to move" << endl;
 
   // Black to move
-  CBoard board("8/8/8/8/8/8/8/8", "b", "");
+  Board board("8/8/8/8/8/8/8/8", "b", "");
   ASSERT(!board.wtm, "Should be black to move");
 
   // Uppercase letters
-  board = CBoard("8/8/8/8/8/8/8/8", "W", "");
+  board = Board("8/8/8/8/8/8/8/8", "W", "");
   ASSERT(board.wtm, "Should be white to move");
 
   // Uppercase letters, black to move
-  board = CBoard("8/8/8/8/8/8/8/8", "B", "");
+  board = Board("8/8/8/8/8/8/8/8", "B", "");
   ASSERT(!board.wtm, "Should be black to move");
 
   return 1;
@@ -125,10 +133,10 @@ int testSetBoardColorToMove() {
 int main() {
   int t = 0;
 
-  t += testSetBoardDefaultPosition();
-  t += testSetBoardEnPassant();
-  t += testSetBoardCastling();
-  t += testSetBoardColorToMove();
+  t += TestSetBoardDefaultPosition();
+  t += TestSetBoardEnPassant();
+  t += TestSetBoardCastling();
+  t += TestSetBoardColorToMove();
 
   cout << endl;
   cout << t << " test(s) OK" << endl;

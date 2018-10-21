@@ -1,13 +1,17 @@
-#pragma once
-#include "cexacto.h"
-#include "SEE.cpp"
-#include "cexacto_evaluate.cpp"
-#include "cexacto_search.cpp"
-#include "cgame.cpp"
-#include "chash.cpp"
-#include "moves.cpp"
+#include "exacto.h"
 
-CExacto::CExacto(CGame initGame) {
+#include <iostream>
+#include <string>
+
+#include "board.h"
+#include "game.h"
+#include "hash.h"
+#include "moves.h"
+#include "SEE.h"
+
+namespace exacto {
+
+Exacto::Exacto(Game initGame) {
   game = initGame;
   post = false;
 #ifndef _DEBUG
@@ -15,9 +19,9 @@ CExacto::CExacto(CGame initGame) {
 #endif
 }
 
-CExacto::~CExacto() {}
+Exacto::~Exacto() {}
 
-void CExacto::go(CGame* game) {
+void Exacto::Go(Game* game) {
   // hardcoding checks per second and average time for search
   int seconds = 7;
 
@@ -26,14 +30,14 @@ void CExacto::go(CGame* game) {
   uint64_t prevNodes = 1;
   double branchingFactor = 3;
   int NPS = 1000000;
-  terminateSearch = false;
+  terminate_search = false;
   int64_t t_0 = clock();
   int64_t t = 0;
 
-  mv bestMove = BOGUS_MOVE;
+  Move bestMove = BOGUS_MOVE;
   for (int depth = 1; true; depth++) {
     prevNodes = nodes;
-    int16_t score = search(game, -INFNTY, INFNTY, depth, 0);
+    int16_t score = Search(game, -INFNTY, INFNTY, depth, 0);
     if (depth == 1) {
       continue;
     }
@@ -43,17 +47,17 @@ void CExacto::go(CGame* game) {
     branchingFactor = nodes / prevNodes;
     NPS = (nodes * CLOCKS_PER_SEC) / t;
 
-    if (terminateSearch) {
+    if (terminate_search) {
       break;
     }
 
-    bestMove = hash.getSugg(game->hashKey);
+    bestMove = hash.get_sugg(game->hash_key);
     if (post) {
-      cout << depth << "\t";
-      cout << "Score: " << score << "\t";
-      cout << "PV: " << extractPV(game, depth) << "\t";
-      cout << "NPS: " << NPS << "\t";
-      cout << "Branching: " << branchingFactor << endl;
+      std::cout << depth << "\t";
+      std::cout << "Score: " << score << "\t";
+      std::cout << "PV: " << principal_variation(game, depth) << "\t";
+      std::cout << "NPS: " << NPS << "\t";
+      std::cout << "Branching: " << branchingFactor << std::endl;
     }
 
     if (secs * branchingFactor > seconds) {
@@ -62,26 +66,26 @@ void CExacto::go(CGame* game) {
   }
 
 #ifndef _DEBUG
-  cout << "move " << moves::algebraic(bestMove) << endl;
+  std::cout << "move " << moves::algebraic(bestMove) << std::endl;
 #endif
 #ifdef _DEBUG
-  cout << " usermove " << moves::algebraic(bestMove);
+  std::cout << " usermove " << moves::algebraic(bestMove);
 #endif
   game->makeMove(&bestMove);
 }
 
-void CExacto::sortMoves(CGame* game, mv* mvs) {
-  mv hashSugg = BOGUS_MOVE;
-  if (hash.probe(game->hashKey, 0) > HASH_ALPHA) {
-    hashSugg = hash.getSugg(game->hashKey);
+void Exacto::SortMoves(Game* game, Move* Moves) {
+  Move hashSugg = BOGUS_MOVE;
+  if (hash.probe(game->hash_key, 0) > HASH_ALPHA) {
+    hashSugg = hash.get_sugg(game->hash_key);
   }
   ind numMoves = 0;
-  while (mvs[numMoves] != NONE) {
+  while (Moves[numMoves] != NONE) {
     numMoves++;
   }
   int16_t scores[numMoves];
   for (int i = 0; i < numMoves; i++) {
-    mv move = mvs[i];
+    Move move = Moves[i];
     int16_t score = (move == hashSugg) ? MATESCORE : SEE::see(game, move);
     ind attacker = moves::attacker(move);
     if (attacker <= BISHOP) {
@@ -96,21 +100,21 @@ void CExacto::sortMoves(CGame* game, mv* mvs) {
     int j = i;
     for (; j > 0 && score > scores[j - 1]; j--) {
       scores[j] = scores[j - 1];
-      mvs[j] = mvs[j - 1];
+      Moves[j] = Moves[j - 1];
     }
-    mvs[j] = move;
+    Moves[j] = move;
     scores[j] = score;
   }
 }
 
-void CExacto::sortCaps(CGame* game, mv* moves) {
+void Exacto::SortCaps(Game* game, Move* moves) {
   int numMoves = 0;
   while (moves[numMoves]) {
     numMoves++;
   }
   int16_t scores[numMoves];
   for (int i = 0; i < numMoves; i++) {
-    mv move = moves[i];
+    Move move = moves[i];
     int16_t score = SEE::see(game, move);
     int j = i;
     for (; j > 0 && score > scores[j - 1]; j--) {
@@ -122,19 +126,20 @@ void CExacto::sortCaps(CGame* game, mv* moves) {
   }
 }
 
-string CExacto::extractPV(CGame* game, int depth) {
+// TODO: Return a vector of moves.
+std::string Exacto::principal_variation(Game* game, int depth) {
   // At depth 0 or if no hash entry, return.
-  if (depth == 0 || hash.probe(game->hashKey, depth) != HASH_EXACT) {
+  if (depth == 0 || hash.probe(game->hash_key, depth) != HASH_EXACT) {
     return "";
   }
 
   // Check if hashed suggestion is legal
-  mv hashMove = hash.getSugg(game->hashKey);
-  mv PVMove = hash.getPV(game->hashKey);
+  Move hashMove = hash.get_sugg(game->hash_key);
+  Move PVMove = hash.get_pv(game->hash_key);
   bool hashLegal = false;
   bool PVLegal = false;
-  mv legalMoves[256] = {0};
-  game->moveGen(legalMoves);
+  Move legalMoves[256] = {0};
+  game->MoveGen(legalMoves);
   for (int i = 0; legalMoves[i]; ++i) {
     hashLegal |= (moves::algebraic(hashMove) == moves::algebraic(legalMoves[i]));
     hashLegal |= (moves::algebraic(PVMove) == moves::algebraic(legalMoves[i]));
@@ -144,11 +149,13 @@ string CExacto::extractPV(CGame* game, int depth) {
   }
 
   // Recurse
-  mv move = PVLegal? PVMove : hashMove;
-  string pv = moves::algebraic(move);
+  Move move = PVLegal? PVMove : hashMove;
+  std::string output = moves::algebraic(move);
   game->makeMove(&move);
-  pv += " " + extractPV(game, depth - 1);
+  output += " " + principal_variation(game, depth - 1);
   game->unmakeMove(move);
-  
-  return pv;
+
+  return output;
 }
+
+}  // namespace exacto

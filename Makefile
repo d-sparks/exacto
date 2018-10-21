@@ -8,7 +8,7 @@ TESTS := $(shell ls -d test/*cpp | sed -e "s/test\///g" | sed -e "s/.cpp//g")
 all: build
 
 build: bin
-	$(CC) $(CFLAGS) -o bin/exacto src/main.cpp
+	$(CC) $(CFLAGS) -o bin/exacto src/*.cpp
 
 run: build
 	bin/exacto
@@ -32,7 +32,7 @@ test: clean build $(TESTS)
 $(TESTS):
 	mkdir -p test/bin
 	@printf "\n=== Building tests: "$@" ===\n"
-	$(CC) $(CFLAGS) -o test/bin/$@ test/$@.cpp
+	$(CC) $(CFLAGS) -o test/bin/$@ test/$@.cpp `ls src/*.cpp | grep -v main`
 	@printf "\n=== Running tests:  "$@" ===\n"
 	@test/bin/$@
 	@rm -rf test/bin

@@ -1,8 +1,11 @@
-#include "cexacto_evaluate.h"
-#include "cexacto.h"
-#include "cgame.h"
+#include "exacto.h"
 
-int16_t CExacto::evaluate(CGame* game) {
+#include "game.h"
+#include "inlines.h"
+
+namespace exacto {
+
+int16_t Exacto::Evaluate(Game* game) {
   int16_t score = 0;
 
   for (ind color = BLACK; color <= WHITE; color++) {
@@ -10,7 +13,7 @@ int16_t CExacto::evaluate(CGame* game) {
       if (piece == ROOK || piece == QUEEN) {
         continue;
       }
-      BB pieceboard = game->pieces[color][piece];
+      Bitboard pieceboard = game->pieces[color][piece];
       for (ind sq = bitscan(pieceboard); pieceboard; sq = bitscan(pieceboard)) {
         score += PVT[color][piece][sq];
         pieceboard ^= exp_2(sq);
@@ -26,10 +29,12 @@ int16_t CExacto::evaluate(CGame* game) {
   return game->wtm ? score : -score;
 }
 
-bool CExacto::drawnByRepitionOr50MoveRule(CGame* game) {
-  if (game->halfMoves >= 100) {
+bool Exacto::drawn_by_repition_or_50_move_rule(Game* game) {
+  if (game->half_moves >= 100) {
     return true;
   }
   // TODO: implement threefold repetition
   return false;
 }
+
+}  // namespace exacto

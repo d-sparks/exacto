@@ -1,12 +1,9 @@
-// file:     inlines.h
-// created:  5/1/2015
-// license:  See text/license.txt
-// purpose:  Small functions which are called frequently, to be inlined.
+#ifndef exacto_src_inlines_h
+#define exacto_src_inlines_h
 
-#pragma once
-#include <stdint.h>
-#include "bb.h"
-using namespace std;
+#include "bitboard.h"
+
+namespace exacto {
 
 // Intrinsic bitscans for the Microsoft compiler.
 #ifdef _MSC_VER
@@ -21,14 +18,14 @@ using namespace std;
 #endif
 
 // exp_2 is the function x /mapsto 2^x.
-inline BB exp_2(ind n) { return ((BB)1) << n; }
+inline Bitboard exp_2(ind n) { return ((Bitboard)1) << n; }
 
 // bitscan for the least significant set bit. Uses intrinsic bitscans for
 // Microsoft compiler or
 // builtin for GCC.
 #ifdef _MSC_VER
 #if _WIN32
-inline ind bitscan(BB b) {
+inline ind bitscan(Bitboard b) {
   unsigned long i;
   if ((uint32_t)b) {
     _BitScanForward(&i, (uint32_t)b);
@@ -40,7 +37,7 @@ inline ind bitscan(BB b) {
 }
 #endif
 #if _WIN64
-inline ind bitscan(BB b) {
+inline ind bitscan(Bitboard b) {
   unsigned long i;
   _BitScanForward64(&i, b);
   return (ind)i;
@@ -48,7 +45,7 @@ inline ind bitscan(BB b) {
 #endif
 #endif
 #ifdef __GNUC__
-inline ind bitscan(BB b) { return __builtin_ctzll(b); }
+inline ind bitscan(Bitboard b) { return __builtin_ctzll(b); }
 #endif
 
 // bitscanReverse finds the most significatn set bit. Uses intrinsic bitscans
@@ -56,7 +53,7 @@ inline ind bitscan(BB b) { return __builtin_ctzll(b); }
 // or builtin for GCC.
 #ifdef _MSC_VER
 #ifdef _WIN_32
-inline ind bitscanReverse(BB b) {
+inline ind bitscanReverse(Bitboard b) {
   unsigned long i;
   if (b >> 32) {
     _BitScanReverse(&i, b >> 32);
@@ -68,7 +65,7 @@ inline ind bitscanReverse(BB b) {
 }
 #endif
 #ifdef _WIN_64
-inline ind bitscanReverse(BB b) {
+inline ind bitscanReverse(Bitboard b) {
   unsigned long i;
   _BitScanReverse64(&i, b);
   return (ind)i;
@@ -76,10 +73,10 @@ inline ind bitscanReverse(BB b) {
 #endif
 #endif
 #ifdef __GNUC__
-inline ind bitscanReverse(BB b) { return (63 - __builtin_clzll(b)); }
+inline ind bitscanReverse(Bitboard b) { return (63 - __builtin_clzll(b)); }
 #endif
 
-// popCount gives the population (number of set bits) of a bitboard.
+// popCount gives the population (number of set bits) of a Bitboard.
 #ifdef __GNUC__
 inline char popcount(uint64_t bb) { return __builtin_popcountll(bb); }
 #endif
@@ -93,3 +90,7 @@ inline char popcount(uint64_t bb) {
   return i;
 }
 #endif
+
+}  // namespace exacto
+
+#endif  // exacto_src_inlines_h

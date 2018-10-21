@@ -1,17 +1,23 @@
-#include "../src/cboard.cpp"
-#include <string.h>
+#include "../src/board.h"
+
+#include <string>
 #include <map>
-#include "../src/bb.cpp"
+
+#include "../src/bitboard.h"
+#include "../src/defines.h"
+#include "../src/inlines.h"
+#include "../src/squares.h"
 #include "assert.h"
 
+using namespace exacto;
 using namespace std;
 
 // Test squares::index by checking that it is the inverse of the array
 // indexToSquare on the
 // appropriate domain.
-int testSquareToIndex() {
+int TestSquareToIndex() {
   cout << "Testing squares::index..." << endl;
-  for (ind i = 0; i < totalSquares; i++) {
+  for (ind i = 0; i < NUM_SQUARES; i++) {
     ASSERT(i == squares::index(squares::algebraic[i]),
            "squares::index failed for i = " + to_string(i));
   }
@@ -21,7 +27,7 @@ int testSquareToIndex() {
 int main() {
   int t = 0;
 
-  t += testSquareToIndex();
+  t += TestSquareToIndex();
 
   cout << endl;
   cout << t << " test(s) OK" << endl;

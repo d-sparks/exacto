@@ -1,23 +1,27 @@
 #define _TEST 1
 
-#include "../src/magics.cpp"
+#include "../src/magics.h"
+
 #include <algorithm>
 #include <iostream>
 #include <vector>
-#include "../src/cboard.cpp"
+
+#include "../src/board.h"
 #include "../src/inlines.h"
+#include "../src/masks.h"
 #include "../src/squares.h"
 #include "assert.h"
 
+using namespace exacto;
 using namespace std;
 
 // Tests generateSubsets with a basic example.
 int testGenerateSubsets() {
   cout << "Testing generateSubsets" << endl;
 
-  BB b = exp_2(5) | exp_2(45) | exp_2(63);
-  vector<BB> subsets;
-  vector<BB> expectedSubsets = {
+  Bitboard b = exp_2(5) | exp_2(45) | exp_2(63);
+  vector<Bitboard> subsets;
+  vector<Bitboard> expectedSubsets = {
       0,
       exp_2(5),
       exp_2(45),
@@ -39,10 +43,10 @@ int testGenerateSubsets() {
 int testBishopMagics() {
   cout << "Testing bishop magics" << endl;
 
-  CBoard board("1b6/8/8/4P3/8/8/8/8", "b", "", "-");
-  BB expectedMoves = exp_2(A7) | exp_2(C7) | exp_2(D6) | exp_2(E5);
+  Board board("1b6/8/8/4P3/8/8/8/8", "b", "", "-");
+  Bitboard expectedMoves = exp_2(A7) | exp_2(C7) | exp_2(D6) | exp_2(E5);
   magics::populateBishopTable(B8);
-  BB moves = magics::bishopMoves(B8, board.occupied);
+  Bitboard moves = magics::bishopMoves(B8, board.occupied);
   ASSERT(moves == expectedMoves, "Bishop magic test failed");
 
   return 1;
@@ -52,15 +56,15 @@ int testBishopMagics() {
 int testRookMagics() {
   cout << "Testing bishop magics" << endl;
 
-  CBoard board("R7/P7/8/8/8/8/8/8", "b", "", "-");
-  BB expectedMoves = exp_2(A7);
+  Board board("R7/P7/8/8/8/8/8/8", "b", "", "-");
+  Bitboard expectedMoves = exp_2(A7);
   for (ind square = B8; square >= H8; square--) {
     expectedMoves |= exp_2(square);
   }
   magics::populateRookTable(A8);
-  BB hashKey = magics::hashRook(board.occupied & ~exp_2(A8), A8);
-  hashKey = magics::hashRook(36028797018963968, A8);
-  BB moves = magics::ROOK_MOVES[A8][hashKey];
+  Bitboard hash_key = magics::hashRook(board.occupied & ~exp_2(A8), A8);
+  hash_key = magics::hashRook(36028797018963968, A8);
+  Bitboard moves = magics::ROOK_MOVES[A8][hash_key];
   ASSERT(moves == expectedMoves, "Rook magic test failed");
 
   return 1;

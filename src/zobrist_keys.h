@@ -1,17 +1,23 @@
-#pragma once
+#ifndef exacto_src_zobrist_keys_h
+#define exacto_src_zobrist_keys_h
+
+#include "bitboard.h"
+
+namespace exacto {
 
 namespace zobrist {
 
-uint64_t const wtm = 0x6ed49c46f19bb8ea;
-uint64_t const castling[2][2] = {{
-                                     0x2ec4712b0bfdfcd6, 0x6c6f5767fff27330,
-                                 },
+const uint64_t wtm = 0x6ed49c46f19bb8ea;
+
+const uint64_t castling[2][2] = {{0x2ec4712b0bfdfcd6, 0x6c6f5767fff27330},
                                  {0x071083b972d80c0c, 0x8d8325e82c4fdcdc}};
-uint64_t const en_passant[8] = {0x2ec4712b0bfdfcd6, 0x6c6f5767fff27330,
+
+const uint64_t en_passant[8] = {0x2ec4712b0bfdfcd6, 0x6c6f5767fff27330,
                                 0x071083b972d80c0c, 0x8d8325e82c4fdcdc,
                                 0xb47a658dad8e13a4, 0x88710bf005fda027,
                                 0x69bd3edaf7111200, 0x0dccdd0c65c810ff};
-uint64_t const pieces[2][7][64] = {
+
+const uint64_t pieces[2][7][64] = {
     {{0x64d79b552a559d7f, 0x44a572665a6ee240, 0xeb2bf6dc3d72135c,
       0xe3836981f9f82ea0, 0x43a38212350ee392, 0xce77502bffcacf8b,
       0x5d8a82d90126f0e7, 0xc0510c6f402c1e3c, 0x48d895bf8b69f77b,
@@ -320,4 +326,9 @@ uint64_t const pieces[2][7][64] = {
       0xe4b4ad6fc18611ae, 0x093cb2ab6cf34f12, 0x0cf8f302e1a87898,
       0xee1f67ded33415db, 0x807f696060045fbb, 0x216e4a489097d0d4,
       0x0a0e12e87648964b}}};
-}
+
+}  // namespace zobrist
+
+}  // namespace exacto
+
+#endif  // exacto_src_zobrist_keys_h

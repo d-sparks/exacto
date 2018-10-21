@@ -1,37 +1,50 @@
-#pragma once
-#include "cexacto_evaluate.h"
-#include "cgame.h"
-#include "chash.h"
+#ifndef exacto_src_exacto_h
+#define exacto_src_exacto_h
 
-class CExacto {
+#include "game.h"
+#include "hash.h"
+
+namespace exacto {
+
+class Exacto {
  public:
-  void go(CGame* game);
-
-  int16_t evaluate(CGame* game);
-  bool drawnByRepitionOr50MoveRule(CGame* game);
-  int16_t search(CGame* game, int16_t alpha, int16_t beta, int16_t depth,
-                 int16_t ply);
-  int16_t qsearch(CGame* game, int16_t alpha, int16_t beta, int16_t ply);
-  void sortMoves(CGame* game, mv* moves);
-  void sortCaps(CGame* game, mv* moves);
-
   // Presumably later the constructor will accept hash table size and
   // parallelism.
-  CExacto(CGame initGame);
-  ~CExacto();
+  Exacto(Game init_game);
+  ~Exacto();
 
-  CHash hash;
-  CGame game;
+  void Go(Game* game);
 
-  // TODO: maybe move out of this class
-  string extractPV(CGame* game, int depth);
+  int16_t Evaluate(Game* game);
 
- protected:
+  int16_t Search(Game* game,
+                 int16_t alpha,
+                 int16_t beta,
+                 int16_t depth,
+                 int16_t ply);
+  int16_t QSearch(Game* game, int16_t alpha, int16_t beta, int16_t ply);
+
+  void SortMoves(Game* game, Move* moves);
+  void SortCaps(Game* game, Move* moves);
+
+  bool drawn_by_repition_or_50_move_rule(Game* game);
+  std::string principal_variation(Game* game, int depth);
+
+  Hash hash;
+  Game game;
+
+ private:
+  struct TimeData {
+    int MPS;        // Number of moves in each time control.
+    int time;       // Time in centiseconds.
+    int increment;  // Time increment.
+  };
   bool post;
-  bool terminateSearch;
+  bool terminate_search;
   uint64_t nodes;
-  uint64_t nodesNextClockCheck;
+  uint64_t nodes_next_clock_check;
 
+  // TODO: think about where to put this, and make it static const.
   int16_t PVT[2][7][64] = {
       // BLACK
       {//  NONE
@@ -101,3 +114,7 @@ class CExacto {
         0,   5,   10,  10,  15,  15,  10,  10,  5,   10,  15,  15,  20,
         20,  15,  15,  10,  15,  15,  20,  25,  25,  20,  15,  15}}};
 };
+
+}  // namespace exacto
+
+#endif  // exacto_h

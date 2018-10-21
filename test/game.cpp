@@ -1,14 +1,18 @@
 #define _TEST 1
 
-#include "../src/cgame.cpp"
-#include "../src/magics.cpp"
-#include "../src/moves.cpp"
+#include "../src/game.h"
+
+#include "../src/board.h"
+#include "../src/magics.h"
+#include "../src/masks.h"
+#include "../src/moves.h"
 #include "assert.h"
 
+using namespace exacto;
 using namespace std;
 
 // Greatcomment
-int testMakeMoveUnmakeMove() {
+int TestMakeMoveUnmakeMove() {
   cout << "Testing that makeMove and unmakeMove are inverses..." << endl;
 
   // +---+---+---+---+---+---+---+---+
@@ -29,13 +33,13 @@ int testMakeMoveUnmakeMove() {
   // | R |   |   |   |[K]|   |   | R |
   // +---+---+---+---+---+---+---+---+
 
-  CGame game1("r2qk3/1P6/8/2Pp4/4P3/1N3b2/5PPP/R3K2R", "w", "KQq", "D6");
-  CGame game2 = game1;
+  Game game1("r2qk3/1P6/8/2Pp4/4P3/1N3b2/5PPP/R3K2R", "w", "KQq", "D6");
+  Game game2 = game1;
   magics::populateBishopTables();
   magics::populateRookTables();
-  mv moveList[256] = {0};
-  game1.moveGen(moveList, true);
-  for (mv* move = moveList; *move; move++) {
+  Move move_list[256] = {0};
+  game1.MoveGen(move_list, true);
+  for (Move* move = move_list; *move; move++) {
     game1.makeMove(move);
     game1.unmakeMove(*move);
     ASSERT(game1 == game2,
@@ -48,7 +52,7 @@ int testMakeMoveUnmakeMove() {
 int main() {
   int t = 0;
 
-  t += testMakeMoveUnmakeMove();
+  t += TestMakeMoveUnmakeMove();
 
   cout << endl;
   cout << t << " test(s) OK" << endl;

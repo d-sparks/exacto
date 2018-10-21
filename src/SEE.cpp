@@ -1,84 +1,84 @@
-#pragma once
 #include "SEE.h"
-#include "bb.cpp"
-#include "cexacto_evaluate.h"
-#include "cgame.h"
-#include "magics.cpp"
-#include "masks.cpp"
-#include "moves.cpp"
-#include "squares.cpp"
+
+#include "bitboard.h"
+#include "board.h"
+#include "defines.h"
+#include "inlines.h"
+#include "magics.h"
+#include "masks.h"
+#include "moves.h"
+#include "squares.h"
+
+namespace exacto {
 
 namespace SEE {
 
-int16_t pieceValues[7] = {
+int16_t piece_values[7] = {
     0, PAWN_VAL, KNIGHT_VAL, BISHOP_VAL, ROOK_VAL, QUEEN_VAL, MATESCORE,
 };
 
-int16_t see(CGame* game, mv move) {
-  BB sourceBB = exp_2(moves::source(move));
+int16_t see(Board* game, Move move) {
+  Bitboard source = exp_2(moves::source(move));
   ind dest = moves::dest(move);
   ind attacker = moves::attacker(move) % 8;
-  int16_t score = pieceValues[moves::defender(move) % 8];
+  int16_t score = piece_values[moves::defender(move) % 8];
 
-  makeMove(game, sourceBB, attacker);
-  score -= next(game, pieceValues[attacker], dest);
-  unmakeMove(game, sourceBB, attacker);
+  MakeMove(game, source, attacker);
+  score -= next(game, piece_values[attacker], dest);
+  UnmakeMove(game, source, attacker);
 
   return score;
 }
 
-int16_t next(CBoard* board, int16_t previousVal, ind square) {
-  ind attackerSquare = leastValuableAttackerSquare(board, square);
-  if (attackerSquare > 63) {
+int16_t next(Board* board, int16_t previous_val, ind square) {
+  ind attacker_square = least_valuable_attacker_square(board, square);
+  if (attacker_square > 63) {
     return 0;
   }
-  ind attacker = board->board[attackerSquare] % 8;
-  BB sourceBB = exp_2(attackerSquare);
-  makeMove(board, sourceBB, attacker);
+  ind attacker = board->board[attacker_square] % 8;
+  Bitboard source = exp_2(attacker_square);
+  MakeMove(board, source, attacker);
   int16_t value =
-      max(0, previousVal - next(board, pieceValues[attacker], square));
-  unmakeMove(board, sourceBB, attacker);
+      std::max(0, previous_val - next(board, piece_values[attacker], square));
+  UnmakeMove(board, source, attacker);
   return value;
 }
 
-void makeMove(CBoard* board, BB sourceBB, ind attacker) {
-  board->pieces[board->wtm][attacker] &= ~sourceBB;
-  board->occupied &= ~sourceBB;
+void MakeMove(Board* board, Bitboard source, ind attacker) {
+  board->pieces[board->wtm][attacker] &= ~source;
+  board->occupied &= ~source;
   board->wtm = !board->wtm;
 }
 
-void unmakeMove(CBoard* board, BB sourceBB, ind attacker) {
+void UnmakeMove(Board* board, Bitboard source, ind attacker) {
   board->wtm = !board->wtm;
-  board->pieces[board->wtm][attacker] |= sourceBB;
-  board->occupied |= sourceBB;
+  board->pieces[board->wtm][attacker] |= source;
+  board->occupied |= source;
 }
 
-ind leastValuableAttackerSquare(CBoard* board, ind square) {
-  BB candidates = 0;
+ind least_valuable_attacker_square(Board* board, ind square) {
+  Bitboard candidates = 0;
   do {
     bool wtm = board->wtm;
-    // Pawns
     candidates = masks::PAWN_CHECKS[!wtm][square] & board->pieces[wtm][PAWN];
     if (candidates != 0) break;
-    // Knights
     candidates = masks::KNIGHT_MOVES[square] & board->pieces[wtm][KNIGHT];
     if (candidates != 0) break;
-    // Bishops
-    BB bishopMoves = magics::bishopMoves(square, board->occupied);
-    candidates = bishopMoves & board->pieces[wtm][BISHOP];
+    Bitboard bishop_moves = magics::bishopMoves(square, board->occupied);
+    candidates = bishop_moves & board->pieces[wtm][BISHOP];
     if (candidates != 0) break;
-    // Rooks
-    BB rookMoves = magics::rookMoves(square, board->occupied);
-    candidates = rookMoves & board->pieces[wtm][ROOK];
+    Bitboard rook_moves = magics::rookMoves(square, board->occupied);
+    candidates = rook_moves & board->pieces[wtm][ROOK];
     if (candidates != 0) break;
-    // Queens
-    candidates = (bishopMoves | rookMoves) & board->pieces[wtm][QUEEN];
+    candidates = (bishop_moves | rook_moves) & board->pieces[wtm][QUEEN];
     if (candidates != 0) break;
-    // King
     candidates = masks::KING_MOVES[square] & board->pieces[wtm][KING];
     if (candidates != 0) break;
     return 255;
   } while (false);
   return bitscan(candidates);
 }
-};
+
+}  // namespace SEE
+
+}  // namespace exacto

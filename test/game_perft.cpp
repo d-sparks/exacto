@@ -1,13 +1,19 @@
-#include "../src/cgame.cpp"
-#include <boost/algorithm/string.hpp>
-#include "../src/magics.cpp"
-#include "../src/moves.cpp"
+#include "../src/game.h"
+
+#include <map>
+
+#include "../src/board.h"
+#include "../src/magics.h"
+#include "../src/masks.h"
+#include "../src/moves.h"
+#include "../src/util.h"
 #include "assert.h"
 
+using namespace exacto;
 using namespace std;
 
 int test1() {
-  map<string, pair<int, BB>> suites = {
+  map<string, pair<int, Bitboard>> suites = {
       {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
        {5, 4865609}},
       {"r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 0",
@@ -28,19 +34,19 @@ int test1() {
     string position = suite.first;
     auto expected = suite.second;
     int depth = expected.first;
-    BB count = expected.second;
+    Bitboard count = expected.second;
 
     cout << "Running perft test for position `" + position + "`" << endl;
     cout << "Expected: " << count;
 
     // split fen into components
     vector<string> pVect;
-    boost::split(pVect, position, boost::is_any_of(" "));
+    util::split(position, ' ', &pVect);
 
     // run test
-    CGame game =
-        CGame(pVect[0], pVect[1], pVect[2], pVect[3], pVect[4], pVect[5]);
-    BB perftCount = perft(&game, depth) - perft(&game, depth - 1);
+    Game game =
+        Game(pVect[0], pVect[1], pVect[2], pVect[3], pVect[4], pVect[5]);
+    Bitboard perftCount = perft(&game, depth) - perft(&game, depth - 1);
     cout << ", got: " << perftCount << endl << endl;
     ASSERT(perftCount == count, "wrong count");
   }
@@ -53,8 +59,8 @@ int main() {
 
   magics::populateRookTables();
   magics::populateBishopTables();
-  masks::generateOpposite();
-  masks::generateInterceding();
+  masks::GenerateOpposite();
+  masks::GenerateInterceding();
 
   t += test1();
 

@@ -1,14 +1,14 @@
 #include "../src/inlines.h"
 #include <string.h>
-#include "../src/bb.cpp"
+#include "../src/bitboard.h"
 #include "assert.h"
 
-using namespace std;
+using namespace exacto;
 
-// Test the bitscans on each bit index. Don't test the empty bitboard.
+// Test the bitscans on each bit index. Don't test the empty Bitboard.
 int testBitscan() {
   cout << "Testing bitscans..." << endl;
-  BB x = 0xFFFFFFFFFFFFFFFF;
+  Bitboard x = 0xFFFFFFFFFFFFFFFF;
   for (ind i = 0; i < 64; i++) {
     ASSERT(bitscan(x << i) == i, "Bitscan for LSB " + to_string(i));
     ASSERT(bitscanReverse(x >> i) == 63 - i,
@@ -20,7 +20,7 @@ int testBitscan() {
 // Basically identical to esp_2's current implementation.
 int testExp_2() {
   cout << "Testing exp_2..." << endl;
-  BB x = 1;
+  Bitboard x = 1;
   for (ind i = 0; i < 64; i++) {
     ASSERT(exp_2(i) == (x << i), "exp_2(" + to_string(i) + ")");
   }
