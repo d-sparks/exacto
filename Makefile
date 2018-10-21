@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 CC := c++
-CFLAGS := -std=c++0x -O3
+CFLAGS := -std=c++11 -O3
 TESTS := $(shell ls -d test/*cpp | sed -e "s/test\///g" | sed -e "s/.cpp//g")
 
 .PHONY: build run test clean debug $(TESTS)
