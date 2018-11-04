@@ -66,30 +66,22 @@ class Board {
   // Move generation helpers functions. Despite being protected, these methods
   // are unit tested due to their complexity.
   void pawnGen(Move **move_list, Bitboard pins, bool quiet_moves);
-
   void pawnCaps(Move **move_list, Bitboard pins);
-
   void pawnGenPinned(Move **move_list,
                      Bitboard pins,
                      ind king_square,
                      bool quiet_moves);
-
   void knightGen(Move **move_list, Bitboard pins, bool quiet_moves);
-
   void bishopGen(Move **move_list, Bitboard pins, bool quiet_moves);
-
   void bishopGenPinned(Move **move_list,
                        Bitboard pins,
                        ind king_square,
                        bool quiet_moves);
-
   void rookGen(Move **move_list, Bitboard pins, bool quiet_moves);
-
   void rookGenPinned(Move **move_list,
                      Bitboard pins,
                      ind king_square,
                      bool quiet_moves);
-
   void kingGen(Move **move_list,
                ind king_square,
                Bitboard enemey_attacks,
@@ -100,22 +92,17 @@ class Board {
                        ind defender,
                        Bitboard pins,
                        Bitboard enemey_attacks);
-
   void evasionGen(Move **move_list,
                   Bitboard enemey_attacks,
                   Bitboard pins,
                   ind king_square);
-
   Bitboard attackSetGen(bool color);
 
   Bitboard bishopPins(ind king_square);
-
   Bitboard rookPins(ind king_square);
 
   void Serialize(Move **move_list, Bitboard b, ind source);
-
   void Serialize(Move **move_list, Bitboard b, ind source, ind special);
-
   void SerializeFromDest(Move **move_list,
                          Bitboard b,
                          ind dest,
@@ -123,7 +110,6 @@ class Board {
                          ind special);
 
   void SerializePawn(Move **move_list, Bitboard b, ind special, int delta);
-
   void closeMoveList(Move **move_list);
 
 };
