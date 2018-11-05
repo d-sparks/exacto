@@ -323,12 +323,15 @@ Bitboard Board::attackSetGen(bool color) {
   attack_set |= masks::KING_MOVES[bitscan(pieces[color][KING])];
 
   return attack_set;
-} 
+}
 
 // Generates the moves to a given square. King moves will only generate moves to
 // the given square if they are a capture.
+// Note: this function does not generate all moves to a square. Rather, it
+// generates interception moves only.
 void Board::generateMovesTo(Move **move_list,
-                            ind dest, ind defender,
+                            ind dest,
+                            ind defender,
                             Bitboard pins,
                             Bitboard enemy_attacks) {
   // Pawn moves
@@ -372,18 +375,21 @@ void Board::generateMovesTo(Move **move_list,
   Bitboard knights = masks::KNIGHT_MOVES[dest] & pieces[wtm][KNIGHT] & ~pins;
   SerializeFromDest(move_list, knights, dest, defender, REGULAR_MOVE);
   Bitboard bishops = magics::bishopMoves(dest, occupied) &
-               (pieces[wtm][BISHOP] | pieces[wtm][QUEEN]) & ~pins;
+      (pieces[wtm][BISHOP] | pieces[wtm][QUEEN]) & ~pins;
   SerializeFromDest(move_list, bishops, dest, defender, REGULAR_MOVE);
   Bitboard rooks = magics::rookMoves(dest, occupied) &
-             (pieces[wtm][ROOK] | pieces[wtm][QUEEN]) & ~pins;
+      (pieces[wtm][ROOK] | pieces[wtm][QUEEN]) & ~pins;
   SerializeFromDest(move_list, rooks, dest, defender, REGULAR_MOVE);
 
-  // Pinned pieces separately
-  if (pins) {
-    // Pawns are annoying
-    // Rooks and bishops less so
-    // TODO!
-  }
+  // In order to make this a general function, we would need to account for
+  // pinned pieces. So far, the only place this is called is in evasionGen,
+  // specifically to intercept the check. But a pinned piece cannot move to
+  // intercept a check. For the case of an en passant pawn capture, note that
+  // the only possibility is a discovered attack when the opposing pawn moved.
+  // This means the enemy king is on the pawn home row and so is the discovered
+  // attacker. But an en passant capture only reaches the row adjacent to the
+  // pawn home row. For the case of a non en passant pawn capture, this is more
+  // or less clear.
 }
 
 // Assumes the king is in check and generates all legal ways to evade the check:
