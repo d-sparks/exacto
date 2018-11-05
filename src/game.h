@@ -27,8 +27,12 @@ class Game : public Board {
 #ifndef _TEST
  private:
 #endif
-  ind half_moves[1024];
   int move_number;
+  // These will have garbage beyond move_number index, which is accoutned for in
+  // operator==.
+  ind half_moves[STACK_SIZE];
+  Bitboard position_history[STACK_SIZE];  // zobrist keys
+  ind repitition_hash[REPITITION_HASH_SIZE];
 };
 
 // TODO: move these somewhere? maybe Exacto?

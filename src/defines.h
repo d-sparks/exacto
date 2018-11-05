@@ -78,3 +78,8 @@
 #define ROOK_SHIFT 52  // 64-ROOK_MAGIC_BITS
 #define EXP2_ROOK_MAGIC_BITS 4096
 
+// For game
+
+#define STACK_SIZE 1024  // maximum number of game plies
+#define REPITITION_HASH_SIZE 16384  // exp_2(14)
+#define REPITITION_HASH_SHIFT 50  // 64 - 14

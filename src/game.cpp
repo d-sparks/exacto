@@ -20,9 +20,11 @@ Game::Game(std::string brd,
            std::string hm,
            std::string fm)
     : Board(brd, clr, cstl, ep) {
-  memset(half_moves, 0, sizeof(half_moves[0]) * 1024);
+  // TODO: this should live in another function that can be called on its own.
   move_number = atoi(fm.c_str());
   half_moves[move_number] = atoi(hm.c_str());
+  memset(repitition_hash, 0, sizeof(repitition_hash[0]) * REPITITION_HASH_SIZE);
+  repitition_hash[hash_key >> REPITITION_HASH_SHIFT] = 1;
 }
 
 Game::~Game() {}
@@ -31,10 +33,16 @@ Game::~Game() {}
 bool Game::operator==(const Game &other) const {
   bool boards_equal = Board::operator==(other);
   bool move_data_equal = (move_number == other.move_number);
+  bool position_history_equal = (move_number == other.move_number);
   for (int i = 0; i <= move_number; ++i) {
     move_data_equal &= (half_moves[i] == other.half_moves[i]);
+    position_history_equal &=
+       (position_history[i] == other.position_history[i]);
   }
-  return boards_equal && move_data_equal;
+  position_history_equal &=
+      memcmp(repitition_hash, other.repitition_hash,
+             sizeof(repitition_hash[0]) * REPITITION_HASH_SIZE) == 0;
+  return boards_equal && move_data_equal && position_history_equal;
 }
 
 // Makes a move, fully updating the gamestate and history.
@@ -138,6 +146,10 @@ void Game::MakeMove(Move *m) {
     }
   }
 
+  wtm = !wtm;
+  hash_key ^= zobrist::wtm;
+  occupied = pieces[WHITE][ALL] | pieces[BLACK][ALL];
+
   // Increment half-move clock
   move_number++;
   half_moves[move_number] = half_moves[move_number - 1] + 1;
@@ -145,9 +157,9 @@ void Game::MakeMove(Move *m) {
     half_moves[move_number] = 0;
   }
 
-  wtm = !wtm;
-  hash_key ^= zobrist::wtm;
-  occupied = pieces[WHITE][ALL] | pieces[BLACK][ALL];
+  // Add new position to the position history and repition hash.
+  position_history[move_number] = hash_key;
+  repitition_hash[hash_key >> REPITITION_HASH_SHIFT]++;
 }
 
 // Fully undoes a move, updating gamestate and history accordingly.
@@ -160,11 +172,12 @@ void Game::UnmakeMove(Move m) {
   Bitboard source_bb = exp_2(source);
   Bitboard dest_bb = exp_2(dest);
 
+  //  Decrement half-move clock and reduce repitition hash sum.
+  repitition_hash[hash_key >> REPITITION_HASH_SHIFT]--;
+  move_number--;
+
   hash_key ^= zobrist::wtm;
   wtm = !wtm;
-
-  //  Decrement half-move clock (leave garbage in half_moves)
-  move_number--;
 
   // Special move stuff
   switch (special) {

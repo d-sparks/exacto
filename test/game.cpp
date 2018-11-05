@@ -39,6 +39,7 @@ int TestMakeMoveUnmakeMove() {
 
   Game game1("r2qk3/1P6/8/2Pp4/4P3/1N3b2/5PPP/R3K2R", "w", "KQq", "D6");
   Game game2 = game1;
+  ASSERT(game1 == game2, "operator== failed for game.");
   magics::PopulateBishopTables();
   magics::PopulateRookTables();
   Move move_list[256] = {0};
