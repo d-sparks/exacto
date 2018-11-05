@@ -280,7 +280,6 @@ void Board::kingGen(Move **move_list, ind king_square, Bitboard enemy_attacks,
       moves |= moves << 1;
     }
     moves &= castling[wtm] & valid_squares & ~occupied;
-    // TODO: add special flag by overloading Serialize
     Serialize(move_list, moves, king_square, CASTLE);
   }
 }
@@ -499,7 +498,7 @@ void Board::Serialize(Move **move_list, Bitboard b, ind source, ind special) {
   while (b) {
     ind dest = bitscan(b);
     *((*move_list)++) = moves::make(source, dest, board[source], board[dest],
-                                   NONE, NONE, special);
+                                    NONE, NONE, special);
     b &= b - 1;
   }
 }

@@ -31,7 +31,6 @@ void Board::print() {
   std::string pieces_to_strings[16] = {"   ", " p ", " n ", " b ", " r ",
                                        " q ", "[k]", "",    "   ", " P ",
                                        " N ", " B ", " R ", " Q ", "[K]"};
-  // TODO: clean this up.
   std::map<int, std::string> side_bar = {
       {7, wtm ? "White to move" : "Black to move"},
       {6, "Static evaluation: "},
