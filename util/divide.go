@@ -163,7 +163,7 @@ func main() {
 	engine2 := flag.String("engine2", "bin/exacto-0.e", "path to engine2 executable")
 	label1 := flag.String("label1", "dev", "label for engine1 loglines")
 	label2 := flag.String("label2", "master", "label for engine2 loglines")
-	headers1 := flag.Int("headers1", 8, "number of header loglines to ignore (engine 1)")
+	headers1 := flag.Int("headers1", 6, "number of header loglines to ignore (engine 1)")
 	headers2 := flag.Int("headers2", 10, "number of header loglines to ignore (engine 2)")
 	commands1 := flag.String("commands1", "force", "comma-separated init commands (engine 1)")
 	commands2 := flag.String("commands2", "force", "comma-separated init commands (engine 2)")
