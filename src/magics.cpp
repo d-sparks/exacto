@@ -63,34 +63,34 @@ Bitboard const ROOK_MAGICS[64] = {
     0x0800011040280c422};
 
 // The magic formula, helper for bishops
-Bitboard hashBishop(Bitboard bb, ind square) {
+Bitboard HashBishop(Bitboard bb, ind square) {
   return (bb * BISHOP_MAGICS[square]) >> BISHOP_SHIFT;
 }
 
 // The magic formula, helper for rooks
-Bitboard hashRook(Bitboard bb, ind square) {
+Bitboard HashRook(Bitboard bb, ind square) {
   return (bb * ROOK_MAGICS[square]) >> ROOK_SHIFT;
 }
 
-// bishopMoves gives the moves for a bishop given an occupancy Bitboard and a
+// BishopMoves gives the moves for a bishop given an occupancy Bitboard and a
 // square
-Bitboard bishopMoves(ind square, Bitboard occupancy) {
+Bitboard BishopMoves(ind square, Bitboard occupancy) {
   occupancy &= masks::BISHOP_MASKS[square];
-  return BISHOP_MOVES[square][hashBishop(occupancy, square)];
+  return BISHOP_MOVES[square][HashBishop(occupancy, square)];
 }
 
-// rookMoves gives the moves for a bishop given an occupancy Bitboard and a
+// RookMoves gives the moves for a bishop given an occupancy Bitboard and a
 // square
-Bitboard rookMoves(ind square, Bitboard occupancy) {
+Bitboard RookMoves(ind square, Bitboard occupancy) {
   occupancy = occupancy & masks::ROOK_MASKS[square];
-  return ROOK_MOVES[square][hashRook(occupancy, square)];
+  return ROOK_MOVES[square][HashRook(occupancy, square)];
 }
 
-// generateSubsets finds all sub-bitstrings of a given bitstring. It is used to
+// GenerateSubsets finds all sub-bitstrings of a given bitstring. It is used to
 // generate occupancy Bitboards for magics. It works by going through indices x
 // = 0, ..., 2^(popcount(b)) - 1, associating each such x to a sub-bitstring of
 // b by shifting the bits of x to the indexes of the nonzero bits of b.
-void generateSubsets(Bitboard b, std::vector<Bitboard>* subsets) {
+void GenerateSubsets(Bitboard b, std::vector<Bitboard>* subsets) {
   ind pop = popcount(b);
 
   ind indices[pop];
@@ -114,64 +114,66 @@ void generateSubsets(Bitboard b, std::vector<Bitboard>* subsets) {
 
 // Generate the moves for a given occupancy Bitboard, square and set of
 // directions.
-Bitboard generateMovesFromOccupancy(ind square, Bitboard occupancy, Bitboard mask,
-                              int directionDeltas[4]) {
-  Bitboard moveBoard = 0;
+Bitboard GenerateMovesFromOccupancy(ind square,
+                                    Bitboard occupancy,
+                                    Bitboard mask,
+                                    int direction_deltas[4]) {
+  Bitboard move_board = 0;
   for (ind direction = 0; direction < 4; ++direction) {
-    int delta = directionDeltas[direction];
-    int nextSquare = square;
-    while (masks::WrapIter(&nextSquare, delta)) {
-      Bitboard nextMove = exp_2(nextSquare);
-      moveBoard |= nextMove;
-      if ((occupancy & nextMove) != 0 || (mask & nextMove) == 0) {
+    int delta = direction_deltas[direction];
+    int next_square = square;
+    while (masks::WrapIter(&next_square, delta)) {
+      Bitboard next_move = exp_2(next_square);
+      move_board |= next_move;
+      if ((occupancy & next_move) != 0 || (mask & next_move) == 0) {
         break;
       }
     }
   }
-  return moveBoard;
+  return move_board;
 }
 
 // Populate the bishop move table for a certain square and a certain number of
 // bits.
-void populateBishopTable(ind square) {
+void PopulateBishopTable(ind square) {
   Bitboard mask = masks::BISHOP_MASKS[square];
-  std::vector<Bitboard> occupancyBoards;
-  generateSubsets(mask, &occupancyBoards);
-  for (int i = 0; i < occupancyBoards.size(); ++i) {
-    Bitboard occupancy = occupancyBoards.at(i);
-    int directionDeltas[4] = {7, 9, -7, -9};
-    Bitboard moveBoard =
-        generateMovesFromOccupancy(square, occupancy, mask, directionDeltas);
-    BISHOP_MOVES[square][hashBishop(occupancy, square)] = moveBoard;
+  std::vector<Bitboard> occupancy_boards;
+  GenerateSubsets(mask, &occupancy_boards);
+  for (int i = 0; i < occupancy_boards.size(); ++i) {
+    Bitboard occupancy = occupancy_boards.at(i);
+    int direction_deltas[4] = {7, 9, -7, -9};
+    Bitboard move_board =
+        GenerateMovesFromOccupancy(square, occupancy, mask, direction_deltas);
+    BISHOP_MOVES[square][HashBishop(occupancy, square)] = move_board;
   }
 }
 
 // Populate the rook move table for a certain square and a certain number of
 // bits.
-void populateRookTable(ind square) {
+void PopulateRookTable(ind square) {
   Bitboard mask = masks::ROOK_MASKS[square];
-  std::vector<Bitboard> occupancyBoards;
-  generateSubsets(mask, &occupancyBoards);
-  for (int i = 0; i < occupancyBoards.size(); ++i) {
-    Bitboard occupancy = occupancyBoards.at(i);
-    int directionDeltas[4] = {1, 8, -1, -8};
-    Bitboard moveBoard =
-        generateMovesFromOccupancy(square, occupancy, mask, directionDeltas);
-    ROOK_MOVES[square][hashRook(occupancy, square)] = moveBoard;
+  std::vector<Bitboard> occupancy_boards;
+  GenerateSubsets(mask, &occupancy_boards);
+  for (int i = 0; i < occupancy_boards.size(); ++i) {
+    Bitboard occupancy = occupancy_boards.at(i);
+    int direction_deltas[4] = {1, 8, -1, -8};
+    Bitboard move_board =
+        GenerateMovesFromOccupancy(square, occupancy, mask, direction_deltas);
+    ROOK_MOVES[square][HashRook(occupancy, square)] = move_board;
   }
 }
 
 // Generate bishop move table for all squares.
-void populateBishopTables() {
+void PopulateBishopTables() {
   for (ind square = 0; square < 64; ++square) {
-    populateBishopTable(square);
+    PopulateBishopTable(square);
   }
 }
 
 // Generate rook move table for all squares.
-void populateRookTables() {
+void PopulateRookTables() {
   for (ind square = 0; square < 64; ++square) {
-    populateRookTable(square);
+    PopulateRookTable(square);
   }
 }
 

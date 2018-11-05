@@ -62,8 +62,8 @@ int test1() {
 int main() {
   int t = 0;
 
-  magics::populateRookTables();
-  magics::populateBishopTables();
+  magics::PopulateRookTables();
+  magics::PopulateBishopTables();
   masks::GenerateOpposite();
   masks::GenerateInterceding();
 

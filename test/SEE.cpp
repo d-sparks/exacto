@@ -98,8 +98,8 @@ int TestSEEValues() {
 int main() {
   int t = 0;
 
-  magics::populateBishopTables();
-  magics::populateRookTables();
+  magics::PopulateBishopTables();
+  magics::PopulateRookTables();
   masks::init();
 
   t += TestMakeMoveUnmakeMove();

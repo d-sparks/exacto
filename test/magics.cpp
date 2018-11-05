@@ -15,9 +15,9 @@
 using namespace exacto;
 using namespace std;
 
-// Tests generateSubsets with a basic example.
+// Tests GenerateSubsets with a basic example.
 int testGenerateSubsets() {
-  cout << "Testing generateSubsets" << endl;
+  cout << "Testing GenerateSubsets" << endl;
 
   Bitboard b = exp_2(5) | exp_2(45) | exp_2(63);
   vector<Bitboard> subsets;
@@ -31,7 +31,7 @@ int testGenerateSubsets() {
       exp_2(45) | exp_2(63),
       b,
   };
-  magics::generateSubsets(b, &subsets);
+  magics::GenerateSubsets(b, &subsets);
   sort(begin(subsets), end(subsets));
   sort(begin(expectedSubsets), end(expectedSubsets));
   ASSERT(subsets == expectedSubsets, "Wrong subsets");
@@ -45,8 +45,8 @@ int testBishopMagics() {
 
   Board board("1b6/8/8/4P3/8/8/8/8", "b", "", "-");
   Bitboard expectedMoves = exp_2(A7) | exp_2(C7) | exp_2(D6) | exp_2(E5);
-  magics::populateBishopTable(B8);
-  Bitboard moves = magics::bishopMoves(B8, board.occupied);
+  magics::PopulateBishopTable(B8);
+  Bitboard moves = magics::BishopMoves(B8, board.occupied);
   ASSERT(moves == expectedMoves, "Bishop magic test failed");
 
   return 1;
@@ -61,9 +61,9 @@ int testRookMagics() {
   for (ind square = B8; square >= H8; square--) {
     expectedMoves |= exp_2(square);
   }
-  magics::populateRookTable(A8);
-  Bitboard hash_key = magics::hashRook(board.occupied & ~exp_2(A8), A8);
-  hash_key = magics::hashRook(36028797018963968, A8);
+  magics::PopulateRookTable(A8);
+  Bitboard hash_key = magics::HashRook(board.occupied & ~exp_2(A8), A8);
+  hash_key = magics::HashRook(36028797018963968, A8);
   Bitboard moves = magics::ROOK_MOVES[A8][hash_key];
   ASSERT(moves == expectedMoves, "Rook magic test failed");
 

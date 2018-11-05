@@ -64,10 +64,10 @@ ind least_valuable_attacker_square(Board* board, ind square) {
     if (candidates != 0) break;
     candidates = masks::KNIGHT_MOVES[square] & board->pieces[wtm][KNIGHT];
     if (candidates != 0) break;
-    Bitboard bishop_moves = magics::bishopMoves(square, board->occupied);
+    Bitboard bishop_moves = magics::BishopMoves(square, board->occupied);
     candidates = bishop_moves & board->pieces[wtm][BISHOP];
     if (candidates != 0) break;
-    Bitboard rook_moves = magics::rookMoves(square, board->occupied);
+    Bitboard rook_moves = magics::RookMoves(square, board->occupied);
     candidates = rook_moves & board->pieces[wtm][ROOK];
     if (candidates != 0) break;
     candidates = (bishop_moves | rook_moves) & board->pieces[wtm][QUEEN];

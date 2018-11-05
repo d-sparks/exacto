@@ -335,7 +335,7 @@ int TestBishopGen() {
   // +---+---+---+---+---+---+---+---+
 
   Board board("8/8/2P5/5p2/4b3/3p4/8/8", "b", "");
-  magics::populateBishopTable(E4);
+  magics::PopulateBishopTable(E4);
   board.bishopGen(&moves, 0, true);
   Move expected_moves[256] = {0};
   expected_moves[0] =
@@ -382,7 +382,7 @@ int TestBishopGenCaps() {
   // +---+---+---+---+---+---+---+---+
 
   Board board("8/8/2P5/5p2/4b3/3p4/8/8", "b", "");
-  magics::populateBishopTable(E4);
+  magics::PopulateBishopTable(E4);
   board.bishopGen(&caps, 0, false);
   Move expected_caps[256] = {0};
   expected_caps[0] = moves::make(E4, C6, BISHOP, PAWN, NONE, NONE, REGULAR_MOVE);
@@ -420,7 +420,7 @@ int TestBishopGenQueen() {
   // +---+---+---+---+---+---+---+---+
 
   Board board("8/8/8/8/8/5ppp/5P2/5P1Q", "w", "");
-  magics::populateBishopTable(H1);
+  magics::PopulateBishopTable(H1);
   board.bishopGen(&moves, 0, true);
   Move expected_moves[256] = {0};
   expected_moves[0] = moves::make(H1, G2, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);
@@ -459,7 +459,7 @@ int TestBishopGenPinned() {
   // +---+---+---+---+---+---+---+---+
 
   Board board("b7/8/2B5/8/4K3/8/8/8", "w", "");
-  magics::populateBishopTable(C6);
+  magics::PopulateBishopTable(C6);
   masks::GenerateOpposite();
   masks::GenerateInterceding();
   board.bishopGenPinned(&moves, exp_2(C6), E4, true);
@@ -504,7 +504,7 @@ int TestRookGen() {
   // +---+---+---+---+---+---+---+---+
 
   Board board("1p6/PR2p3/8/1P6/8/8/8/8", "w", "");
-  magics::populateRookTable(B7);
+  magics::PopulateRookTable(B7);
   board.rookGen(&moves, 0, true);
   Move expected_moves[256] = {0};
   expected_moves[0] = moves::make(B7, B8, ROOK, PAWN, NONE, NONE, REGULAR_MOVE);
@@ -546,7 +546,7 @@ int TestRookGenCaps() {
   // +---+---+---+---+---+---+---+---+
 
   Board board("1p6/PR2p3/8/1P6/8/8/8/8", "w", "");
-  magics::populateRookTable(B7);
+  magics::PopulateRookTable(B7);
   board.rookGen(&caps, 0, false);
   Move expected_caps[256] = {0};
   expected_caps[0] = moves::make(B7, B8, ROOK, PAWN, NONE, NONE, REGULAR_MOVE);
@@ -585,7 +585,7 @@ int TestRookGenQueen() {
   // +---+---+---+---+---+---+---+---+
 
   Board board("8/8/8/8/8/8/7P/7Q", "w", "");
-  magics::populateRookTable(H1);
+  magics::PopulateRookTable(H1);
   board.rookGen(&moves, 0, true);
   Move expected_moves[256] = {0};
   expected_moves[0] = moves::make(H1, G1, QUEEN, NONE, NONE, NONE, REGULAR_MOVE);
@@ -629,7 +629,7 @@ int TestRookGenPinned() {
   // +---+---+---+---+---+---+---+---+
 
   Board board("8/8/8/8/8/8/8/r1R1K3", "w", "");
-  magics::populateRookTable(C1);
+  magics::PopulateRookTable(C1);
   masks::GenerateOpposite();
   masks::GenerateInterceding();
   board.rookGenPinned(&moves, exp_2(C1), E1, true);
@@ -668,7 +668,7 @@ int TestBishopPins() {
   // +---+---+---+---+---+---+---+---+
 
   Board board("q7/5b2/2P1P3/3K4/2P1P3/8/8/8", "w", "");
-  magics::populateBishopTables();
+  magics::PopulateBishopTables();
   Bitboard pins = board.bishopPins(D5);
   Bitboard expectedPins = exp_2(C6) | exp_2(E6);
   ASSERT(pins == expectedPins, "Wrong bishop pins");
@@ -699,7 +699,7 @@ int TestRookPins() {
   // +---+---+---+---+---+---+---+---+
 
   Board board("4q3/8/8/4P3/r1P1KP2/8/8/8", "w", "");
-  magics::populateRookTables();
+  magics::PopulateRookTables();
   Bitboard pins = board.rookPins(E4);
   Bitboard expectedPins = exp_2(C4) | exp_2(E5);
   ASSERT(pins == expectedPins, "Wrong rook pins");
@@ -730,8 +730,8 @@ int TestAttackSetGen() {
   // +---+---+---+---+---+---+---+---+
 
   Board board("3k4/6P1/6pb/rn6/8/5q2/p4P2/8", "w", "");
-  magics::populateBishopTables();
-  magics::populateRookTables();
+  magics::PopulateBishopTables();
+  magics::PopulateRookTables();
   Bitboard attacks = board.attackSetGen(BLACK);
   Bitboard expected_attacks =
       0b1010110011111110101101000101011110011110111110111001111001110001;
@@ -890,8 +890,8 @@ int TestGenerateMovesTo() {
   // +---+---+---+---+---+---+---+---+
 
   Board board("4R1Q1/k7/8/3Pp3/5NB1/8/8/4K3", "w", "", "e6");
-  magics::populateBishopTables();
-  magics::populateRookTables();
+  magics::PopulateBishopTables();
+  magics::PopulateRookTables();
   board.generateMovesTo(&moves, E6, NONE, 0, 0);
   Move expected_moves[256] = {0};
   expected_moves[0] =
@@ -936,8 +936,8 @@ int TestGenerateMovesToCaps() {
   // +---+---+---+---+---+---+---+---+
 
   Board board("4N3/6B1/5rR1/4PK2/8/8/8/8", "w", "");
-  magics::populateBishopTables();
-  magics::populateRookTables();
+  magics::PopulateBishopTables();
+  magics::PopulateRookTables();
   board.generateMovesTo(&moves, F6, ROOK, 0, 0);
   Move expected_moves[256] = {0};
   expected_moves[0] = moves::make(E5, F6, PAWN, ROOK, NONE, NONE, REGULAR_MOVE);
@@ -980,8 +980,8 @@ int TestEvasionGen() {
   // +---+---+---+---+---+---+---+---+
 
   Board board("5Q1q/4B3/2r3K1/4pP2/6N1/8/8/k7", "w", "", "E6");
-  magics::populateBishopTables();
-  magics::populateRookTables();
+  magics::PopulateBishopTables();
+  magics::PopulateRookTables();
   masks::GenerateOpposite();
   masks::GenerateInterceding();
   Bitboard enemy_attacks = board.attackSetGen(BLACK);

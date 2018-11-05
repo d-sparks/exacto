@@ -204,7 +204,7 @@ void Board::bishopGen(Move **move_list, Bitboard pins, bool quiet_moves) {
   Bitboard sliders = (pieces[wtm][BISHOP] | pieces[wtm][QUEEN]) & ~pins;
   while (sliders) {
     ind i = bitscan(sliders);
-    Bitboard movesBB = magics::bishopMoves(i, occupied);
+    Bitboard movesBB = magics::BishopMoves(i, occupied);
     movesBB &= quiet_moves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL];
     Serialize(move_list, movesBB, i);
     sliders &= ~exp_2(i);
@@ -221,7 +221,7 @@ void Board::bishopGenPinned(Move **move_list, Bitboard pins, ind king_square,
     ind i = bitscan(sliders);
     Bitboard validMoves =
         masks::OPPOSITE[king_square][i] | masks::INTERCEDING[king_square][i];
-    validMoves &= magics::bishopMoves(i, occupied);
+    validMoves &= magics::BishopMoves(i, occupied);
     validMoves &= quiet_moves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL];
     Serialize(move_list, validMoves, i);
     sliders &= sliders - 1;
@@ -234,7 +234,7 @@ void Board::rookGen(Move **move_list, Bitboard pins, bool quiet_moves) {
   Bitboard sliders = (pieces[wtm][ROOK] | pieces[wtm][QUEEN]) & ~pins;
   while (sliders) {
     ind i = bitscan(sliders);
-    Bitboard movesBB = magics::rookMoves(i, occupied);
+    Bitboard movesBB = magics::RookMoves(i, occupied);
     movesBB &= quiet_moves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL];
     Serialize(move_list, movesBB, i);
     sliders &= ~exp_2(i);
@@ -251,7 +251,7 @@ void Board::rookGenPinned(Move **move_list, Bitboard pins, ind king_square,
     ind i = bitscan(sliders);
     Bitboard validMoves =
         masks::OPPOSITE[king_square][i] | masks::INTERCEDING[king_square][i];
-    validMoves &= magics::rookMoves(i, occupied);
+    validMoves &= magics::RookMoves(i, occupied);
     validMoves &= quiet_moves ? ~pieces[wtm][ALL] : pieces[!wtm][ALL];
     Serialize(move_list, validMoves, i);
     sliders &= sliders - 1;
@@ -309,14 +309,14 @@ Bitboard Board::attackSetGen(bool color) {
   Bitboard bishops = pieces[color][BISHOP] | pieces[color][QUEEN];
   while (bishops) {
     ind i = bitscan(bishops);
-    attack_set |= magics::bishopMoves(i, occupied);
+    attack_set |= magics::BishopMoves(i, occupied);
     bishops &= bishops - 1;
   }
   // Rooks and queen horizontal/vertical moves
   Bitboard rooks = pieces[color][ROOK] | pieces[color][QUEEN];
   while (rooks) {
     ind i = bitscan(rooks);
-    attack_set |= magics::rookMoves(i, occupied);
+    attack_set |= magics::RookMoves(i, occupied);
     rooks &= rooks - 1;
   }
   // King moves
@@ -374,10 +374,10 @@ void Board::generateMovesTo(Move **move_list,
   // Knights, bishops, and rooks are very simple.
   Bitboard knights = masks::KNIGHT_MOVES[dest] & pieces[wtm][KNIGHT] & ~pins;
   SerializeFromDest(move_list, knights, dest, defender, REGULAR_MOVE);
-  Bitboard bishops = magics::bishopMoves(dest, occupied) &
+  Bitboard bishops = magics::BishopMoves(dest, occupied) &
       (pieces[wtm][BISHOP] | pieces[wtm][QUEEN]) & ~pins;
   SerializeFromDest(move_list, bishops, dest, defender, REGULAR_MOVE);
-  Bitboard rooks = magics::rookMoves(dest, occupied) &
+  Bitboard rooks = magics::RookMoves(dest, occupied) &
       (pieces[wtm][ROOK] | pieces[wtm][QUEEN]) & ~pins;
   SerializeFromDest(move_list, rooks, dest, defender, REGULAR_MOVE);
 
@@ -408,9 +408,9 @@ void Board::evasionGen(Move **move_list, Bitboard enemy_attacks, Bitboard pins,
   }
   attackers[PAWN] &= masks::KING_MOVES[king_square];
   attackers[KNIGHT] = masks::KNIGHT_MOVES[king_square] & pieces[!wtm][KNIGHT];
-  attackers[BISHOP] = magics::bishopMoves(king_square, occupied) &
+  attackers[BISHOP] = magics::BishopMoves(king_square, occupied) &
                       (pieces[!wtm][BISHOP] | pieces[!wtm][QUEEN]);
-  attackers[ROOK] = magics::rookMoves(king_square, occupied) &
+  attackers[ROOK] = magics::RookMoves(king_square, occupied) &
                     (pieces[!wtm][ROOK] | pieces[!wtm][QUEEN]);
   attackers[ALL] =
       attackers[PAWN] | attackers[KNIGHT] | attackers[BISHOP] | attackers[ROOK];
@@ -460,12 +460,12 @@ void Board::evasionGen(Move **move_list, Bitboard enemy_attacks, Bitboard pins,
 Bitboard Board::bishopPins(ind king_square) {
   Bitboard pins = 0;
   Bitboard candidatePins =
-      magics::bishopMoves(king_square, occupied) & pieces[wtm][ALL];
+      magics::BishopMoves(king_square, occupied) & pieces[wtm][ALL];
   while (candidatePins) {
     ind i = bitscan(candidatePins);
-    Bitboard candidateMoves = magics::bishopMoves(i, occupied);
+    Bitboard candidateMoves = magics::BishopMoves(i, occupied);
     Bitboard king_xray_attacks =
-        magics::bishopMoves(king_square, occupied & ~exp_2(i));
+        magics::BishopMoves(king_square, occupied & ~exp_2(i));
     if (candidateMoves & king_xray_attacks &
         (pieces[!wtm][BISHOP] | pieces[!wtm][QUEEN])) {
       pins |= exp_2(i);
@@ -480,13 +480,13 @@ Bitboard Board::bishopPins(ind king_square) {
 Bitboard Board::rookPins(ind king_square) {
   Bitboard pins = 0;
   Bitboard candidatePins =
-      magics::rookMoves(king_square, occupied) & pieces[wtm][ALL];
+      magics::RookMoves(king_square, occupied) & pieces[wtm][ALL];
   while (candidatePins) {
     ind i = bitscan(candidatePins);
-    Bitboard candidateMoves = magics::rookMoves(i, occupied);
+    Bitboard candidateMoves = magics::RookMoves(i, occupied);
     candidatePins &= candidatePins - 1;
     Bitboard king_xray_attacks =
-        magics::rookMoves(king_square, occupied & ~exp_2(i));
+        magics::RookMoves(king_square, occupied & ~exp_2(i));
     if (candidateMoves & king_xray_attacks &
         (pieces[!wtm][ROOK] | pieces[!wtm][QUEEN])) {
       pins |= exp_2(i);

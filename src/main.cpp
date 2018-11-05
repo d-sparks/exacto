@@ -31,8 +31,8 @@ int main() {
   greet("?.?");
   Game game;
   Exacto exacto(game);
-  magics::populateRookTables();
-  magics::populateBishopTables();
+  magics::PopulateRookTables();
+  magics::PopulateBishopTables();
   masks::init();
 
   std::string userInput;
