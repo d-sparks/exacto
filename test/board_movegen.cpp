@@ -89,7 +89,7 @@ int TestPawnGenPromotions() {
   Board board("8/8/8/8/8/8/7p/6R1", "b", "");
   board.pawnGen(&moves, 0, true);
   Move expected_moves[256] = {0};
-  for (ind special = PROMOTE_KNIGHT; special <= PROMOTE_QUEEN; special++) {
+  for (ind special = PROMOTE_KNIGHT; special <= PROMOTE_QUEEN; ++special) {
     expected_moves[special] =
         moves::make(H2, H1, PAWN, NONE, NONE, NONE, special);
     expected_moves[100 + special] =

@@ -75,7 +75,7 @@ void Board::setBoard(std::string brd,
   hash_key = 0;
 
   // Parse FEN board and set pieces, board arrays
-  for (ind x = 0, y = 63; x < brd.length(); x++, y--) {
+  for (ind x = 0, y = 63; x < brd.length(); ++x, --y) {
     std::string temp = brd;
     temp = temp.substr(x, 1);
     if (atoi(temp.c_str()) == 0) {
@@ -97,7 +97,7 @@ void Board::setBoard(std::string brd,
   }
 
   // Set castling data
-  for (ind i = 0; i < cstl.length(); i++) {
+  for (ind i = 0; i < cstl.length(); ++i) {
     std::string temp = cstl;
     temp = temp.substr(i, 1);
     if (temp == "K") GrantKingsideCastlingRights(WHITE);
@@ -113,8 +113,8 @@ void Board::setBoard(std::string brd,
   }
 
   // Set occupancy Bitboards
-  for (ind i = BLACK; i <= WHITE; i++) {
-    for (ind j = PAWN; j <= KING; j++) {
+  for (ind i = BLACK; i <= WHITE; ++i) {
+    for (ind j = PAWN; j <= KING; ++j) {
       pieces[i][ALL] |= pieces[i][j];
     }
   }

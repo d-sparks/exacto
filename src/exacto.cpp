@@ -35,7 +35,7 @@ void Exacto::Go(Game* game) {
   int64_t t = 0;
 
   Move bestMove = BOGUS_MOVE;
-  for (int depth = 1; true; depth++) {
+  for (int depth = 1; true; ++depth) {
     prevNodes = nodes;
     int16_t score = Search(game, -INFNTY, INFNTY, depth, 0);
     if (depth == 1) {
@@ -84,7 +84,7 @@ void Exacto::SortMoves(Game* game, Move* Moves) {
     numMoves++;
   }
   int16_t scores[numMoves];
-  for (int i = 0; i < numMoves; i++) {
+  for (int i = 0; i < numMoves; ++i) {
     Move move = Moves[i];
     int16_t score = (move == hashSugg) ? MATESCORE : SEE::see(game, move);
     ind attacker = moves::attacker(move);
@@ -98,7 +98,7 @@ void Exacto::SortMoves(Game* game, Move* Moves) {
       }
     }
     int j = i;
-    for (; j > 0 && score > scores[j - 1]; j--) {
+    for (; j > 0 && score > scores[j - 1]; --j) {
       scores[j] = scores[j - 1];
       Moves[j] = Moves[j - 1];
     }
@@ -113,11 +113,11 @@ void Exacto::SortCaps(Game* game, Move* moves) {
     numMoves++;
   }
   int16_t scores[numMoves];
-  for (int i = 0; i < numMoves; i++) {
+  for (int i = 0; i < numMoves; ++i) {
     Move move = moves[i];
     int16_t score = SEE::see(game, move);
     int j = i;
-    for (; j > 0 && score > scores[j - 1]; j--) {
+    for (; j > 0 && score > scores[j - 1]; --j) {
       scores[j] = scores[j - 1];
       moves[j] = moves[j - 1];
     }

@@ -30,7 +30,7 @@ int TestSetBoardDefaultPosition() {
       {B7, PAWN},   {A7, PAWN}};
 
   Board board;
-  for (ind i = H1; i < NUM_SQUARES; i++) {
+  for (ind i = H1; i < NUM_SQUARES; ++i) {
     ASSERT(board.board[i] == expectedBoard[i],
            "Wrong piece index " + to_string(i));
   }
@@ -77,7 +77,7 @@ int TestSetBoardDefaultPosition() {
 // Test setBoard's accuracy with en passant squares
 int TestSetBoardEnPassant() {
   cout << "Testing setBoard: en passant" << endl;
-  for (ind i = H1; i < NUM_SQUARES; i++) {
+  for (ind i = H1; i < NUM_SQUARES; ++i) {
     Board board("8/8/8/8/8/8/8/8", "w", "KQkq", squares::algebraic[i]);
     ASSERT(board.en_passant == exp_2(i),
            "Bad en_passant loading " + squares::algebraic[i]);

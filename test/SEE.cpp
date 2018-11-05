@@ -38,7 +38,7 @@ int TestMakeMoveUnmakeMove() {
   Game game2 = game1;
   Move move_list[256] = {0};
   game1.MoveGen(move_list, true);
-  for (Move* move = move_list; *move; move++) {
+  for (Move* move = move_list; *move; ++move) {
     Bitboard source_bb = exp_2(moves::source(*move));
     ind attacker = moves::attacker(*move);
     SEE::MakeMove(&game1, source_bb, attacker);
@@ -82,7 +82,7 @@ int TestSEEValues() {
 
   Game game("3rkr2/1n2P1B1/8/8/P1PK4/8/8/8", "w", "-", "-");
   Game gameRef("3rkr2/1n2P1B1/8/8/P1PK4/8/8/8", "w", "-", "-");
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 5; ++i) {
     Move move = moves[i].first;
     int16_t expectedScore = moves[i].second;
     int16_t score = SEE::see(&game, move);

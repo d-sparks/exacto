@@ -547,7 +547,7 @@ void Board::SerializePawn(Move **move_list,
   pawns = b & masks::promo_rank(wtm);
   while (pawns) {
     ind i = bitscan(pawns);
-    for (ind special = PROMOTE_KNIGHT; special <= PROMOTE_QUEEN; special++) {
+    for (ind special = PROMOTE_KNIGHT; special <= PROMOTE_QUEEN; ++special) {
       *((*move_list)++) =
           moves::make((int)i - delta, i, PAWN, board[i], 0, 0, special);
     }

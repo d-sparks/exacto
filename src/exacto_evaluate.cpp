@@ -8,8 +8,8 @@ namespace exacto {
 int16_t Exacto::Evaluate(Game* game) {
   int16_t score = 0;
 
-  for (ind color = BLACK; color <= WHITE; color++) {
-    for (ind piece = PAWN; piece <= KING; piece++) {
+  for (ind color = BLACK; color <= WHITE; ++color) {
+    for (ind piece = PAWN; piece <= KING; ++piece) {
       if (piece == ROOK || piece == QUEEN) {
         continue;
       }

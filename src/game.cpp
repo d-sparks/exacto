@@ -216,7 +216,7 @@ Bitboard perft(Game *game, int depth) {
   if (depth > 0) {
     Move moves[256];
     game->MoveGen(moves);
-    for (Move *move = moves; *move; move++) {
+    for (Move *move = moves; *move; ++move) {
       game->MakeMove(move);
       nodes += perft(game, depth - 1);
       game->UnmakeMove(*move);
@@ -234,7 +234,7 @@ Bitboard divide(Game *game, int depth) {
   Move moves[256];
   int number_of_moves = 0;
   game->MoveGen(moves);
-  for (Move *move = moves; *move; move++) {
+  for (Move *move = moves; *move; ++move) {
     number_of_moves++;
     game->MakeMove(move);
     std::cout << moves::algebraic(*move) << " ";

@@ -172,8 +172,8 @@ Bitboard OPPOSITE[64][64] = {0};
 
 void GenerateInterceding() {
   int deltas[8] = {-1, -7, -8, -9, 1, 9, 8, 7};
-  for (ind source = 0; source < 64; source++) {
-    for (ind direction = 0; direction < 8; direction++) {
+  for (ind source = 0; source < 64; ++source) {
+    for (ind direction = 0; direction < 8; ++direction) {
       int dest = source;
       Bitboard interceding = 0;
       while (WrapIter(&dest, deltas[direction])) {
@@ -186,8 +186,8 @@ void GenerateInterceding() {
 
 void GenerateOpposite() {
   int deltas[8] = {-1, -7, -8, -9, 1, 9, 8, 7};
-  for (ind dest = 0; dest < 64; dest++) {
-    for (ind direction = 0; direction < 8; direction++) {
+  for (ind dest = 0; dest < 64; ++dest) {
+    for (ind direction = 0; direction < 8; ++direction) {
       Bitboard opposite = 0;
 
       // Set the "opposite" bits
@@ -218,7 +218,7 @@ void GenerateOpposite() {
 Bitboard PAWN_CHECKS[2][64] = {0};
 
 void GeneratePawnChecks() {
-  for (int i = 0; i < 64; i++) {
+  for (int i = 0; i < 64; ++i) {
     Bitboard square = exp_2(i);
     PAWN_CHECKS[WHITE][i] =
         ((square & ~FILE[0]) << 7) | ((square & ~FILE[7]) << 9);

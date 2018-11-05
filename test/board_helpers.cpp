@@ -17,7 +17,7 @@ using namespace std;
 // appropriate domain.
 int TestSquareToIndex() {
   cout << "Testing squares::index..." << endl;
-  for (ind i = 0; i < NUM_SQUARES; i++) {
+  for (ind i = 0; i < NUM_SQUARES; ++i) {
     ASSERT(i == squares::index(squares::algebraic[i]),
            "squares::index failed for i = " + to_string(i));
   }

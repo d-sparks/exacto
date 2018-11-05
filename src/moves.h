@@ -17,6 +17,8 @@
 // [00000011110000000000000000000000]: castling data (4 bits - KQkq)
 // [11111100000000000000000000000000]: special data (6 bits)
 
+// To see special values, see defines.h.
+
 namespace exacto {
 
 typedef uint32_t Move;

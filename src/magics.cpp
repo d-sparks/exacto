@@ -95,15 +95,15 @@ void generateSubsets(Bitboard b, std::vector<Bitboard>* subsets) {
 
   ind indices[pop];
 
-  for (ind j = 0; b; j++) {
+  for (ind j = 0; b; ++j) {
     ind i = bitscan(b);
     indices[j] = i;
     b &= ~exp_2(i);
   }
 
-  for (Bitboard x = 0; x < exp_2(pop); x++) {
+  for (Bitboard x = 0; x < exp_2(pop); ++x) {
     Bitboard subset = 0;
-    for (ind i = 0; i < pop; i++) {
+    for (ind i = 0; i < pop; ++i) {
       if (x & exp_2(i)) {
         subset |= exp_2(indices[i]);
       }
@@ -117,7 +117,7 @@ void generateSubsets(Bitboard b, std::vector<Bitboard>* subsets) {
 Bitboard generateMovesFromOccupancy(ind square, Bitboard occupancy, Bitboard mask,
                               int directionDeltas[4]) {
   Bitboard moveBoard = 0;
-  for (ind direction = 0; direction < 4; direction++) {
+  for (ind direction = 0; direction < 4; ++direction) {
     int delta = directionDeltas[direction];
     int nextSquare = square;
     while (masks::WrapIter(&nextSquare, delta)) {
@@ -152,7 +152,7 @@ void populateRookTable(ind square) {
   Bitboard mask = masks::ROOK_MASKS[square];
   std::vector<Bitboard> occupancyBoards;
   generateSubsets(mask, &occupancyBoards);
-  for (int i = 0; i < occupancyBoards.size(); i++) {
+  for (int i = 0; i < occupancyBoards.size(); ++i) {
     Bitboard occupancy = occupancyBoards.at(i);
     int directionDeltas[4] = {1, 8, -1, -8};
     Bitboard moveBoard =
@@ -163,14 +163,14 @@ void populateRookTable(ind square) {
 
 // Generate bishop move table for all squares.
 void populateBishopTables() {
-  for (ind square = 0; square < 64; square++) {
+  for (ind square = 0; square < 64; ++square) {
     populateBishopTable(square);
   }
 }
 
 // Generate rook move table for all squares.
 void populateRookTables() {
-  for (ind square = 0; square < 64; square++) {
+  for (ind square = 0; square < 64; ++square) {
     populateRookTable(square);
   }
 }
