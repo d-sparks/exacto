@@ -30,7 +30,7 @@ int16_t Exacto::Evaluate(Game* game) {
 }
 
 bool Exacto::drawn_by_repition_or_50_move_rule(Game* game) {
-  if (game->half_moves >= 100) {
+  if (game->half_moves[game->move_number] >= 100) {
     return true;
   }
   // TODO: implement threefold repetition

@@ -24,8 +24,10 @@ class Game : public Board {
   void UnmakeMove(Move m);
   bool operator==(const Game& other) const;
 
+#ifndef _TEST
  private:
-  int half_moves;
+#endif
+  ind half_moves[1024];
   int move_number;
 };
 

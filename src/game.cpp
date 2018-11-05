@@ -1,6 +1,7 @@
 #include "game.h"
 
 #include <iostream>
+#include <cstring>
 #include <string>
 
 #include "board.h"
@@ -20,16 +21,21 @@ Game::Game(std::string brd,
            std::string hm,
            std::string fm)
     : Board(brd, clr, cstl, ep) {
-  half_moves = atoi(hm.c_str());
+  memset(half_moves, 0, sizeof(half_moves[0]) * 1024);
   move_number = atoi(fm.c_str());
+  half_moves[move_number] = atoi(hm.c_str());
 }
 
 Game::~Game() {}
 
 // operator== for comparing Games
 bool Game::operator==(const Game &other) const {
-  bool boardsEqual = Board::operator==(other);
-  return boardsEqual;
+  bool boards_equal = Board::operator==(other);
+  bool move_data_equal = (move_number == other.move_number);
+  for (int i = 0; i <= move_number; ++i) {
+    move_data_equal &= (half_moves[i] == other.half_moves[i]);
+  }
+  return boards_equal && move_data_equal;
 }
 
 // Makes a move, fully updating the gamestate and history.
@@ -134,8 +140,10 @@ void Game::MakeMove(Move *m) {
   }
 
   // Increment half-move clock
+  move_number++;
+  half_moves[move_number] = half_moves[move_number - 1] + 1;
   if (defender || (attacker == PAWN)) {
-    half_moves++;
+    half_moves[move_number] = 0;
   }
 
   wtm = !wtm;
@@ -156,10 +164,8 @@ void Game::UnmakeMove(Move m) {
   hash_key ^= zobrist::wtm;
   wtm = !wtm;
 
-  //  Decrement half-move clock
-  if (defender || (attacker == PAWN)) {
-    half_moves--;
-  }
+  //  Decrement half-move clock (leave garbage in half_moves)
+  move_number--;
 
   // Special move stuff
   switch (special) {

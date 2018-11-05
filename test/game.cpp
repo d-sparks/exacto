@@ -2,10 +2,14 @@
 
 #include "../src/game.h"
 
+#include <vector>
+
 #include "../src/board.h"
+#include "../src/defines.h"
 #include "../src/magics.h"
 #include "../src/masks.h"
 #include "../src/moves.h"
+#include "../src/squares.h"
 #include "assert.h"
 
 using namespace exacto;
@@ -49,10 +53,59 @@ int TestMakeMoveUnmakeMove() {
   return 1;
 }
 
+int TestReset50MoveLogic() {
+  cout << "Testing that pawn/capture moves resets 50 move clock..." << endl;
+
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |[k]|   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   | : |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   | P | p |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |   | R |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |[K]|   |   |   |
+  // +---+---+---+---+---+---+---+---+
+
+  Game game("4k3/8/8/2Pp4/8/8/5r2/4K3", "w", "-", "D6", "20", "100");
+  vector<Move> noisy_moves{
+      moves::make(E1, F2, KING, ROOK, D6, 0, 0),
+      moves::make(C5, D6, PAWN, PAWN, D6, 0, EN_PASSANT_CAP),
+      moves::make(C5, C6, PAWN, NONE, D6, 0, 0)};
+  vector<Move> quiet_moves{
+      moves::make(E1, F1, KING, NONE, D6, 0, 0),
+      moves::make(E1, E2, KING, NONE, D6, 0, 0),
+      moves::make(E1, D2, KING, NONE, D6, 0, 0),
+      moves::make(E1, D1, KING, NONE, D6, 0, 0)};
+
+  for (Move move : noisy_moves) {
+    game.MakeMove(&move);
+    ASSERT(game.half_moves[game.move_number] == 0,
+           "Didn't reset 50move clock: " + moves::algebraic(move));
+    game.UnmakeMove(move);
+  }
+  for (Move move : quiet_moves) {
+    game.MakeMove(&move);
+    ASSERT(game.half_moves[game.move_number] == 21,
+           "Didn't increment 50move clock: " + moves::algebraic(move));
+    game.UnmakeMove(move);
+  }
+
+  return 1;
+}
+
 int main() {
   int t = 0;
 
   t += TestMakeMoveUnmakeMove();
+  t += TestReset50MoveLogic();
 
   cout << endl;
   cout << t << " test(s) OK" << endl;
