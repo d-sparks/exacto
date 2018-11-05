@@ -13,7 +13,6 @@
 
 namespace exacto {
 
-// Constructor and destructor
 Game::Game(std::string brd,
            std::string clr,
            std::string cstl,

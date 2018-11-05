@@ -65,41 +65,41 @@ class Board {
 #endif
   // Move generation helpers functions. Despite being protected, these methods
   // are unit tested due to their complexity.
-  void pawnGen(Move **move_list, Bitboard pins, bool quiet_moves);
-  void pawnCaps(Move **move_list, Bitboard pins);
-  void pawnGenPinned(Move **move_list,
+  void PawnGen(Move **move_list, Bitboard pins, bool quiet_moves);
+  void PawnCaps(Move **move_list, Bitboard pins);
+  void PawnGenPinned(Move **move_list,
                      Bitboard pins,
                      ind king_square,
                      bool quiet_moves);
-  void knightGen(Move **move_list, Bitboard pins, bool quiet_moves);
-  void bishopGen(Move **move_list, Bitboard pins, bool quiet_moves);
-  void bishopGenPinned(Move **move_list,
+  void KnightGen(Move **move_list, Bitboard pins, bool quiet_moves);
+  void BishopGen(Move **move_list, Bitboard pins, bool quiet_moves);
+  void BishopGenPinned(Move **move_list,
                        Bitboard pins,
                        ind king_square,
                        bool quiet_moves);
-  void rookGen(Move **move_list, Bitboard pins, bool quiet_moves);
-  void rookGenPinned(Move **move_list,
+  void RookGen(Move **move_list, Bitboard pins, bool quiet_moves);
+  void RookGenPinned(Move **move_list,
                      Bitboard pins,
                      ind king_square,
                      bool quiet_moves);
-  void kingGen(Move **move_list,
+  void KingGen(Move **move_list,
                ind king_square,
                Bitboard enemey_attacks,
                bool quiet_moves);
 
-  void generateMovesTo(Move **move_list,
+  void GenerateMovesTo(Move **move_list,
                        ind square,
                        ind defender,
                        Bitboard pins,
                        Bitboard enemey_attacks);
-  void evasionGen(Move **move_list,
+  void EvasionGen(Move **move_list,
                   Bitboard enemey_attacks,
                   Bitboard pins,
                   ind king_square);
-  Bitboard attackSetGen(bool color);
+  Bitboard AttackSetGen(bool color);
 
-  Bitboard bishopPins(ind king_square);
-  Bitboard rookPins(ind king_square);
+  Bitboard BishopPins(ind king_square);
+  Bitboard RookPins(ind king_square);
 
   void Serialize(Move **move_list, Bitboard b, ind source);
   void Serialize(Move **move_list, Bitboard b, ind source, ind special);
@@ -110,7 +110,7 @@ class Board {
                          ind special);
 
   void SerializePawn(Move **move_list, Bitboard b, ind special, int delta);
-  void closeMoveList(Move **move_list);
+  void CloseMoveList(Move **move_list);
 
 };
 

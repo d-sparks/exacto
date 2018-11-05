@@ -19,33 +19,33 @@ void Board::CapGen(Move *move_list) { MoveGen(move_list, false); }
 // Main coordinating function for MoveGen.
 void Board::MoveGen(Move *move_list, bool quiet_moves) {
   ind king_square = bitscan(pieces[wtm][KING]);
-  Bitboard enemy_attacks = attackSetGen(!wtm);
-  Bitboard pins = bishopPins(king_square) | rookPins(king_square);
+  Bitboard enemy_attacks = AttackSetGen(!wtm);
+  Bitboard pins = BishopPins(king_square) | RookPins(king_square);
   bool currently_in_check = pieces[wtm][KING] & enemy_attacks;
 
   if (currently_in_check) {
-    evasionGen(&move_list, enemy_attacks, pins, king_square);
+    EvasionGen(&move_list, enemy_attacks, pins, king_square);
   } else {
-    pawnGen(&move_list, pins, quiet_moves);
-    knightGen(&move_list, pins, quiet_moves);
-    bishopGen(&move_list, pins, quiet_moves);
-    rookGen(&move_list, pins, quiet_moves);
-    kingGen(&move_list, king_square, enemy_attacks, quiet_moves);
+    PawnGen(&move_list, pins, quiet_moves);
+    KnightGen(&move_list, pins, quiet_moves);
+    BishopGen(&move_list, pins, quiet_moves);
+    RookGen(&move_list, pins, quiet_moves);
+    KingGen(&move_list, king_square, enemy_attacks, quiet_moves);
     if (pins) {
-      pawnGenPinned(&move_list, pins, king_square, quiet_moves);
-      bishopGenPinned(&move_list, pins, king_square, quiet_moves);
-      rookGenPinned(&move_list, pins, king_square, quiet_moves);
+      PawnGenPinned(&move_list, pins, king_square, quiet_moves);
+      BishopGenPinned(&move_list, pins, king_square, quiet_moves);
+      RookGenPinned(&move_list, pins, king_square, quiet_moves);
     }
   }
-  closeMoveList(&move_list);
+  CloseMoveList(&move_list);
 }
 
 // Returns true if the king is in check.
-bool Board::in_check() { return (pieces[wtm][KING] & attackSetGen(!wtm)) != 0; }
+bool Board::in_check() { return (pieces[wtm][KING] & AttackSetGen(!wtm)) != 0; }
 
 // Generates the non-capture pawn moves
-void Board::pawnGen(Move **move_list, Bitboard pins, bool quiet_moves) {
-  pawnCaps(move_list, pins);
+void Board::PawnGen(Move **move_list, Bitboard pins, bool quiet_moves) {
+  PawnCaps(move_list, pins);
   if (quiet_moves) {
     Bitboard pawns = pieces[wtm][PAWN] & ~pins;
     if (wtm) {
@@ -63,7 +63,7 @@ void Board::pawnGen(Move **move_list, Bitboard pins, bool quiet_moves) {
 }
 
 // Generate pawn capture moves
-void Board::pawnCaps(Move **move_list, Bitboard pins) {
+void Board::PawnCaps(Move **move_list, Bitboard pins) {
   Bitboard pawns = pieces[wtm][PAWN] & ~pins;
   if (wtm) {
     SerializePawn(move_list,
@@ -139,7 +139,7 @@ void Board::pawnCaps(Move **move_list, Bitboard pins) {
 }
 
 // Generate legal moves for pawns that are pinned to the king.
-void Board::pawnGenPinned(Move **move_list, Bitboard pins, ind king_square,
+void Board::PawnGenPinned(Move **move_list, Bitboard pins, ind king_square,
                            bool quiet_moves) {
   Bitboard pawns = pieces[wtm][PAWN] & pins;
   while (pawns) {
@@ -187,7 +187,7 @@ void Board::pawnGenPinned(Move **move_list, Bitboard pins, ind king_square,
 
 // Generates all moves for knights. Accepts a boolean argument which specifies
 // whether to return non-captures.
-void Board::knightGen(Move **move_list, Bitboard pins, bool quiet_moves) {
+void Board::KnightGen(Move **move_list, Bitboard pins, bool quiet_moves) {
   Bitboard knights = pieces[wtm][KNIGHT] & ~pins;
   while (knights) {
     ind i = bitscan(knights);
@@ -200,7 +200,7 @@ void Board::knightGen(Move **move_list, Bitboard pins, bool quiet_moves) {
 
 // Generates all moves for bishops and the bishop moves for queens. Accepts a
 // boolean argument which specifies whether to return non-captures.
-void Board::bishopGen(Move **move_list, Bitboard pins, bool quiet_moves) {
+void Board::BishopGen(Move **move_list, Bitboard pins, bool quiet_moves) {
   Bitboard sliders = (pieces[wtm][BISHOP] | pieces[wtm][QUEEN]) & ~pins;
   while (sliders) {
     ind i = bitscan(sliders);
@@ -214,7 +214,7 @@ void Board::bishopGen(Move **move_list, Bitboard pins, bool quiet_moves) {
 // Generates all moves for bishops and the bishop moves for queens that are
 // valid despite an already recognized pin. Accepts a boolean argument which
 // specifies whether to return non-captures.
-void Board::bishopGenPinned(Move **move_list, Bitboard pins, ind king_square,
+void Board::BishopGenPinned(Move **move_list, Bitboard pins, ind king_square,
                              bool quiet_moves) {
   Bitboard sliders = (pieces[wtm][BISHOP] | pieces[wtm][QUEEN]) & pins;
   while (sliders) {
@@ -230,7 +230,7 @@ void Board::bishopGenPinned(Move **move_list, Bitboard pins, ind king_square,
 
 // Generates all moves for rooks, and the rook moves for queens. Accepts a
 // boolean argument which specifies whether to return non-captures.
-void Board::rookGen(Move **move_list, Bitboard pins, bool quiet_moves) {
+void Board::RookGen(Move **move_list, Bitboard pins, bool quiet_moves) {
   Bitboard sliders = (pieces[wtm][ROOK] | pieces[wtm][QUEEN]) & ~pins;
   while (sliders) {
     ind i = bitscan(sliders);
@@ -244,7 +244,7 @@ void Board::rookGen(Move **move_list, Bitboard pins, bool quiet_moves) {
 // Generates all moves for rooks, and the rooks moves for queens that are valid
 // despite an already recognized pin. Accepts a boolean argument which specifies
 // whether to return non-captures.
-void Board::rookGenPinned(Move **move_list, Bitboard pins, ind king_square,
+void Board::RookGenPinned(Move **move_list, Bitboard pins, ind king_square,
                            bool quiet_moves) {
   Bitboard sliders = (pieces[wtm][ROOK] | pieces[wtm][QUEEN]) & pins;
   while (sliders) {
@@ -260,7 +260,7 @@ void Board::rookGenPinned(Move **move_list, Bitboard pins, ind king_square,
 
 // Generates all the moves from a given position, including castling moves.
 // Optionally, only generate captures by passing quiet_moves=false.
-void Board::kingGen(Move **move_list, ind king_square, Bitboard enemy_attacks,
+void Board::KingGen(Move **move_list, ind king_square, Bitboard enemy_attacks,
                      bool quiet_moves) {
   // Regular moves
   Bitboard valid_squares =
@@ -287,7 +287,7 @@ void Board::kingGen(Move **move_list, ind king_square, Bitboard enemy_attacks,
 // Returns a bitmap of all squares threatened by a given color on the current
 // board. A piece is threatening any square it aims at or can move to, even
 // while pinned.
-Bitboard Board::attackSetGen(bool color) {
+Bitboard Board::AttackSetGen(bool color) {
   Bitboard attack_set = 0;
 
   // Pawns
@@ -329,7 +329,7 @@ Bitboard Board::attackSetGen(bool color) {
 // the given square if they are a capture.
 // Note: this function does not generate all moves to a square. Rather, it
 // generates interception moves only.
-void Board::generateMovesTo(Move **move_list,
+void Board::GenerateMovesTo(Move **move_list,
                             ind dest,
                             ind defender,
                             Bitboard pins,
@@ -382,7 +382,7 @@ void Board::generateMovesTo(Move **move_list,
   SerializeFromDest(move_list, rooks, dest, defender, REGULAR_MOVE);
 
   // In order to make this a general function, we would need to account for
-  // pinned pieces. So far, the only place this is called is in evasionGen,
+  // pinned pieces. So far, the only place this is called is in EvasionGen,
   // specifically to intercept the check. But a pinned piece cannot move to
   // intercept a check. For the case of an en passant pawn capture, note that
   // the only possibility is a discovered attack when the opposing pawn moved.
@@ -394,7 +394,7 @@ void Board::generateMovesTo(Move **move_list,
 
 // Assumes the king is in check and generates all legal ways to evade the check:
 // move the king, kill the attacker or intercept.
-void Board::evasionGen(Move **move_list, Bitboard enemy_attacks, Bitboard pins,
+void Board::EvasionGen(Move **move_list, Bitboard enemy_attacks, Bitboard pins,
                         ind king_square) {
   Bitboard attackers[QUEEN] = {0};
 
@@ -435,7 +435,7 @@ void Board::evasionGen(Move **move_list, Bitboard enemy_attacks, Bitboard pins,
     // Generate interception moves
     while (intercept) {
       ind dest = bitscan(intercept);
-      generateMovesTo(move_list, dest, board[dest], pins, enemy_attacks);
+      GenerateMovesTo(move_list, dest, board[dest], pins, enemy_attacks);
       intercept &= intercept - 1;
     }
   }
@@ -457,7 +457,7 @@ void Board::evasionGen(Move **move_list, Bitboard enemy_attacks, Bitboard pins,
 
 // Gets the pieces that are currently pinned to the king by a diagonally moving
 // piece.
-Bitboard Board::bishopPins(ind king_square) {
+Bitboard Board::BishopPins(ind king_square) {
   Bitboard pins = 0;
   Bitboard candidatePins =
       magics::BishopMoves(king_square, occupied) & pieces[wtm][ALL];
@@ -477,7 +477,7 @@ Bitboard Board::bishopPins(ind king_square) {
 
 // Gets the pieces that are currently pinned to the king by a horizontally
 // moving piece.
-Bitboard Board::rookPins(ind king_square) {
+Bitboard Board::RookPins(ind king_square) {
   Bitboard pins = 0;
   Bitboard candidatePins =
       magics::RookMoves(king_square, occupied) & pieces[wtm][ALL];
@@ -557,6 +557,6 @@ void Board::SerializePawn(Move **move_list,
 
 // The end of a move_list array is signified by a 0 move. This helper adds that
 // 0 move to the list.
-void Board::closeMoveList(Move **move_list) { *((*move_list)++) = 0; }
+void Board::CloseMoveList(Move **move_list) { *((*move_list)++) = 0; }
 
 }  // namespace exacto
