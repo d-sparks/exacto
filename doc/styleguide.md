@@ -25,5 +25,9 @@ void myFunc(type1 arg1, type2 arg2,
 
 * Data members in classes do not end with an underscore, but are still snake case.
 
+* Test files live in a separate directory and may use namespace std.
+
+* Some classes or namespaces that are large are separated into multiple cpp files when it is logical. In that case the name of the cpp file would be `class_function.cpp`. For example `exacto_evaluate.cpp`, `exacto.cpp`, and `exacto_search.cpp`.
+
 Unlike 0.e and before, classes are no longer named `CGame`, `CBoard`, etc, but rather simply `Game` and `Board`, etc.
 
