@@ -126,7 +126,6 @@ void Exacto::SortCaps(Game* game, Move* moves) {
   }
 }
 
-// TODO: Return a vector of moves.
 std::string Exacto::principal_variation(Game* game, int depth) {
   // At depth 0 or if no hash entry, return.
   if (depth == 0 || hash.probe(game->hash_key, depth) != HASH_EXACT) {

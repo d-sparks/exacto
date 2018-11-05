@@ -1,6 +1,8 @@
 #ifndef exacto_src_exacto_h
 #define exacto_src_exacto_h
 
+#include <string>
+
 #include "game.h"
 #include "hash.h"
 
