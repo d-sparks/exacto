@@ -35,8 +35,6 @@ int main() {
   magics::populateBishopTables();
   masks::init();
 
-  std::cout << exacto.Search(&game, -10000, 10000, 1, 0) << std::endl;
-
   std::string userInput;
 
   for (std::cin >> userInput; true; std::cin >> userInput) {
