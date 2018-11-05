@@ -184,7 +184,7 @@ func main() {
 	fmt.Println("\n" + *fen + " " + getDifferingMoveSequence(*depth, process1, process2))
 
 	// exit
-	go func() { process1.Stdin <- "quit" }()
-	go func() { process2.Stdin <- "quit" }()
+  process1.UnderlyingProcess.Process.Kill()
+  process2.UnderlyingProcess.Process.Kill()
 }
 
