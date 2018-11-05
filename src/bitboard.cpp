@@ -5,8 +5,7 @@
 
 #include "inlines.h"
 
-// TODO: remove this, or move it?
-namespace bb {
+namespace bitboard {
 
 // print prints a Bitboard as an 8x8 square of binary. The 0-index bit is in the
 // lower-right corner while the 63-index bit is in the upper-left.
