@@ -43,7 +43,7 @@ int main() {
       game.MoveGen(candidateMoves);
       Move move;
       moves::ReadMoveFromStdin(candidateMoves, &move);
-      game.makeMove(&move);
+      game.MakeMove(&move);
     }
 
     if (userInput == "go") {

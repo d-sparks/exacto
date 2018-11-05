@@ -56,9 +56,9 @@ int16_t Exacto::Search(Game* game, int16_t alpha, int16_t beta, int16_t depth,
   // PVS algorithm: iterate over each child, recurse.
   for (ind i = 0; Moves[i]; i++) {
     Move move = Moves[i];
-    game->makeMove(&move);
+    game->MakeMove(&move);
     int score = -Search(game, -beta, -bestScore, depth - 1, ply + 1);
-    game->unmakeMove(move);
+    game->UnmakeMove(move);
 
 #ifdef _DEBUG
     if (!(*game == reference)) {
@@ -139,9 +139,9 @@ int16_t Exacto::QSearch(Game* game, int16_t alpha, int16_t beta,
   // This is basic alphabeta.
   for (ind i = 0; Moves[i]; i++) {
     Move move = Moves[i];
-    game->makeMove(&move);
+    game->MakeMove(&move);
     int score = -QSearch(game, -beta, -alpha, ply + 1);
-    game->unmakeMove(move);
+    game->UnmakeMove(move);
     if (score >= beta) {
       return score;
     }

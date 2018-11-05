@@ -71,7 +71,7 @@ void Exacto::Go(Game* game) {
 #ifdef _DEBUG
   std::cout << " usermove " << moves::algebraic(bestMove);
 #endif
-  game->makeMove(&bestMove);
+  game->MakeMove(&bestMove);
 }
 
 void Exacto::SortMoves(Game* game, Move* Moves) {
@@ -150,9 +150,9 @@ std::string Exacto::principal_variation(Game* game, int depth) {
   // Recurse
   Move move = PVLegal? PVMove : hashMove;
   std::string output = moves::algebraic(move);
-  game->makeMove(&move);
+  game->MakeMove(&move);
   output += " " + principal_variation(game, depth - 1);
-  game->unmakeMove(move);
+  game->UnmakeMove(move);
 
   return output;
 }

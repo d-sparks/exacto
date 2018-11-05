@@ -13,7 +13,7 @@ using namespace exacto;
 using namespace std;
 
 // Greatcomment
-int TestMakeMoveUnMakeMove() {
+int TestMakeMoveUnmakeMove() {
   cout << "Testing that MakeMove and UnmakeMove are inverses..." << endl;
 
   // +---+---+---+---+---+---+---+---+
@@ -102,7 +102,7 @@ int main() {
   magics::populateRookTables();
   masks::init();
 
-  t += TestMakeMoveUnMakeMove();
+  t += TestMakeMoveUnmakeMove();
   t += TestSEEValues();
 
   cout << endl;

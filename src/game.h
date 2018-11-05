@@ -20,13 +20,13 @@ class Game : public Board {
        std::string fm = "0");
   ~Game();
 
-  void makeMove(Move* m);
-  void unmakeMove(Move m);
+  void MakeMove(Move* m);
+  void UnmakeMove(Move m);
   bool operator==(const Game& other) const;
 
  private:
   int half_moves;
-  int moveNumber;
+  int move_number;
 };
 
 // TODO: move these somewhere? maybe Exacto?

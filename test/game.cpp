@@ -13,7 +13,7 @@ using namespace std;
 
 // Greatcomment
 int TestMakeMoveUnmakeMove() {
-  cout << "Testing that makeMove and unmakeMove are inverses..." << endl;
+  cout << "Testing that MakeMove and UnmakeMove are inverses..." << endl;
 
   // +---+---+---+---+---+---+---+---+
   // | r |   |   | q |[k]|   |   |   |
@@ -40,10 +40,10 @@ int TestMakeMoveUnmakeMove() {
   Move move_list[256] = {0};
   game1.MoveGen(move_list, true);
   for (Move* move = move_list; *move; move++) {
-    game1.makeMove(move);
-    game1.unmakeMove(*move);
+    game1.MakeMove(move);
+    game1.UnmakeMove(*move);
     ASSERT(game1 == game2,
-           "unmakeMove didn't undo makeMove: " + moves::algebraic(*move));
+           "UnmakeMove didn't undo MakeMove: " + moves::algebraic(*move));
   }
 
   return 1;

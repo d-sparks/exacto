@@ -21,7 +21,7 @@ Game::Game(std::string brd,
            std::string fm)
     : Board(brd, clr, cstl, ep) {
   half_moves = atoi(hm.c_str());
-  moveNumber = atoi(fm.c_str());
+  move_number = atoi(fm.c_str());
 }
 
 Game::~Game() {}
@@ -33,7 +33,7 @@ bool Game::operator==(const Game &other) const {
 }
 
 // Makes a move, fully updating the gamestate and history.
-void Game::makeMove(Move *m) {
+void Game::MakeMove(Move *m) {
   ind source = moves::source(*m);
   ind dest = moves::dest(*m);
   ind attacker = moves::attacker(*m);
@@ -144,7 +144,7 @@ void Game::makeMove(Move *m) {
 }
 
 // Fully undoes a move, updating gamestate and history accordingly.
-void Game::unmakeMove(Move m) {
+void Game::UnmakeMove(Move m) {
   ind source = moves::source(m);
   ind dest = moves::dest(m);
   ind attacker = moves::attacker(m);
@@ -217,9 +217,9 @@ Bitboard perft(Game *game, int depth) {
     Move moves[256];
     game->MoveGen(moves);
     for (Move *move = moves; *move; move++) {
-      game->makeMove(move);
+      game->MakeMove(move);
       nodes += perft(game, depth - 1);
-      game->unmakeMove(*move);
+      game->UnmakeMove(*move);
     }
   }
 
@@ -236,14 +236,14 @@ Bitboard divide(Game *game, int depth) {
   game->MoveGen(moves);
   for (Move *move = moves; *move; move++) {
     number_of_moves++;
-    game->makeMove(move);
+    game->MakeMove(move);
     std::cout << moves::algebraic(*move) << " ";
     if (depth >= 2) {
       descendents = perft(game, depth - 1) - perft(game, depth - 2);
     } else {
       descendents = 1;
     }
-    game->unmakeMove(*move);
+    game->UnmakeMove(*move);
     std::cout << descendents << std::endl;
     nodes += descendents;
   }
