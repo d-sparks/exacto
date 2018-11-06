@@ -67,6 +67,48 @@ int TestSortMoves() {
   return 1;
 }
 
+// Tests draw by threefold repitition and 50 move rule.
+int TestDrawThreefold() {
+  cout << "Testing that sort moves sorts correctly..." << endl;
+
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |[k]|   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |   | r |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   | R |   |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |[K]|   |   |   |
+  // +---+---+---+---+---+---+---+---+
+
+  Game game("4kr1q/6B1/7B/6P1/6P1/2p2pp1/6n1/5bRK", "w", "-", "-");
+  vector<Move> repeat{
+    moves::make(C2, B2, ROOK, NONE, NONE, NONE, NONE),
+    moves::make(F7, G7, ROOK, NONE, NONE, NONE, NONE),
+    moves::make(B2, C2, ROOK, NONE, NONE, NONE, NONE),
+    moves::make(G7, F7, ROOK, NONE, NONE, NONE, NONE)};
+  Exacto exacto(game);
+  for (int i = 0; i < 2; ++i) {
+    ASSERT(!exacto.drawn_by_repitition_or_50_move_rule(&game),
+           "Should not be drawn by repitition.");
+    for (Move move : repeat) {
+      game.MakeMove(&move);
+    }
+  }
+  ASSERT(exacto.drawn_by_repitition_or_50_move_rule(&game),
+         "Should be drawn by repitition.");
+
+  return 1;
+}
+
 int main() {
   int t = 0;
 
@@ -75,6 +117,7 @@ int main() {
   masks::init();
 
   t += TestSortMoves();
+  t += TestDrawThreefold();
 
   cout << endl;
   cout << t << " test(s) OK" << endl;

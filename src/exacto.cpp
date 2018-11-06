@@ -126,6 +126,30 @@ void Exacto::SortCaps(Game* game, Move* moves) {
   }
 }
 
+bool Exacto::drawn_by_repitition_or_50_move_rule(Game* game) {
+  int half_moves = game->half_moves[game->move_number];
+  if (half_moves >= 100) {
+    return true;
+  }
+
+  if (game->repitition_hash[game->hash_key >> REPITITION_HASH_SHIFT] < 3 ||
+      half_moves < 4) {
+    return false;
+  }
+
+  int count = 0;
+  for (int i = game->move_number - half_moves; i < game->move_number; ++i) {
+    if (game->position_history[i] == game->hash_key) {
+      count++;
+    }
+    if (count >= 2) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 std::string Exacto::principal_variation(Game* game, int depth) {
   // At depth 0 or if no hash entry, return.
   if (depth == 0 || hash.probe(game->hash_key, depth) != HASH_EXACT) {

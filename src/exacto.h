@@ -29,7 +29,7 @@ class Exacto {
   void SortMoves(Game* game, Move* moves);
   void SortCaps(Game* game, Move* moves);
 
-  bool drawn_by_repition_or_50_move_rule(Game* game);
+  bool drawn_by_repitition_or_50_move_rule(Game* game);
   std::string principal_variation(Game* game, int depth);
 
   Hash hash;

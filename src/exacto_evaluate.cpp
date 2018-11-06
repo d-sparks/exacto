@@ -29,12 +29,4 @@ int16_t Exacto::Evaluate(Game* game) {
   return game->wtm ? score : -score;
 }
 
-bool Exacto::drawn_by_repition_or_50_move_rule(Game* game) {
-  if (game->half_moves[game->move_number] >= 100) {
-    return true;
-  }
-  // TODO: implement threefold repetition
-  return false;
-}
-
 }  // namespace exacto

@@ -25,6 +25,7 @@ Game::Game(std::string brd,
   half_moves[move_number] = atoi(hm.c_str());
   memset(repitition_hash, 0, sizeof(repitition_hash[0]) * REPITITION_HASH_SIZE);
   repitition_hash[hash_key >> REPITITION_HASH_SHIFT] = 1;
+  position_history[move_number] = hash_key;
 }
 
 Game::~Game() {}

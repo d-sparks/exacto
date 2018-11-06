@@ -29,7 +29,7 @@ int16_t Exacto::Search(Game* game,
   }
 
   // Check for a draw by repition or 50 move rule.
-  if (drawn_by_repition_or_50_move_rule(game)) {
+  if (drawn_by_repitition_or_50_move_rule(game)) {
     return DRAWSCORE;
   }
 
@@ -114,7 +114,7 @@ int16_t Exacto::QSearch(Game* game,
   nodes++;
 
   // Check for a draw by repition or 50 move rule.
-  if (drawn_by_repition_or_50_move_rule(game)) {
+  if (drawn_by_repitition_or_50_move_rule(game)) {
     return DRAWSCORE;
   }
 
