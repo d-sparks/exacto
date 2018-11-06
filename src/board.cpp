@@ -18,7 +18,7 @@ Board::Board(std::string brd,
              std::string clr,
              std::string cstl,
              std::string ep) {
-  setBoard(brd, clr, cstl, ep);
+  SetBoard(brd, clr, cstl, ep);
 }
 
 // print prints a graphical representation of the board.
@@ -58,8 +58,8 @@ void Board::print() {
   std::cout << "       A   B   C   D   E   F   G   H  " << std::endl;
 }
 
-// setBoard sets board given an FEN std::string.
-void Board::setBoard(std::string brd,
+// SetBoard sets board given an FEN std::string.
+void Board::SetBoard(std::string brd,
                      std::string clr,
                      std::string cstl,
                      std::string ep) {

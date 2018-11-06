@@ -16,9 +16,9 @@
 using namespace exacto;
 using namespace std;
 
-// Test setBoard
+// Test SetBoard
 int TestSetBoardDefaultPosition() {
-  cout << "Testing setBoard in default position..." << endl;
+  cout << "Testing SetBoard in default position..." << endl;
 
   map<ind, ind> expectedBoard = {
       {H1, ROOK},   {G1, KNIGHT}, {F1, BISHOP}, {E1, KING},   {D1, QUEEN},
@@ -74,9 +74,9 @@ int TestSetBoardDefaultPosition() {
   return 1;
 }
 
-// Test setBoard's accuracy with en passant squares
+// Test SetBoard's accuracy with en passant squares
 int TestSetBoardEnPassant() {
-  cout << "Testing setBoard: en passant" << endl;
+  cout << "Testing SetBoard: en passant" << endl;
   for (ind i = H1; i < NUM_SQUARES; ++i) {
     Board board("8/8/8/8/8/8/8/8", "w", "KQkq", squares::algebraic[i]);
     ASSERT(board.en_passant == exp_2(i),
@@ -85,9 +85,9 @@ int TestSetBoardEnPassant() {
   return 1;
 }
 
-// Test setBoard's accuracy with castling data
+// Test SetBoard's accuracy with castling data
 int TestSetBoardCastling() {
-  cout << "Testing setBoard: castling" << endl;
+  cout << "Testing SetBoard: castling" << endl;
 
   // No castling rights
   Board board("8/8/8/8/8/8/8/8", "w", "");
@@ -111,9 +111,9 @@ int TestSetBoardCastling() {
   return 1;
 }
 
-// Test setBoard's accuracy with color to move
+// Test SetBoard's accuracy with color to move
 int TestSetBoardColorToMove() {
-  cout << "Testing setBoard: color to move" << endl;
+  cout << "Testing SetBoard: color to move" << endl;
 
   // Black to move
   Board board("8/8/8/8/8/8/8/8", "b", "");

@@ -35,13 +35,16 @@ class Exacto {
   Hash hash;
   Game game;
 
+  bool force;
+  bool post_pretty;
+  bool post;
+
  private:
   struct TimeData {
     int MPS;        // Number of moves in each time control.
     int time;       // Time in centiseconds.
     int increment;  // Time increment.
   };
-  bool post;
   bool terminate_search;
   uint64_t nodes;
   uint64_t nodes_next_clock_check;

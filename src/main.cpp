@@ -14,10 +14,12 @@ using namespace exacto;
 
 namespace {
 
+static const char kVersion[] = "?.?";
+
 // greet is the classic exacto greeting, dating back to 0.a.
-void greet(const std::string& version) {
+void greet() {
   std::cout << std::endl
-            << "   exacto[" << version << "]          " << std::endl
+            << "   exacto[" << kVersion << "]          " << std::endl
             << " <<------------------------------->>  " << std::endl
             << "             by Daniel Sparks, USA    " << std::endl
             << std::endl
@@ -28,49 +30,64 @@ void greet(const std::string& version) {
 }  // namespace
 
 int main() {
-  greet("?.?");
+  greet();
   Game game;
   Exacto exacto(game);
   magics::PopulateRookTables();
   magics::PopulateBishopTables();
   masks::init();
 
-  std::string userInput;
+  std::string input;
 
-  for (std::cin >> userInput; true; std::cin >> userInput) {
-    if (userInput == "usermove") {
-      Move candidateMoves[256];
-      game.MoveGen(candidateMoves);
-      Move move;
-      moves::ReadMoveFromStdin(candidateMoves, &move);
-      game.MakeMove(&move);
-    }
-
-    if (userInput == "go") {
-      exacto.Go(&game);
-    }
-
-    if (userInput == "print") {
+  for (std::cin >> input; true; std::cin >> input) {
+    // Exacto specific commands
+    if (input == "print") {
       game.print();
-    }
-
-    if (userInput == "divide") {
+    } else if (input == "divide") {
       int depth;
       std::cin >> depth;
       divide(&game, depth);
-    }
-
-    if (userInput == "perft") {
+    } else if (input == "perft") {
       int depth;
       std::cin >> depth;
       std::cout << perft(&game, depth) - perft(&game, depth - 1) << std::endl;
-    }
-
-    if (userInput == "clear") {
+    } else if (input == "clear") {
       exacto.hash.clear_table();
     }
+    // TODO: FEN, move history, stats, help
 
-    if (userInput == "setboard") {
+    // XBoard protocol
+    if (input == "quit" || input == "exit") {
+      break;
+    } else if (input == "xboard" || input == "winboard") {
+      exacto.post_pretty = false;
+    } else if (input == "protover") {
+      std::cin >> input;  // TODO:
+      std::cout << "feature ping=1 setboard=1 playother=1 san=0 usermove=1 "
+                << "time=1 draw=0 sigint=0 sigterm=0 reuse=1 analyze=0 "
+                << "colors=0 ics=0 name=0 pause=0 done=1" << std::endl;
+    } else if (input == "accepted") {
+      std::cin >> input;  // TODO:
+    } else if (input == "ping") {
+      std::cin >> input;
+      std::cout << "pong " << input << std::endl;
+    } else if (input == "force") {
+      exacto.force = true;
+    } else if (input == "draw") {
+      // TODO:
+    } else if (input == "usermove") {
+      Move legal_moves[256];
+      game.MoveGen(legal_moves);
+      Move move;
+      moves::ReadMoveFromStdin(legal_moves, &move);
+      game.MakeMove(&move);
+    } else if (input == "go") {
+      exacto.Go(&game);
+    } else if (input == "undo") {
+      // TODO: store move history in Game
+    } else if (input == "new") {
+      game.SetBoard();
+    } else if (input == "setoard") {
       std::string POS, WTM, CAS, EPT, HMC, FMC;
       std::cin >> POS;
       std::cin >> WTM;
@@ -78,11 +95,29 @@ int main() {
       std::cin >> EPT;
       // std::cin >> HMC;
       // std::cin >> FMC;
-      game.setBoard(POS, WTM, CAS, EPT);
+      game.SetBoard(POS, WTM, CAS, EPT);
+    } else if (input == "post") {
+      exacto.post = true;
+      std::cout << "Post ON" << std::endl;
+    } else if (input == "nopost") {
+      exacto.post = false;
+      std::cout << "Post OFF" << std::endl;
+    } else if (input == "version") {
+      std::cout << kVersion << std::endl;
+    } else if (input == "hash") {
+      int size_in_megabytes;
+      std::cin >> size_in_megabytes;
+      exacto.hash.set_dimension(size_in_megabytes);
+    } else if (input == "name") {
     }
 
-    if (userInput == "quit" || userInput == "exit") {
-      break;
+    // Time control specific
+    if (input == "level") {
+    } else if (input == "st") {
+    } else if (input == "time") {
+    } else if (input == "otim") {
+    } else if (input == "mt") {
+    } else if (input == "name") {
     }
   }
 

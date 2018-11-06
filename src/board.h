@@ -19,7 +19,7 @@ class Board {
         std::string cstl = "KQkq",
         std::string ep = "-");
 
-  void setBoard(std::string brd = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+  void SetBoard(std::string brd = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
                 std::string clr = "w",
                 std::string cstl = "KQkq",
                 std::string ep = "-");
