@@ -4,6 +4,7 @@
 #include "assert.h"
 
 using namespace exacto;
+using namespace std;
 
 // Test the bitscans on each bit index. Don't test the empty Bitboard.
 int testBitscan() {

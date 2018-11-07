@@ -4,6 +4,7 @@
 #include "assert.h"
 
 using namespace exacto;
+using namespace std;
 
 // Test GenerateInterceding
 int testGenerateInterceding() {
