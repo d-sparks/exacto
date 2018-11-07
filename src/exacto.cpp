@@ -181,4 +181,16 @@ std::string Exacto::principal_variation(Game* game, int depth) {
   return output;
 }
 
+void Exacto::SetLevels(int MPS, int base_time, int increment) {
+  time_manager.SetLevels(MPS, base_time, increment);
+}
+
+void Exacto::set_time(int time) {
+  time_manager.set_time(time);
+}
+
+void Exacto::set_opponent_time(int opponent_time) {
+  time_manager.set_opponent_time(opponent_time);
+}
+
 }  // namespace exacto

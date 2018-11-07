@@ -5,6 +5,7 @@
 
 #include "game.h"
 #include "hash.h"
+#include "time_manager.h"
 
 namespace exacto {
 
@@ -32,6 +33,10 @@ class Exacto {
   bool drawn_by_repitition_or_50_move_rule(Game* game);
   std::string principal_variation(Game* game, int depth);
 
+  void SetLevels(int MPS, int base_time, int increment);
+  void set_time(int time);
+  void set_opponent_time(int opponent_time);
+
   Hash hash;
   Game game;
 
@@ -40,11 +45,7 @@ class Exacto {
   bool post;
 
  private:
-  struct TimeData {
-    int MPS;        // Number of moves in each time control.
-    int time;       // Time in centiseconds.
-    int increment;  // Time increment.
-  };
+  TimeManager time_manager;
   bool terminate_search;
   uint64_t nodes;
   uint64_t nodes_next_clock_check;
