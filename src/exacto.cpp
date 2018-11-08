@@ -27,16 +27,16 @@ void Exacto::Go(Game* game) {
 
   // timing initialization
   nodes = 0;
-  uint64_t prevNodes = 1;
-  double branchingFactor = 3;
+  uint64_t prev_nodes = 1;
+  double branching_factor = 3;
   int NPS = 1000000;
   terminate_search = false;
   int64_t t_0 = clock();
   int64_t t = 0;
 
-  Move bestMove = BOGUS_MOVE;
+  Move best_move = BOGUS_MOVE;
   for (int depth = 1; true; ++depth) {
-    prevNodes = nodes;
+    prev_nodes = nodes;
     int16_t score = Search(game, -INFNTY, INFNTY, depth, 0);
     if (depth == 1) {
       continue;
@@ -44,49 +44,49 @@ void Exacto::Go(Game* game) {
 
     t = clock() - t_0;
     double secs = double(t) / CLOCKS_PER_SEC;
-    branchingFactor = nodes / prevNodes;
+    branching_factor = nodes / prev_nodes;
     NPS = (nodes * CLOCKS_PER_SEC) / t;
 
     if (terminate_search) {
       break;
     }
 
-    bestMove = hash.get_sugg(game->hash_key);
+    best_move = hash.get_sugg(game->hash_key);
     if (post) {
       std::cout << depth << "\t";
       std::cout << "Score: " << score << "\t";
       std::cout << "PV: " << principal_variation(game, depth) << "\t";
       std::cout << "NPS: " << NPS << "\t";
-      std::cout << "Branching: " << branchingFactor << std::endl;
+      std::cout << "Branching: " << branching_factor << std::endl;
     }
 
-    if (secs * branchingFactor > seconds) {
+    if (secs * branching_factor > seconds) {
       break;
     }
   }
 
 #ifndef _DEBUG
-  std::cout << "move " << moves::algebraic(bestMove) << std::endl;
+  std::cout << "move " << moves::algebraic(best_move) << std::endl;
 #endif
 #ifdef _DEBUG
-  std::cout << " usermove " << moves::algebraic(bestMove);
+  std::cout << " usermove " << moves::algebraic(best_move);
 #endif
-  game->MakeMove(&bestMove);
+  game->MakeMove(&best_move);
 }
 
-void Exacto::SortMoves(Game* game, Move* Moves) {
-  Move hashSugg = BOGUS_MOVE;
+void Exacto::SortMoves(Game* game, Move* moves) {
+  Move hash_sugg = BOGUS_MOVE;
   if (hash.probe(game->hash_key, 0) > HASH_ALPHA) {
-    hashSugg = hash.get_sugg(game->hash_key);
+    hash_sugg = hash.get_sugg(game->hash_key);
   }
-  ind numMoves = 0;
-  while (Moves[numMoves] != NONE) {
-    numMoves++;
+  ind num_moves = 0;
+  while (moves[num_moves] != NONE) {
+    num_moves++;
   }
-  int16_t scores[numMoves];
-  for (int i = 0; i < numMoves; ++i) {
-    Move move = Moves[i];
-    int16_t score = (move == hashSugg) ? MATESCORE : SEE::see(game, move);
+  int16_t scores[num_moves];
+  for (int i = 0; i < num_moves; ++i) {
+    Move move = moves[i];
+    int16_t score = (move == hash_sugg) ? MATESCORE : SEE::see(game, move);
     ind attacker = moves::attacker(move);
     if (attacker <= BISHOP) {
       ind source = moves::source(move);
@@ -100,20 +100,20 @@ void Exacto::SortMoves(Game* game, Move* Moves) {
     int j = i;
     for (; j > 0 && score > scores[j - 1]; --j) {
       scores[j] = scores[j - 1];
-      Moves[j] = Moves[j - 1];
+      moves[j] = moves[j - 1];
     }
-    Moves[j] = move;
+    moves[j] = move;
     scores[j] = score;
   }
 }
 
 void Exacto::SortCaps(Game* game, Move* moves) {
-  int numMoves = 0;
-  while (moves[numMoves]) {
-    numMoves++;
+  int num_moves = 0;
+  while (moves[num_moves]) {
+    num_moves++;
   }
-  int16_t scores[numMoves];
-  for (int i = 0; i < numMoves; ++i) {
+  int16_t scores[num_moves];
+  for (int i = 0; i < num_moves; ++i) {
     Move move = moves[i];
     int16_t score = SEE::see(game, move);
     int j = i;
@@ -157,22 +157,24 @@ std::string Exacto::principal_variation(Game* game, int depth) {
   }
 
   // Check if hashed suggestion is legal
-  Move hashMove = hash.get_sugg(game->hash_key);
-  Move PVMove = hash.get_pv(game->hash_key);
-  bool hashLegal = false;
-  bool PVLegal = false;
-  Move legalMoves[256] = {0};
-  game->MoveGen(legalMoves);
-  for (int i = 0; legalMoves[i]; ++i) {
-    hashLegal |= (moves::algebraic(hashMove) == moves::algebraic(legalMoves[i]));
-    hashLegal |= (moves::algebraic(PVMove) == moves::algebraic(legalMoves[i]));
+  Move hash_sugg = hash.get_sugg(game->hash_key);
+  Move pv_move = hash.get_pv(game->hash_key);
+  bool hash_legal = false;
+  bool pv_legal = false;
+  Move legal_moves[256] = {0};
+  game->MoveGen(legal_moves);
+  for (int i = 0; legal_moves[i]; ++i) {
+    hash_legal |=
+        (moves::algebraic(hash_sugg) == moves::algebraic(legal_moves[i]));
+    hash_legal |=
+        (moves::algebraic(pv_move) == moves::algebraic(legal_moves[i]));
   }
-  if (!hashLegal && !PVLegal) {
+  if (!hash_legal && !pv_legal) {
     return "";
   }
 
   // Recurse
-  Move move = PVLegal? PVMove : hashMove;
+  Move move = pv_legal? pv_move : hash_sugg;
   std::string output = moves::algebraic(move);
   game->MakeMove(&move);
   output += " " + principal_variation(game, depth - 1);
