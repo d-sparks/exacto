@@ -12,16 +12,18 @@ void TimeManager::SetLevels(int _MPS, int _base_time, int _increment) {
 }
 
 void TimeManager::GetTimeForMove(float move_number,
-                                 float moves_left,
                                  float time_left,
                                  int* ideal,
                                  int* maximum) {
+
   // If less than 500 centiseconds left,
   if (time_left < 100) {
     *ideal = 0;
     *maximum = *ideal;
     return;
   }
+
+  int moves_left = EstimateMovesLeft(move_number);
 
   if (moves_left < 4) {
     *ideal = 0.9f * (time_left / moves_left);
@@ -36,6 +38,14 @@ void TimeManager::GetTimeForMove(float move_number,
   float time = time_left / moves_left;
   *ideal = round(ideal_factor * time);
   *maximum = round(max_factor * time);
+}
+
+int TimeManager::EstimateMovesLeft(int move_number) {
+  if (MPS != 0) {
+    return (MPS - move_number % MPS) % MPS + 1;
+  }
+
+  return std::max(42 - move_number, 15);
 }
 
 }  // namespace exacto
