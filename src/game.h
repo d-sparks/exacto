@@ -17,12 +17,21 @@ class Game : public Board {
        const std::string& cstl = "KQkq",
        const std::string& ep = "-",
        const std::string& hm = "0",
-       const std::string& fm = "0");
+       const std::string& fm = "1");
+
+  void SetGame(
+      const std::string& brd = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+      const std::string& clr = "w",
+      const std::string& cstl = "KQkq",
+      const std::string& ep = "-",
+      const std::string& hm = "0",
+      const std::string& fm = "1");
 
   void MakeMove(Move* m);
   void UnmakeMove(Move m);
   bool operator==(const Game& other) const;
 
+  int full_move_number() { return (move_number / 2) + 1; };
   int move_number;
 
 #ifndef _TEST

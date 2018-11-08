@@ -1,7 +1,7 @@
 #include "game.h"
 
-#include <iostream>
 #include <cstring>
+#include <iostream>
 #include <string>
 
 #include "board.h"
@@ -18,12 +18,24 @@ Game::Game(const std::string& brd,
            const std::string& cstl,
            const std::string& ep,
            const std::string& hm,
-           const std::string& fm)
-    : Board(brd, clr, cstl, ep) {
-  // TODO: this should live in another function that can be called on its own.
-  move_number = atoi(fm.c_str());
-  half_moves[move_number] = atoi(hm.c_str());
+           const std::string& fm) {
+  SetGame(brd, clr, cstl, ep, hm, fm);
+}
+
+void Game::SetGame(const std::string& brd,
+                   const std::string& clr,
+                   const std::string& cstl,
+                   const std::string& ep,
+                   const std::string& hm,
+                   const std::string& fm) {
+  SetBoard(brd, clr, cstl, ep);
+
+  memset(half_moves, 0, sizeof(half_moves[0]) * STACK_SIZE);
+  memset(position_history, 0, sizeof(position_history[0]) * STACK_SIZE);
   memset(repitition_hash, 0, sizeof(repitition_hash[0]) * REPITITION_HASH_SIZE);
+
+  move_number = (atoi(fm.c_str()) - 1) * 2 + !wtm;
+  half_moves[move_number] = atoi(hm.c_str());
   repitition_hash[hash_key >> REPITITION_HASH_SHIFT] = 1;
   position_history[move_number] = hash_key;
 }
