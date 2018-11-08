@@ -14,10 +14,10 @@
 
 namespace exacto {
 
-Board::Board(std::string brd,
-             std::string clr,
-             std::string cstl,
-             std::string ep) {
+Board::Board(const std::string& brd,
+             const std::string& clr,
+             const std::string& cstl,
+             const std::string& ep) {
   SetBoard(brd, clr, cstl, ep);
 }
 
@@ -59,10 +59,10 @@ void Board::print() {
 }
 
 // SetBoard sets board given an FEN std::string.
-void Board::SetBoard(std::string brd,
-                     std::string clr,
-                     std::string cstl,
-                     std::string ep) {
+void Board::SetBoard(const std::string& brd,
+                     const std::string& clr,
+                     const std::string& cstl,
+                     const std::string& ep) {
   std::map<std::string, ind> string_to_piece = {
       {"p", 1}, {"n", 2},  {"b", 3},  {"r", 4},  {"q", 5},  {"k", 6},
       {"P", 9}, {"N", 10}, {"B", 11}, {"R", 12}, {"Q", 13}, {"K", 14},

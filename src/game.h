@@ -12,13 +12,12 @@ class Game : public Board {
   friend class Exacto;
 
  public:
-  Game(std::string brd = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
-       std::string clr = "w",
-       std::string cstl = "KQkq",
-       std::string ep = "-",
-       std::string hm = "0",
-       std::string fm = "0");
-  ~Game();
+  Game(const std::string& brd = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+       const std::string& clr = "w",
+       const std::string& cstl = "KQkq",
+       const std::string& ep = "-",
+       const std::string& hm = "0",
+       const std::string& fm = "0");
 
   void MakeMove(Move* m);
   void UnmakeMove(Move m);

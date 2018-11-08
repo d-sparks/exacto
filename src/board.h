@@ -14,15 +14,16 @@ namespace exacto {
 // etc.
 class Board {
  public:
-  Board(std::string brd = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
-        std::string clr = "w",
-        std::string cstl = "KQkq",
-        std::string ep = "-");
+  Board(const std::string& brd = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+        const std::string& clr = "w",
+        const std::string& cstl = "KQkq",
+        const std::string& ep = "-");
 
-  void SetBoard(std::string brd = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
-                std::string clr = "w",
-                std::string cstl = "KQkq",
-                std::string ep = "-");
+  void SetBoard(
+      const std::string& brd = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+      const std::string& clr = "w",
+      const std::string& cstl = "KQkq",
+      const std::string& ep = "-");
 
   void MoveGen(Move *move_list);
   void CapGen(Move *move_list);

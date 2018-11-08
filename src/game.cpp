@@ -13,12 +13,12 @@
 
 namespace exacto {
 
-Game::Game(std::string brd,
-           std::string clr,
-           std::string cstl,
-           std::string ep,
-           std::string hm,
-           std::string fm)
+Game::Game(const std::string& brd,
+           const std::string& clr,
+           const std::string& cstl,
+           const std::string& ep,
+           const std::string& hm,
+           const std::string& fm)
     : Board(brd, clr, cstl, ep) {
   // TODO: this should live in another function that can be called on its own.
   move_number = atoi(fm.c_str());
@@ -27,8 +27,6 @@ Game::Game(std::string brd,
   repitition_hash[hash_key >> REPITITION_HASH_SHIFT] = 1;
   position_history[move_number] = hash_key;
 }
-
-Game::~Game() {}
 
 // operator== for comparing Games
 bool Game::operator==(const Game &other) const {
