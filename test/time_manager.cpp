@@ -10,18 +10,37 @@
 using namespace exacto;
 using namespace std;
 
-// Tests that moves are sorted appropriately
+// Happy path.
 int TestBasicTimeControl() {
   cout << "Testing basic time control..." << endl;
 
   TimeManager time_manager;
-  time_manager.SetLevels(40, 40, 0);
+  time_manager.SetLevels(40, -1, 0);
+  time_manager.set_time(40 * 60 * 100);
 
   int ideal;
   int maximal;
 
-  time_manager.GetTimeForMove(1, 40 * 60 * 100, &ideal, &maximal);
+  time_manager.GetTimeForMove(1, &ideal, &maximal);
   ASSERT_EQ(ideal, 114 * 100, "Ideal time wrong: " + to_string(ideal));
+  ASSERT_EQ(maximal, 180 * 100, "Maximal time wrong: " + to_string(maximal));
+
+  return 1;
+}
+
+// Test with increments.
+int TestWithIncrement() {
+  cout << "Testing incremental control..." << endl;
+
+  TimeManager time_manager;
+  time_manager.SetLevels(40, -1, 500);
+  time_manager.set_time(40 * 60 * 100);
+
+  int ideal;
+  int maximal;
+
+  time_manager.GetTimeForMove(1, &ideal, &maximal);
+  ASSERT_EQ(ideal, 119 * 100, "Ideal time wrong: " + to_string(ideal));
   ASSERT_EQ(maximal, 180 * 100, "Maximal time wrong: " + to_string(maximal));
 
   return 1;
@@ -32,7 +51,7 @@ int TestEstimateMovesLeft() {
 
   TimeManager time_manager;
 
-  time_manager.SetLevels(40, 40, 0);
+  time_manager.SetLevels(40, 40 * 60 * 100, 0);
 
   ASSERT_EQ(time_manager.EstimateMovesLeft(1), 40, "Expected 40 moves left.");
   ASSERT_EQ(time_manager.EstimateMovesLeft(40), 1, "Expected 1 moves left.");
@@ -44,6 +63,7 @@ int main() {
   int t = 0;
 
   t += TestBasicTimeControl();
+  t += TestWithIncrement();
   t += TestEstimateMovesLeft();
 
   cout << endl;

@@ -11,13 +11,9 @@ void TimeManager::SetLevels(int _MPS, int _base_time, int _increment) {
   increment = _increment;
 }
 
-void TimeManager::GetTimeForMove(float move_number,
-                                 float time_left,
-                                 int* ideal,
-                                 int* maximum) {
-
-  // If less than 500 centiseconds left,
-  if (time_left < 100) {
+void TimeManager::GetTimeForMove(float move_number, int* ideal, int* maximum) {
+  // If less than 100 centiseconds left,
+  if (time < 100) {
     *ideal = 0;
     *maximum = *ideal;
     return;
@@ -26,7 +22,7 @@ void TimeManager::GetTimeForMove(float move_number,
   int moves_left = EstimateMovesLeft(move_number);
 
   if (moves_left < 4) {
-    *ideal = 0.9f * (time_left / moves_left);
+    *ideal = 0.9f * (time / moves_left);
     *maximum = *ideal;
     return;
   }
@@ -34,10 +30,10 @@ void TimeManager::GetTimeForMove(float move_number,
   // From Robert Hyatt's Using Time Wisely.
   move_number = std::min(move_number, 10.0f);
   float ideal_factor = 2 - move_number / 10.0f;
-  float max_factor = 3;
-  float time = time_left / moves_left;
-  *ideal = round(ideal_factor * time);
-  *maximum = round(max_factor * time);
+  float target_time = time / moves_left;
+  *maximum = round(3 * target_time);
+  *ideal = round(ideal_factor * target_time) + increment;
+  *ideal = std::min(*ideal, *maximum);
 }
 
 int TimeManager::EstimateMovesLeft(int move_number) {
