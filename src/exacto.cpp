@@ -23,8 +23,10 @@ Exacto::~Exacto() {}
 
 void Exacto::Go(Game* game) {
   // hardcoding checks per second and average time for search
-  int seconds = 7;
-
+  int ideal_time;
+  int maximum_time;
+  time_manager.GetTimeForMove(game->full_move_number(), &ideal_time,
+                              &maximum_time);
   // timing initialization
   nodes = 0;
   uint64_t prev_nodes = 1;
@@ -43,7 +45,7 @@ void Exacto::Go(Game* game) {
     }
 
     t = clock() - t_0;
-    double secs = double(t) / CLOCKS_PER_SEC;
+    double centiseconds = 100 * double(t) / CLOCKS_PER_SEC;
     branching_factor = nodes / prev_nodes;
     NPS = (nodes * CLOCKS_PER_SEC) / t;
 
@@ -60,7 +62,10 @@ void Exacto::Go(Game* game) {
       std::cout << "Branching: " << branching_factor << std::endl;
     }
 
-    if (secs * branching_factor > seconds) {
+    int estimate = centiseconds * branching_factor;
+    int high_estimate = 1.5 * estimate;
+    if (high_estimate > maximum_time ||
+        estimate > ideal_time) {
       break;
     }
   }

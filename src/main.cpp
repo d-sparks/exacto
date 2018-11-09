@@ -113,8 +113,16 @@ int main() {
 
     // Time control specific
     if (input == "level") {
+      int MPS, base, increment;
+      std::cin >> MPS;
+      std::cin >> base;
+      std::cin >> increment;
+      exacto.SetLevels(MPS, base * 60 * 100, increment * 100);
     } else if (input == "st") {
     } else if (input == "time") {
+      int centiseconds;
+      std::cin >> centiseconds;
+      exacto.set_time(centiseconds);
     } else if (input == "otim") {
     } else if (input == "mt") {
     } else if (input == "name") {
