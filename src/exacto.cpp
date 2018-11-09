@@ -35,6 +35,9 @@ void Exacto::Go(Game* game) {
   terminate_search = false;
   int64_t t_0 = clock();
   int64_t t = 0;
+  nodes_next_clock_check = NODES_PER_CLOCK_CHECK;
+
+  max_clock = t_0 + maximum_time * CLOCKS_PER_SEC / 100;
 
   Move best_move = BOGUS_MOVE;
   for (int depth = 1; true; ++depth) {

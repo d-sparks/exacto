@@ -49,6 +49,7 @@ class Exacto {
   bool terminate_search;
   uint64_t nodes;
   uint64_t nodes_next_clock_check;
+  int64_t max_clock;
 
   // TODO: think about where to put this, and make it static const.
   int16_t PVT[2][7][64] = {

@@ -83,3 +83,7 @@
 #define STACK_SIZE 1024  // maximum number of game plies
 #define REPITITION_HASH_SIZE 16384  // exp_2(14)
 #define REPITITION_HASH_SHIFT 50  // 64 - 14
+
+// For search
+
+#define NODES_PER_CLOCK_CHECK 50000
