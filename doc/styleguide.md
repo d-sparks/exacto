@@ -23,9 +23,9 @@ void myFunc(type1 arg1, type2 arg2,
 
 * Global array variables are all uppercase.
 
-* Data members in classes do not end with an underscore, but are still snake case.
+* Data members in classes do not end with an underscore, but are still snake case. Similarly methods that can be used logically as a data member (and take no arguments) can be snake case. It's not great, but far too much of Exacto's logic uses the bitboards of the Board class and it would be unwieldy for these to end with underscores. Setter and constructor arguments that would shadow a data member's name will start with an underscore.
 
-* Test files live in a separate directory and may use namespace std.
+* Test files live in a separate directory and may use namespace std. I am willing to revist the decision of tests using std.
 
 * Some classes or namespaces that are large are separated into multiple cpp files when it is logical. In that case the name of the cpp file would be `class_function.cpp`. For example `exacto_evaluate.cpp`, `exacto.cpp`, and `exacto_search.cpp`.
 
