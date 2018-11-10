@@ -14,9 +14,7 @@ namespace exacto {
 Exacto::Exacto(Game initGame) {
   game = initGame;
   post = false;
-#ifndef _DEBUG
-  post = true;
-#endif
+  force = false;
 }
 
 Exacto::~Exacto() {}
@@ -27,6 +25,7 @@ void Exacto::Go(Game* game) {
   int maximum_time;
   time_manager.GetTimeForMove(game->full_move_number(), &ideal_time,
                               &maximum_time);
+
   // timing initialization
   nodes = 0;
   uint64_t prev_nodes = 1;
@@ -58,11 +57,9 @@ void Exacto::Go(Game* game) {
 
     best_move = hash.get_sugg(game->hash_key);
     if (post) {
-      std::cout << depth << "\t";
-      std::cout << "Score: " << score << "\t";
-      std::cout << "PV: " << principal_variation(game, depth) << "\t";
-      std::cout << "NPS: " << NPS << "\t";
-      std::cout << "Branching: " << branching_factor << std::endl;
+      std::cout << depth << "\t" << score << "\t" << (int)centiseconds << "\t"
+                << nodes << "\t" << principal_variation(game, depth)
+                << std::endl;
     }
 
     int estimate = centiseconds * branching_factor;

@@ -66,13 +66,16 @@ int main() {
       std::cout << "feature ping=1 setboard=1 playother=1 san=0 usermove=1 "
                 << "time=1 draw=0 sigint=0 sigterm=0 reuse=1 analyze=0 "
                 << "colors=0 ics=0 name=0 pause=0 done=1" << std::endl;
+      continue;
     } else if (input == "accepted") {
-      std::cin >> input;  // TODO:
+      std::cin >> input;
+      continue;
     } else if (input == "ping") {
       std::cin >> input;
       std::cout << "pong " << input << std::endl;
+      continue;
     } else if (input == "force") {
-      exacto.force = true;
+      exacto.force = !exacto.force;
     } else if (input == "draw") {
       // TODO:
     } else if (input == "usermove") {
@@ -81,13 +84,16 @@ int main() {
       Move move;
       moves::ReadMoveFromStdin(legal_moves, &move);
       game.MakeMove(&move);
+      if (!exacto.force) {
+        exacto.Go(&game);
+      }
     } else if (input == "go") {
       exacto.Go(&game);
     } else if (input == "undo") {
       // TODO: store move history in Game
     } else if (input == "new") {
-      game.SetBoard();
-    } else if (input == "setoard") {
+      game.SetGame();
+    } else if (input == "setboard") {
       std::string POS, WTM, CAS, EPT, HMC, FMC;
       std::cin >> POS;
       std::cin >> WTM;
@@ -125,7 +131,6 @@ int main() {
       exacto.set_time(centiseconds);
     } else if (input == "otim") {
     } else if (input == "mt") {
-    } else if (input == "name") {
     }
   }
 
