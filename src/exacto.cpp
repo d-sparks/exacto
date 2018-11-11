@@ -20,6 +20,8 @@ Exacto::Exacto(Game initGame) {
 Exacto::~Exacto() {}
 
 void Exacto::Go(Game* game) {
+  force = false;
+
   // hardcoding checks per second and average time for search
   int ideal_time;
   int maximum_time;
