@@ -1,6 +1,7 @@
 #include "moves.h"
 
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -101,9 +102,19 @@ bool ReadMoveFromStdin(Move* candidate_moves, Move* output) {
     }
   }
 
-  if (matches.empty()) {
+  if (matches.size() != 1) {
+    std::map<char, Move> promo_type{{'Q', PROMOTE_QUEEN}, {'R', PROMOTE_ROOK},
+                                    {'B', PROMOTE_BISHOP},
+                                    {'N', PROMOTE_KNIGHT}};
+    for (Move move : matches) {
+      if (special(move) ==
+          promo_type[toupper(move_string[move_string.length() - 1])]) {
+        *output = move;
+        return true;
+      }
+    }
     return false;
-  } else if (matches.size() > 1) {
+
     // determine pawn promotion type
   }
 
