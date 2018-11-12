@@ -19,10 +19,9 @@ static const char kVersion[] = "?.?";
 // greet is the classic exacto greeting, dating back to 0.a.
 void greet() {
   std::cout << std::endl
-            << "   exacto[" << kVersion << "]          " << std::endl
-            << " <<------------------------------->>  " << std::endl
-            << "             by Daniel Sparks, USA    " << std::endl
-            << std::endl
+            << "   exacto[" << kVersion << "]" << std::endl
+            << " <<------------------------------->>" << std::endl
+            << "             by Daniel Sparks, USA" << std::endl << std::endl
             << "Type 'game' for gameplay commands, or 'help' for all commands."
             << std::endl << std::endl;
 }
