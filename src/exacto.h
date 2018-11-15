@@ -44,6 +44,8 @@ class Exacto {
   bool post_pretty;
   bool post;
 
+  void Print(Game* game);
+
  private:
   TimeManager time_manager;
   bool terminate_search;

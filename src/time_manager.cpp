@@ -5,10 +5,17 @@
 
 namespace exacto {
 
+TimeManager::TimeManager() {
+  SetLevels(40, 5 * 60 * 100, 0);
+}
+
 void TimeManager::SetLevels(int _MPS, int _base_time, int _increment) {
   MPS = _MPS;
   base_time = _base_time;
   increment = _increment;
+
+  time = base_time;
+  opponent_time = base_time;
 }
 
 void TimeManager::GetTimeForMove(float move_number, int* ideal, int* maximum) {

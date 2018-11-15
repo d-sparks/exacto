@@ -2,6 +2,7 @@
 #define exacto_src_board_h
 
 #include <string>
+#include <vector>
 
 #include "bitboard.h"
 #include "moves.h"
@@ -49,7 +50,9 @@ class Board {
   bool operator==(const Board &other) const;
 
   // For debugging
-  void print();
+  void Print();
+  void Print(const std::vector<std::string>& side_bar);
+  std::vector<std::string> board_debug();
 
   // The state of the board.
   uint64_t hash_key;

@@ -134,7 +134,7 @@ void Exacto::SortCaps(Game* game, Move* moves) {
 }
 
 bool Exacto::drawn_by_repitition_or_50_move_rule(Game* game) {
-  int half_moves = game->half_moves[game->move_number];
+  int half_moves = game->half_moves();
   if (half_moves >= 100) {
     return true;
   }
@@ -200,6 +200,24 @@ void Exacto::set_time(int time) {
 
 void Exacto::set_opponent_time(int opponent_time) {
   time_manager.set_opponent_time(opponent_time);
+}
+
+void Exacto::Print(Game* game) {
+  std::vector<std::string> debug{"--Board--"};
+  auto board_debug = game->board_debug();
+  debug.insert(debug.end(), board_debug.begin(), board_debug.end());
+  debug.push_back("");
+  debug.push_back("--Game--");
+  debug.push_back("Half moves:\t" + std::to_string(game->half_moves()));
+  debug.push_back("Full moves:\t" + std::to_string(game->full_move_number()));
+  debug.push_back("Repititions:\t<= " + std::to_string(game->repitition_ub()));
+  debug.push_back("");
+  debug.push_back("--Exacto--");
+  debug.push_back("Time:\t\t" + std::to_string(time_manager.time));
+  debug.push_back("Control:\t" + std::to_string(time_manager.MPS) + "/" +
+                  std::to_string(time_manager.base_time) + "/" +
+                  std::to_string(time_manager.increment));
+  game->Print(debug);
 }
 
 }  // namespace exacto

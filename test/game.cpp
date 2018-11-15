@@ -88,13 +88,13 @@ int TestReset50MoveLogic() {
 
   for (Move move : noisy_moves) {
     game.MakeMove(&move);
-    ASSERT(game.half_moves[game.move_number] == 0,
+    ASSERT(game.half_moves() == 0,
            "Didn't reset 50move clock: " + moves::algebraic(move));
     game.UnmakeMove(move);
   }
   for (Move move : quiet_moves) {
     game.MakeMove(&move);
-    ASSERT(game.half_moves[game.move_number] == 21,
+    ASSERT(game.half_moves() == 21,
            "Didn't increment 50move clock: " + moves::algebraic(move));
     game.UnmakeMove(move);
   }

@@ -9,6 +9,7 @@
 #include "magics.h"
 #include "masks.h"
 #include "moves.h"
+#include "util.h"
 
 using namespace exacto;
 
@@ -31,7 +32,7 @@ bool REPL(Game& game, Exacto& exacto, std::string input) {
   if (input == "greet") {
     greet();
   } else if (input == "print") {
-    game.print();
+    exacto.Print(&game);
   } else if (input == "divide") {
     int depth;
     std::cin >> depth;
@@ -109,10 +110,23 @@ bool REPL(Game& game, Exacto& exacto, std::string input) {
   // Time control specific
   if (input == "level") {
     int MPS, base, increment;
+    std::string base_string;
     std::cin >> MPS;
-    std::cin >> base;
+    std::cin >> base_string;
     std::cin >> increment;
-    exacto.SetLevels(MPS, base * 60 * 100, increment * 100);
+
+    std::vector<std::string> base_vector;
+    util::split(base_string, ':', &base_vector);
+
+    int seconds = 0;
+    int minutes = std::stoi(base_vector[base_vector.size() - 1]);
+    if (base_vector.size() > 1) {
+      minutes = std::stoi(base_vector[base_vector.size() - 2]);
+      seconds = std::stoi(base_vector[base_vector.size() - 1]);
+    }
+
+    base = 60 * minutes + seconds;
+    exacto.SetLevels(MPS, base * 100, increment * 100);
   } else if (input == "st") {
   } else if (input == "time") {
     int centiseconds;

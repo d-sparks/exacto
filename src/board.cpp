@@ -22,40 +22,47 @@ Board::Board(const std::string& brd,
 }
 
 // print prints a graphical representation of the board.
-void Board::print() {
-  bool castlingWK = (castling[WHITE] & exp_2(G1)) != 0;
-  bool castlingWQ = (castling[WHITE] & exp_2(C1)) != 0;
-  bool castlingBK = (castling[BLACK] & exp_2(G8)) != 0;
-  bool castlingBQ = (castling[BLACK] & exp_2(C8)) != 0;
+void Board::Print() {
+  Print(board_debug());
+}
 
-  std::string pieces_to_strings[16] = {"   ", " p ", " n ", " b ", " r ",
-                                       " q ", "[k]", "",    "   ", " P ",
-                                       " N ", " B ", " R ", " Q ", "[K]"};
-  std::map<int, std::string> side_bar = {
-      {7, wtm ? "White to move" : "Black to move"},
-      {6, "Static evaluation: "},
-      {5, "Q-search value: "},
-      {4, "Repititions: "},
-      {3, "Castling     Kingside/Queenside"},
-      {2, (std::string) "White:    " + "      " + (castlingWK ? "Yes" : "No") +
-              "      " + (castlingWQ ? "Yes" : "No")},
-      {1, (std::string) "Black:    " + "      " + (castlingBK ? "Yes" : "No") +
-              "      " + (castlingBQ ? "Yes" : "No")},
-  };
-
+void Board::Print(const std::vector<std::string>& side_bar) {
+  static const std::string pieces_to_strings[16] =
+      {"   ", " p ", " n ", " b ", " r ", " q ", "[k]", "",    "   ", " P ",
+       " N ", " B ", " R ", " Q ", "[K]"};
   std::cout << std::endl;
+  int side_bar_counter = 0;
   for (ind i = 7; i < 255; --i) {
-    std::cout << "     +---+---+---+---+---+---+---+---+" << std::endl;
-    std::cout << "  " << (int)(i + 1) << "  ";
+    std::cout << "     +---+---+---+---+---+---+---+---+";
+    if (i < 7 && side_bar_counter < (int)side_bar.size()) {
+      std::cout << "    " << side_bar[side_bar_counter++];
+    }
+    std::cout << std::endl << "  " << (int)(i + 1) << "  ";
     for (ind j = 7; j < 255; --j) {
       ind square = 8 * i + j;
       ind color_modifier = (pieces[WHITE][ALL] & exp_2(square)) ? 8 : 0;
       std::cout << "|" << pieces_to_strings[color_modifier + board[square]];
     }
-    std::cout << "|     " << side_bar[i] << std::endl;
+    std::cout << "|";
+    if (side_bar_counter < (int)side_bar.size()) {
+      std::cout << "    " << side_bar[side_bar_counter++];
+    }
+    std::cout << std::endl;
   }
   std::cout << "     +---+---+---+---+---+---+---+---+" << std::endl;
   std::cout << "       A   B   C   D   E   F   G   H  " << std::endl;
+}
+
+std::vector<std::string> Board::board_debug() {
+  std::string castling_string = "Castling:\t";
+  if (castling[WHITE] & exp_2(G1)) castling_string += (std::string)"K";
+  if (castling[WHITE] & exp_2(C1)) castling_string += (std::string)"Q";
+  if (castling[BLACK] & exp_2(G8)) castling_string += (std::string)"k";
+  if (castling[BLACK] & exp_2(G8)) castling_string += (std::string)"q";
+  if (castling_string.length() == 11) castling_string += "-";
+  std::vector<std::string> output{(std::string)"To move:\t" + (wtm ? "W" : "B"),
+                                  castling_string};
+  return output;
 }
 
 // SetBoard sets board given an FEN std::string.

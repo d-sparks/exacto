@@ -9,8 +9,6 @@
 namespace exacto {
 
 class Game : public Board {
-  friend class Exacto;
-
  public:
   Game(const std::string& brd = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
        const std::string& clr = "w",
@@ -33,16 +31,16 @@ class Game : public Board {
 
   int full_move_number() { return (move_number / 2) + 1; };
   int move_number;
+  ind repitition_ub() {
+    return repitition_hash[hash_key >> REPITITION_HASH_SHIFT];
+  }
 
-#ifndef _TEST
- private:
-#endif
   // These will have garbage beyond move_number index, which is accoutned for in
   // operator==.
-  ind half_moves[STACK_SIZE];
+  ind half_moves() { return half_move_history[move_number]; }
+  ind half_move_history[STACK_SIZE];
   Bitboard position_history[STACK_SIZE];  // zobrist keys
   ind repitition_hash[REPITITION_HASH_SIZE];
-
 };
 
 // TODO: move these somewhere? maybe Exacto?

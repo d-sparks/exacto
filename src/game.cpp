@@ -30,12 +30,12 @@ void Game::SetGame(const std::string& brd,
                    const std::string& fm) {
   SetBoard(brd, clr, cstl, ep);
 
-  memset(half_moves, 0, sizeof(half_moves[0]) * STACK_SIZE);
+  memset(half_move_history, 0, sizeof(half_move_history[0]) * STACK_SIZE);
   memset(position_history, 0, sizeof(position_history[0]) * STACK_SIZE);
   memset(repitition_hash, 0, sizeof(repitition_hash[0]) * REPITITION_HASH_SIZE);
 
   move_number = (atoi(fm.c_str()) - 1) * 2 + !wtm;
-  half_moves[move_number] = atoi(hm.c_str());
+  half_move_history[move_number] = atoi(hm.c_str());
   repitition_hash[hash_key >> REPITITION_HASH_SHIFT] = 1;
   position_history[move_number] = hash_key;
 }
@@ -46,7 +46,7 @@ bool Game::operator==(const Game &other) const {
   bool move_data_equal = (move_number == other.move_number);
   bool position_history_equal = (move_number == other.move_number);
   for (int i = 0; i <= move_number; ++i) {
-    move_data_equal &= (half_moves[i] == other.half_moves[i]);
+    move_data_equal &= (half_move_history[i] == other.half_move_history[i]);
     position_history_equal &=
        (position_history[i] == other.position_history[i]);
   }
@@ -163,9 +163,9 @@ void Game::MakeMove(Move *m) {
 
   // Increment half-move clock
   move_number++;
-  half_moves[move_number] = half_moves[move_number - 1] + 1;
+  half_move_history[move_number] = half_move_history[move_number - 1] + 1;
   if (defender || (attacker == PAWN)) {
-    half_moves[move_number] = 0;
+    half_move_history[move_number] = 0;
   }
 
   // Add new position to the position history and repition hash.
