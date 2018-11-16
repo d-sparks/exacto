@@ -7,14 +7,20 @@
 #include "game.h"
 #include "hash.h"
 #include "inlines.h"
+#include "magics.h"
+#include "masks.h"
 #include "moves.h"
 #include "SEE.h"
 #include "squares.h"
 
 namespace exacto {
 
-Exacto::Exacto(Game initGame) {
-  game = initGame;
+Exacto::Exacto(Game init_game) {
+  magics::PopulateRookTables();
+  magics::PopulateBishopTables();
+  masks::init();
+
+  game = init_game;
   post = false;
   force = false;
 }

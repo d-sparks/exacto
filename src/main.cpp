@@ -144,11 +144,6 @@ bool REPL(Game& game, Exacto& exacto, std::string input) {
 int main() {
   Game game;
   Exacto exacto(game);
-  magics::PopulateRookTables();
-  magics::PopulateBishopTables();
-  masks::init();
-
   for (std::string cmd = "greet"; REPL(game, exacto, cmd); std::cin >> cmd) {}
-
   return 0;
 }
