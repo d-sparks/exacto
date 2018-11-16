@@ -6,8 +6,10 @@
 #include "board.h"
 #include "game.h"
 #include "hash.h"
+#include "inlines.h"
 #include "moves.h"
 #include "SEE.h"
+#include "squares.h"
 
 namespace exacto {
 
@@ -203,20 +205,46 @@ void Exacto::set_opponent_time(int opponent_time) {
 }
 
 void Exacto::Print(Game* game) {
-  std::vector<std::string> debug{"--Board--"};
-  auto board_debug = game->board_debug();
-  debug.insert(debug.end(), board_debug.begin(), board_debug.end());
-  debug.push_back("");
+  constexpr int debug_width = 15;
+  std::vector<std::string> debug;
+  auto add_str_debug = [&](const std::string& k, const std::string& v) {
+    debug.push_back(k);
+    while (debug.back().length() < debug_width) debug.back() += ' ';
+    debug.back() += v;
+  };
+  auto add_int_debug = [&](const std::string& k, int v) {
+    add_str_debug(k, std::to_string(v));
+  };
+
+  // Make castling string
+  std::string castling_string = "";
+  if (game->castling[WHITE] & exp_2(G1)) castling_string += (std::string)"K";
+  if (game->castling[WHITE] & exp_2(C1)) castling_string += (std::string)"Q";
+  if (game->castling[BLACK] & exp_2(G8)) castling_string += (std::string)"k";
+  if (game->castling[BLACK] & exp_2(G8)) castling_string += (std::string)"q";
+  if (castling_string.empty()) castling_string += "-";
+
+  // Make time control string
+  std::string time_control = std::to_string(time_manager.MPS) + "/" +
+                             std::to_string(time_manager.base_time) + "/" +
+                             std::to_string(time_manager.increment);
+
+  debug.push_back("--Board--");
+  add_str_debug("Castling:", castling_string);
+  add_str_debug("To move:", (game->wtm ? "W" : "B"));
+
   debug.push_back("--Game--");
-  debug.push_back("Half moves:\t" + std::to_string(game->half_moves()));
-  debug.push_back("Full moves:\t" + std::to_string(game->full_move_number()));
-  debug.push_back("Repititions:\t<= " + std::to_string(game->repitition_ub()));
-  debug.push_back("");
+  add_int_debug("Half moves:", game->half_moves());
+  add_int_debug("Full moves:", game->full_move_number());
+  add_int_debug("Repititions:", game->repitition_ub());
+
   debug.push_back("--Exacto--");
-  debug.push_back("Time:\t\t" + std::to_string(time_manager.time));
-  debug.push_back("Control:\t" + std::to_string(time_manager.MPS) + "/" +
-                  std::to_string(time_manager.base_time) + "/" +
-                  std::to_string(time_manager.increment));
+  add_int_debug("Static eval:", Evaluate(game));
+  add_int_debug("QSearch eval:", QSearch(game, -MATESCORE, MATESCORE, 0));
+  add_int_debug("Time:", time_manager.time);
+  add_int_debug("Opponent time:", time_manager.opponent_time);
+  add_str_debug("Control", time_control);
+
   game->Print(debug);
 }
 

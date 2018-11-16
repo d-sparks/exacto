@@ -23,7 +23,8 @@ Board::Board(const std::string& brd,
 
 // print prints a graphical representation of the board.
 void Board::Print() {
-  Print(board_debug());
+  std::vector<std::string> empty;
+  Print(empty);
 }
 
 void Board::Print(const std::vector<std::string>& side_bar) {
@@ -51,18 +52,6 @@ void Board::Print(const std::vector<std::string>& side_bar) {
   }
   std::cout << "     +---+---+---+---+---+---+---+---+" << std::endl;
   std::cout << "       A   B   C   D   E   F   G   H  " << std::endl;
-}
-
-std::vector<std::string> Board::board_debug() {
-  std::string castling_string = "Castling:\t";
-  if (castling[WHITE] & exp_2(G1)) castling_string += (std::string)"K";
-  if (castling[WHITE] & exp_2(C1)) castling_string += (std::string)"Q";
-  if (castling[BLACK] & exp_2(G8)) castling_string += (std::string)"k";
-  if (castling[BLACK] & exp_2(G8)) castling_string += (std::string)"q";
-  if (castling_string.length() == 11) castling_string += "-";
-  std::vector<std::string> output{(std::string)"To move:\t" + (wtm ? "W" : "B"),
-                                  castling_string};
-  return output;
 }
 
 // SetBoard sets board given an FEN std::string.

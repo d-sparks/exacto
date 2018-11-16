@@ -89,9 +89,9 @@ bool REPL(Game& game, Exacto& exacto, std::string input) {
     std::cin >> WTM;
     std::cin >> CAS;
     std::cin >> EPT;
-    // std::cin >> HMC;
-    // std::cin >> FMC;
-    game.SetBoard(POS, WTM, CAS, EPT);
+    std::cin >> HMC;
+    std::cin >> FMC;
+    game.SetGame(POS, WTM, CAS, EPT, HMC, FMC);
   } else if (input == "post") {
     exacto.post = true;
     std::cout << "Post ON" << std::endl;

@@ -52,7 +52,6 @@ class Board {
   // For debugging
   void Print();
   void Print(const std::vector<std::string>& side_bar);
-  std::vector<std::string> board_debug();
 
   // The state of the board.
   uint64_t hash_key;
