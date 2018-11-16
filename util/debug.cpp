@@ -1,27 +1,22 @@
 #define _DEBUG 1
 
-#include <stdint.h>
 #include <iostream>
 #include <string>
-#include "../src/bb.cpp"
-#include "../src/cexacto.cpp"
-#include "../src/cgame.cpp"
-#include "../src/masks.cpp"
-#include "../src/moves.cpp"
+
+#include "../src/exacto.cpp"
+#include "../src/game.cpp"
 
 using namespace std;
+using namespace exacto;
 
 int main() {
-  CGame game;
-  Exacto exacto(game);
-  magics::populateRookTables();
-  magics::populateBishopTables();
-  masks::init();
+  Game game;
+  Exacto exacto;
 
   while (true) {
-    // TODO: make a sequence of random moves     
+    // TODO: make a sequence of random moves
     while (true) {
-      exacto.go(&game);
+      exacto.Go(&game);
     }
     break;
   }

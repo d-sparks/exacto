@@ -15,12 +15,11 @@
 
 namespace exacto {
 
-Exacto::Exacto(Game init_game) {
+Exacto::Exacto() {
   magics::PopulateRookTables();
   magics::PopulateBishopTables();
   masks::init();
 
-  game = init_game;
   post = false;
   force = false;
 }

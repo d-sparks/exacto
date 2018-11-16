@@ -39,7 +39,7 @@ int TestSortMoves() {
 
   Game game("4kr1q/6B1/7B/6P1/6P1/2p2pp1/6n1/5bRK", "w", "-", "-");
   Game gameRef("4kr1q/6B1/7B/6P1/6P1/2p2pp1/6n1/5bRK", "w", "-", "-");
-  Exacto exacto(game);
+  Exacto exacto;
   Move move_list[256] = {0};
   game.MoveGen(move_list, true);
   pair<Move, int16_t> expected[9] = {
@@ -95,7 +95,7 @@ int TestDrawThreefold() {
     moves::make(F7, G7, ROOK, NONE, NONE, NONE, NONE),
     moves::make(B2, C2, ROOK, NONE, NONE, NONE, NONE),
     moves::make(G7, F7, ROOK, NONE, NONE, NONE, NONE)};
-  Exacto exacto(game);
+  Exacto exacto;
   for (int i = 0; i < 2; ++i) {
     ASSERT(!exacto.drawn_by_repitition_or_50_move_rule(&game),
            "Should not be drawn by repitition.");

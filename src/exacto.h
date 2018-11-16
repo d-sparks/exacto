@@ -13,7 +13,7 @@ class Exacto {
  public:
   // Presumably later the constructor will accept hash table size and
   // parallelism.
-  Exacto(Game init_game);
+  Exacto();
   ~Exacto();
 
   void Go(Game* game);
@@ -38,7 +38,6 @@ class Exacto {
   void set_opponent_time(int opponent_time);
 
   Hash hash;
-  Game game;
 
   bool force;
   bool post_pretty;

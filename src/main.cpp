@@ -143,7 +143,7 @@ bool REPL(Game& game, Exacto& exacto, std::string input) {
 
 int main() {
   Game game;
-  Exacto exacto(game);
+  Exacto exacto;
   for (std::string cmd = "greet"; REPL(game, exacto, cmd); std::cin >> cmd) {}
   return 0;
 }
