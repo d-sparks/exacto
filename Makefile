@@ -20,8 +20,12 @@ clean:
 
 debug: clean
 	@mkdir -p util/bin
-	$(CC) $(CFLAGS) -o util/bin/debug util/debug.cpp
+	$(CC) $(CFLAGS) -o util/bin/debug util/debug.cpp `ls src/*cpp | grep -v main`
 	@util/bin/debug
+
+run_suite: clean
+	@mkdir -p util/bin
+	$(CC) $(CFLAGS) -o util/bin/run_suite util/run_suite.cpp `ls src/*cpp | grep -v main`
 
 bin:
 	mkdir -p bin
