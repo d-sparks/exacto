@@ -7,6 +7,7 @@
 3. Search, QSearch
 4. Time management
 5. Deeper evaluate
+6. Parallel search
 
 ### Heuristics Phase (ELO 2000)
 
