@@ -1,8 +1,0 @@
-#!/bin/bash
-go run divide.go \
-  -engine1 ../bin/exacto -label1=1.0 \
-  -engine2=../exacto-0.e -label2=0.e -headers2=9 \
-  -fen="$1" \
-  -depth=$2
-
-
