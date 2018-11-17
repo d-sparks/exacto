@@ -97,7 +97,7 @@ int16_t Exacto::Search(Game* game,
     // Keep track of the best move.
     if (score > best_score) {
       best_score = score;
-      best_move = move;
+      best_move = moves[i];  // because moves[i] was mutated
     }
   }
 

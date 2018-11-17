@@ -68,7 +68,7 @@ Move Exacto::FindMove(Game* game, Move target_move) {
     t = clock() - t_0;
 
     search_info.branching_factor = (float)search_info.nodes / prev_nodes;
-    search_info.time_used = 100 * (double)t / CLOCKS_PER_SEC;
+    search_info.time_used = 100 * (float)t / CLOCKS_PER_SEC;
     search_info.nodes_per_second =
       (float)search_info.nodes * CLOCKS_PER_SEC / t;
     search_info.score = score;
