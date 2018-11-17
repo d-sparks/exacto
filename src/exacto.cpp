@@ -27,6 +27,17 @@ Exacto::Exacto() {
 Exacto::~Exacto() {}
 
 void Exacto::Go(Game* game) {
+  Move best_move = FindMove(game);
+#ifndef _DEBUG
+  std::cout << "move " << moves::algebraic(best_move) << std::endl;
+#endif
+#ifdef _DEBUG
+  std::cout << " usermove " << moves::algebraic(best_move);
+#endif
+  game->MakeMove(&best_move);
+}
+
+Move Exacto::FindMove(Game* game) {
   force = false;
 
   // hardcoding checks per second and average time for search
@@ -79,13 +90,7 @@ void Exacto::Go(Game* game) {
     }
   }
 
-#ifndef _DEBUG
-  std::cout << "move " << moves::algebraic(best_move) << std::endl;
-#endif
-#ifdef _DEBUG
-  std::cout << " usermove " << moves::algebraic(best_move);
-#endif
-  game->MakeMove(&best_move);
+  return best_move;
 }
 
 void Exacto::SortMoves(Game* game, Move* moves) {

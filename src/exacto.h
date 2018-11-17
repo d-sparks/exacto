@@ -16,6 +16,7 @@ class Exacto {
   Exacto();
   ~Exacto();
 
+  Move FindMove(Game* game);
   void Go(Game* game);
 
   int16_t Evaluate(Game* game);
