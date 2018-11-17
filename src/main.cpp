@@ -128,6 +128,10 @@ bool REPL(Game& game, Exacto& exacto, std::string input) {
     base = 60 * minutes + seconds;
     exacto.SetLevels(MPS, base * 100, increment * 100);
   } else if (input == "st") {
+    int seconds;
+    std::cin >> seconds;
+    exacto.use_exact_time = true;
+    exacto.set_time(seconds * 100);
   } else if (input == "time") {
     int centiseconds;
     std::cin >> centiseconds;

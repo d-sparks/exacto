@@ -43,6 +43,7 @@ class Exacto {
   bool force;
   bool post_pretty;
   bool post;
+  bool use_exact_time;
 
   void Print(Game* game);
 

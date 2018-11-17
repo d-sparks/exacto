@@ -22,6 +22,7 @@ Exacto::Exacto() {
 
   post = false;
   force = false;
+  use_exact_time = false;
 }
 
 Exacto::~Exacto() {}
@@ -41,10 +42,12 @@ Move Exacto::FindMove(Game* game) {
   force = false;
 
   // hardcoding checks per second and average time for search
-  int ideal_time;
-  int maximum_time;
-  time_manager.GetTimeForMove(game->full_move_number(), &ideal_time,
-                              &maximum_time);
+  int ideal_time = time_manager.time - 10;
+  int maximum_time = time_manager.time - 10;
+  if (!use_exact_time) {
+    time_manager.GetTimeForMove(game->full_move_number(), &ideal_time,
+                                &maximum_time);
+  }
 
   // timing initialization
   nodes = 0;
@@ -84,8 +87,8 @@ Move Exacto::FindMove(Game* game) {
 
     int estimate = centiseconds * branching_factor;
     int high_estimate = 1.5 * estimate;
-    if (high_estimate > maximum_time ||
-        estimate > ideal_time) {
+    if (!use_exact_time && (high_estimate > maximum_time ||
+                            estimate > ideal_time)) {
       break;
     }
   }
