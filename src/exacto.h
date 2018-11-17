@@ -16,7 +16,7 @@ class Exacto {
   Exacto();
   ~Exacto();
 
-  Move FindMove(Game* game);
+  Move FindMove(Game* game, Move target_move = BOGUS_MOVE);
   void Go(Game* game);
 
   int16_t Evaluate(Game* game);
@@ -35,15 +35,13 @@ class Exacto {
   std::string principal_variation(Game* game, int depth);
 
   void SetLevels(int MPS, int base_time, int increment);
-  void set_time(int time);
-  void set_opponent_time(int opponent_time);
+  void SetTime(int centiseconds, bool exact = false, bool opponent = false);
 
   Hash hash;
 
   bool force;
   bool post_pretty;
   bool post;
-  bool use_exact_time;
 
   void Print(Game* game);
 
@@ -51,8 +49,6 @@ class Exacto {
   TimeManager time_manager;
   bool terminate_search;
   uint64_t nodes;
-  uint64_t nodes_next_clock_check;
-  int64_t max_clock;
 
   // TODO: think about where to put this, and make it static const.
   int16_t PVT[2][7][64] = {

@@ -16,7 +16,7 @@ int TestBasicTimeControl() {
 
   TimeManager time_manager;
   time_manager.SetLevels(40, -1, 0);
-  time_manager.set_time(40 * 60 * 100);
+  time_manager.time = 40 * 60 * 100;
 
   int ideal;
   int maximal;
@@ -34,7 +34,7 @@ int TestWithIncrement() {
 
   TimeManager time_manager;
   time_manager.SetLevels(40, -1, 500);
-  time_manager.set_time(40 * 60 * 100);
+  time_manager.time = 40 * 60 * 100;
 
   int ideal;
   int maximal;

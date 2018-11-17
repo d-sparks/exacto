@@ -1,6 +1,8 @@
 #ifndef exacto_src_time_manager_h
 #define exacto_src_time_manager_h
 
+#include <stdint.h>
+
 namespace exacto {
 
 class TimeManager {
@@ -10,9 +12,6 @@ class TimeManager {
   void SetLevels(int _MPS, int _base_time, int _increment);
   void GetTimeForMove(float move_number, int* ideal, int* maximum);
 
-  void set_time(int _time) { time = _time; }
-  void set_opponent_time(int otime) { opponent_time = otime; }
-
   int EstimateMovesLeft(int move_number);
 
   int MPS;
@@ -21,6 +20,10 @@ class TimeManager {
 
   int time;
   int opponent_time;
+
+  bool use_exact_time;
+  uint64_t nodes_next_clock_check;
+  int64_t max_clock;
 };
 
 }  // namespace exacto

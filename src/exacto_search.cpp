@@ -19,12 +19,12 @@ int16_t Exacto::Search(Game* game,
     return alpha;
   }
   nodes++;
-  if (nodes >= nodes_next_clock_check) {
-    if (clock() >= max_clock) {
+  if (nodes >= time_manager.nodes_next_clock_check) {
+    if (clock() >= time_manager.max_clock) {
       terminate_search = true;
       return alpha;
     } else {
-      nodes_next_clock_check = nodes + NODES_PER_CLOCK_CHECK;
+      time_manager.nodes_next_clock_check = nodes + NODES_PER_CLOCK_CHECK;
     }
   }
   // Transposition table pruning.

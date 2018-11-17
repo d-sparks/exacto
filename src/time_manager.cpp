@@ -7,6 +7,7 @@ namespace exacto {
 
 TimeManager::TimeManager() {
   SetLevels(40, 5 * 60 * 100, 0);
+  use_exact_time = false;
 }
 
 void TimeManager::SetLevels(int _MPS, int _base_time, int _increment) {
@@ -26,6 +27,14 @@ void TimeManager::GetTimeForMove(float move_number, int* ideal, int* maximum) {
     return;
   }
 
+  // Exact timing with 10 centisecond buffer
+  if (use_exact_time) {
+    *ideal = time - 10;
+    *maximum = time - 10;
+    return;
+  }
+
+  // Otherwise, actual time management
   int moves_left = EstimateMovesLeft(move_number);
 
   if (moves_left < 4) {

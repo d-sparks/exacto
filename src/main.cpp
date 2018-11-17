@@ -130,13 +130,15 @@ bool REPL(Game& game, Exacto& exacto, std::string input) {
   } else if (input == "st") {
     int seconds;
     std::cin >> seconds;
-    exacto.use_exact_time = true;
-    exacto.set_time(seconds * 100);
+    exacto.SetTime(seconds * 100, true, false);
   } else if (input == "time") {
     int centiseconds;
     std::cin >> centiseconds;
-    exacto.set_time(centiseconds);
+    exacto.SetTime(centiseconds);
   } else if (input == "otim") {
+    int centiseconds;
+    std::cin >> centiseconds;
+    exacto.SetTime(centiseconds, false, true);
   } else if (input == "mt") {
   }
 

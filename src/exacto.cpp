@@ -22,7 +22,6 @@ Exacto::Exacto() {
 
   post = false;
   force = false;
-  use_exact_time = false;
 }
 
 Exacto::~Exacto() {}
@@ -38,16 +37,14 @@ void Exacto::Go(Game* game) {
   game->MakeMove(&best_move);
 }
 
-Move Exacto::FindMove(Game* game) {
+Move Exacto::FindMove(Game* game, Move target_move) {
   force = false;
 
   // hardcoding checks per second and average time for search
-  int ideal_time = time_manager.time - 10;
-  int maximum_time = time_manager.time - 10;
-  if (!use_exact_time) {
-    time_manager.GetTimeForMove(game->full_move_number(), &ideal_time,
-                                &maximum_time);
-  }
+  int ideal_time;
+  int maximum_time;
+  time_manager.GetTimeForMove(game->full_move_number(), &ideal_time,
+                              &maximum_time);
 
   // timing initialization
   nodes = 0;
@@ -57,9 +54,9 @@ Move Exacto::FindMove(Game* game) {
   terminate_search = false;
   int64_t t_0 = clock();
   int64_t t = 0;
-  nodes_next_clock_check = NODES_PER_CLOCK_CHECK;
+  time_manager.nodes_next_clock_check = NODES_PER_CLOCK_CHECK;
 
-  max_clock = t_0 + maximum_time * CLOCKS_PER_SEC / 100;
+  time_manager.max_clock = t_0 + maximum_time * CLOCKS_PER_SEC / 100;
 
   Move best_move = BOGUS_MOVE;
   for (int depth = 1; true; ++depth) {
@@ -85,10 +82,14 @@ Move Exacto::FindMove(Game* game) {
                 << std::endl;
     }
 
+    if (target_move != BOGUS_MOVE && best_move == target_move) {
+      break;
+    }
+
     int estimate = centiseconds * branching_factor;
     int high_estimate = 1.5 * estimate;
-    if (!use_exact_time && (high_estimate > maximum_time ||
-                            estimate > ideal_time)) {
+    if (!time_manager.use_exact_time && (high_estimate > maximum_time ||
+                                         estimate > ideal_time)) {
       break;
     }
   }
@@ -209,12 +210,13 @@ void Exacto::SetLevels(int MPS, int base_time, int increment) {
   time_manager.SetLevels(MPS, base_time, increment);
 }
 
-void Exacto::set_time(int time) {
-  time_manager.set_time(time);
-}
-
-void Exacto::set_opponent_time(int opponent_time) {
-  time_manager.set_opponent_time(opponent_time);
+void Exacto::SetTime(int centiseconds, bool exact, bool opponent) {
+  if (opponent) {
+    time_manager.opponent_time = centiseconds;
+  } else {
+    time_manager.time = centiseconds;
+  }
+  time_manager.use_exact_time = exact;
 }
 
 void Exacto::Print(Game* game) {
