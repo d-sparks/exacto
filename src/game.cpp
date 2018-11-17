@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <iostream>
+#include <map>
 #include <string>
 
 #include "board.h"
@@ -281,6 +282,75 @@ Bitboard divide(Game *game, int depth) {
   std::cout << "moves " << number_of_moves << std::endl;
 
   return nodes;
+}
+
+std::string Game::fancy_algebraic(Move move) {
+  std::string output = "";
+
+  ind source = moves::source(move);
+  ind dest = moves::dest(move);
+  ind special = moves::special(move);
+
+  ind attacker = board[source];
+  bool capture = board[dest];
+
+  if (special == CASTLE) {
+    return (dest == G1 || dest == G8) ? "O-O" : "O-O-O";
+  } else if (special == EN_PASSANT_CAP) {
+    capture = true;
+  }
+
+  Move move_list[256];
+  MoveGen(move_list);
+
+  bool ambiguous_move = false;
+  for (int i = 0; move_list[i]; ++i) {
+    ind other_source_sq = moves::source(move_list[i]);
+    if (moves::dest(move_list[i]) == dest && other_source_sq != source &&
+        board[other_source_sq] == attacker) {
+      ambiguous_move = true;
+    }
+  }
+
+  // Attacker notation
+  if (attacker != PAWN) {
+    std::map<ind, char> pieces_to_chars{
+        {KNIGHT, 'N'}, {BISHOP, 'B'}, {ROOK, 'R'}, {QUEEN, 'Q'}, {KING, 'K'}};
+    output += pieces_to_chars[attacker];
+  }
+
+  if (attacker == PAWN) {
+    // Pawn captures only reference columns
+    if (capture) {
+      static const char files[8] = {'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'};
+      output += files[squares::file(source)];
+    }
+  } else if (ambiguous_move) {
+    // Ambiguous moves include source square
+    output.append(squares::algebraic[source]);
+  }
+
+  // Captures have an x
+  if (capture) {
+    output += 'x';
+  }
+
+  // Destination square
+  output.append(squares::algebraic[dest]);
+
+  // Promotions
+  std::map<ind, std::string> promo{{PROMOTE_KNIGHT, "N"}, {PROMOTE_BISHOP, "B"},
+                                   {PROMOTE_ROOK, "R"}, {PROMOTE_QUEEN, "Q"}};
+  output.append(promo[special]);
+
+  // Check
+  MakeMove(&move);
+  if (in_check()) {
+    output += '+';
+  }
+  UnmakeMove(move);
+
+  return output;
 }
 
 }  // namespace exacto

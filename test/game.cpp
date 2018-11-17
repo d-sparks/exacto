@@ -2,6 +2,7 @@
 
 #include "../src/game.h"
 
+#include <map>
 #include <vector>
 
 #include "../src/board.h"
@@ -15,7 +16,6 @@
 using namespace exacto;
 using namespace std;
 
-// Greatcomment
 int TestMakeMoveUnmakeMove() {
   cout << "Testing that MakeMove and UnmakeMove are inverses..." << endl;
 
@@ -102,11 +102,63 @@ int TestReset50MoveLogic() {
   return 1;
 }
 
+int TestFancyAlgebraic() {
+  cout << "Testing fancy algebraic notation..." << endl;
+
+  Move move_list[256];
+
+  // +---+---+---+---+---+---+---+---+
+  // |   |   | n |   |[k]|   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   | P |   |   |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |   | : |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   | P | p | P |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   | N |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   | N |   |   | Q |
+  // +---+---+---+---+---+---+---+---+
+  // | p |   |   |   |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // | R |   |   |   |[K]|   |   | R |
+  // +---+---+---+---+---+---+---+---+
+
+  Game game("2n1k3/1P6/8/4PpP1/3N4/4N2Q/p7/R3K2R", "w", "KQ", "f6");
+  game.MoveGen(move_list);
+
+  map<string, string> algebraic_to_fancy{
+      {"a1b1", "Rb1"}, {"a1c1", "Rc1"}, {"a1d1", "Rd1"}, {"e1c1", "O-O-O"},
+      {"e1d1", "Kd1"}, {"e1d2", "Kd2"}, {"e1e2", "Ke2"}, {"e1f2", "Kf2"},
+      {"e1f1", "Kf1"}, {"e1g1", "O-O"}, {"h1f1", "Rf1"}, {"h1g1", "Rg1"},
+      {"h1h2", "Rh2"}, {"h3f1", "Qf1"}, {"h3g2", "Qg2"}, {"h3h2", "Qh2"},
+      {"h3f3", "Qf3"}, {"h3g3", "Qg3"}, {"h3g4", "Qg4"}, {"h3f5", "Qxf5"},
+      {"h3h4", "Qh4"}, {"h3h5", "Qh5+"}, {"h3h6", "Qh6"}, {"h3h7", "Qh7"},
+      {"h3h8", "Qh8+"}, {"d4b5", "Nb5"}, {"d4c6", "Nc6"}, {"d4e6", "Ne6"},
+      {"d4f5", "Nd4xf5"}, {"d4f3", "Nf3"}, {"d4e2", "Ne2"}, {"d4c2", "Nd4c2"},
+      {"d4b3", "Nb3"}, {"e3c4", "Nc4"}, {"e3d5", "Nd5"}, {"e3f5", "Ne3xf5"},
+      {"e3g4", "Ng4"}, {"e3g2", "Ng2"}, {"e3f1", "Nf1"}, {"e3d1", "Nd1"},
+      {"e3c2", "Ne3c2"}, {"e5e6", "e6"}, {"e5f6", "exf6"}, {"g5g6", "g6"},
+      {"g5f6", "gxf6"}, {"b7b8Q", "b8Q"}, {"b7b8R", "b8R"}, {"b7b8B", "b8B"},
+      {"b7b8N", "b8N"}, {"b7c8Q", "bxc8Q+"}, {"b7c8R", "bxc8R+"},
+      {"b7c8B", "bxc8B"}, {"b7c8N", "bxc8N"}, {"a1a2", "Rxa2"}};
+
+  for (int i = 0; move_list[i]; ++i) {
+    string actual = game.fancy_algebraic(move_list[i]);
+    string expected = algebraic_to_fancy[moves::algebraic(move_list[i])];
+    ASSERT_EQ(actual, expected, "Expected " + actual + " == " + expected);
+  }
+
+  return 1;
+}
+
 int main() {
   int t = 0;
 
   t += TestMakeMoveUnmakeMove();
   t += TestReset50MoveLogic();
+  t += TestFancyAlgebraic();
 
   cout << endl;
   cout << t << " test(s) OK" << endl;

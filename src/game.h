@@ -41,6 +41,8 @@ class Game : public Board {
   ind half_move_history[STACK_SIZE];
   Bitboard position_history[STACK_SIZE];  // zobrist keys
   ind repitition_hash[REPITITION_HASH_SIZE];
+
+  std::string fancy_algebraic(Move move);
 };
 
 // TODO: move these somewhere? maybe Exacto?
