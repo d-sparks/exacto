@@ -33,7 +33,7 @@ suites: clean build $(SUITES)
 
 $(SUITES): run_suite
 	@printf "\n=== Running suite: "$@" ===\n"
-	util/bin/run_suite data/$@.suite > data/$@.suite_result
+	util/bin/run_suite data/$@.suite > data/$@.suite_results
 
 bin:
 	mkdir -p bin
