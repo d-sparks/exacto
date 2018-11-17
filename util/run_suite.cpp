@@ -123,7 +123,6 @@ int main(int argc, char* argv[]) {
     debug.push_back("Time:   " + std::to_string(exacto.search_info.time_used));
 
     game.Print(debug);
-
   }
 
   std::cout << std::endl << "--FAILURES--" << std::endl;
