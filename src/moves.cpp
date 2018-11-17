@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "bitboard.h"
-#include "game.h"
+#include "defines.h"
 #include "inlines.h"
 #include "squares.h"
 
@@ -40,12 +40,12 @@ Move make(Move source,
 }
 
 std::string algebraic(Move m) {
-  ind promot_data = special(m);
+  ind promote_data = special(m);
   std::string out = squares::algebraic[source(m)] + squares::algebraic[dest(m)];
-  if (promot_data == PROMOTE_BISHOP) out += "B";
-  if (promot_data == PROMOTE_KNIGHT) out += "N";
-  if (promot_data == PROMOTE_ROOK) out += "R";
-  if (promot_data == PROMOTE_QUEEN) out += "Q";
+  if (promote_data == PROMOTE_BISHOP) out += "B";
+  if (promote_data == PROMOTE_KNIGHT) out += "N";
+  if (promote_data == PROMOTE_ROOK) out += "R";
+  if (promote_data == PROMOTE_QUEEN) out += "Q";
   return out;
 }
 
