@@ -45,10 +45,21 @@ class Exacto {
 
   void Print(Game* game);
 
+  // Updated after each iteration of iterative deepening. Thinking about using
+  // this to model whether to go deeper.
+  struct SearchInfo {
+    uint64_t nodes;
+    int64_t time_used;
+    int16_t depth;
+    int16_t score;
+    float branching_factor;
+    float nodes_per_second;
+  };
+  SearchInfo search_info;
+
  private:
   TimeManager time_manager;
   bool terminate_search;
-  uint64_t nodes;
 
   // TODO: think about where to put this, and make it static const.
   int16_t PVT[2][7][64] = {

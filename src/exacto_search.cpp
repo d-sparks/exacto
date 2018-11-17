@@ -18,13 +18,14 @@ int16_t Exacto::Search(Game* game,
   if (terminate_search) {
     return alpha;
   }
-  nodes++;
-  if (nodes >= time_manager.nodes_next_clock_check) {
+  search_info.nodes++;
+  if (search_info.nodes >= time_manager.nodes_next_clock_check) {
     if (clock() >= time_manager.max_clock) {
       terminate_search = true;
       return alpha;
     } else {
-      time_manager.nodes_next_clock_check = nodes + NODES_PER_CLOCK_CHECK;
+      time_manager.nodes_next_clock_check =
+          search_info.nodes + NODES_PER_CLOCK_CHECK;
     }
   }
   // Transposition table pruning.
@@ -121,7 +122,7 @@ int16_t Exacto::QSearch(Game* game,
                         int16_t beta,
                         int16_t ply) {
   // Time control
-  nodes++;
+  search_info.nodes++;
 
   // Check for a draw by repition or 50 move rule.
   if (drawn_by_repitition_or_50_move_rule(game)) {

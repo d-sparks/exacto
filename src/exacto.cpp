@@ -47,29 +47,32 @@ Move Exacto::FindMove(Game* game, Move target_move) {
                               &maximum_time);
 
   // timing initialization
-  nodes = 0;
+  search_info.nodes = 0;
   uint64_t prev_nodes = 1;
-  double branching_factor = 3;
-  int NPS = 1000000;
+  search_info.branching_factor = 3;
+  search_info.nodes_per_second = 1000000;
   terminate_search = false;
   int64_t t_0 = clock();
   int64_t t = 0;
   time_manager.nodes_next_clock_check = NODES_PER_CLOCK_CHECK;
-
   time_manager.max_clock = t_0 + maximum_time * CLOCKS_PER_SEC / 100;
 
   Move best_move = BOGUS_MOVE;
   for (int depth = 1; true; ++depth) {
-    prev_nodes = nodes;
+    prev_nodes = search_info.nodes;
     int16_t score = Search(game, -INFNTY, INFNTY, depth, 0);
     if (depth == 1) {
       continue;
     }
 
     t = clock() - t_0;
-    double centiseconds = 100 * double(t) / CLOCKS_PER_SEC;
-    branching_factor = nodes / prev_nodes;
-    NPS = (nodes * CLOCKS_PER_SEC) / t;
+
+    search_info.branching_factor = (float)search_info.nodes / prev_nodes;
+    search_info.time_used = 100 * (double)t / CLOCKS_PER_SEC;
+    search_info.nodes_per_second =
+      (float)search_info.nodes * CLOCKS_PER_SEC / t;
+    search_info.score = score;
+    search_info.depth = depth;
 
     if (terminate_search) {
       break;
@@ -77,16 +80,16 @@ Move Exacto::FindMove(Game* game, Move target_move) {
 
     best_move = hash.get_sugg(game->hash_key);
     if (post) {
-      std::cout << depth << "\t" << score << "\t" << (int)centiseconds << "\t"
-                << nodes << "\t" << principal_variation(game, depth)
-                << std::endl;
+      std::cout << search_info.depth << "\t" << search_info.score << "\t"
+                << (int)search_info.time_used << "\t" << search_info.nodes
+                << "\t" << principal_variation(game, depth) << std::endl;
     }
 
     if (target_move != BOGUS_MOVE && best_move == target_move) {
       break;
     }
 
-    int estimate = centiseconds * branching_factor;
+    int estimate = search_info.time_used * search_info.branching_factor;
     int high_estimate = 1.5 * estimate;
     if (!time_manager.use_exact_time && (high_estimate > maximum_time ||
                                          estimate > ideal_time)) {

@@ -43,6 +43,14 @@ bool REPL(Game& game, Exacto& exacto, std::string input) {
     std::cout << perft(&game, depth) - perft(&game, depth - 1) << std::endl;
   } else if (input == "clear") {
     exacto.hash.clear_table();
+  } else if (input == "searchinfo") {
+    std::cout << "Score: " << exacto.search_info.score << std::endl << "Depth: "
+              << exacto.search_info.depth << std::endl << "Nodes: "
+              << exacto.search_info.nodes << std::endl << "Branching factor: "
+              << exacto.search_info.branching_factor << std::endl << "Time: "
+              << exacto.search_info.time_used << std::endl
+              << "Nodes per second: " << exacto.search_info.nodes_per_second
+              << std::endl;
   }
   // TODO: FEN, move history, stats, help
 
