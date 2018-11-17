@@ -85,7 +85,7 @@ Move Exacto::FindMove(Game* game, Move target_move) {
                 << "\t" << principal_variation(game, depth) << std::endl;
     }
 
-    if (target_move != BOGUS_MOVE && best_move == target_move) {
+    if (depth >= 3 && target_move != BOGUS_MOVE && best_move == target_move) {
       break;
     }
 
