@@ -28,6 +28,7 @@ int16_t Exacto::Search(Game* game,
           search_info.nodes + NODES_PER_CLOCK_CHECK;
     }
   }
+
   // Transposition table pruning.
   uint8_t hash_lookup = hash.probe(game->hash_key, depth);
   if (hash_lookup) {
@@ -90,7 +91,7 @@ int16_t Exacto::Search(Game* game,
     // played, so we can stop searching. We note in the transposition table that
     // we only have a lower bound on the score of this node. (Fail high.)
     if (score >= beta && !terminate_search) {
-      hash.record(game->hash_key, best_move, depth, HASH_BETA, score);
+      hash.record(game->hash_key, moves[i], depth, HASH_BETA, score);
       return score;
     }
 
