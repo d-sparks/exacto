@@ -22,8 +22,6 @@ class TimeManager {
   int opponent_time;
 
   bool use_exact_time;
-  uint64_t nodes_next_clock_check;
-  int64_t max_clock;
 };
 
 }  // namespace exacto

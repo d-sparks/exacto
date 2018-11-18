@@ -40,33 +40,40 @@ void Exacto::Go(Game* game) {
 Move Exacto::FindMove(Game* game, Move target_move) {
   force = false;
 
-  // hardcoding checks per second and average time for search
+  // Init search info
+  search_info.nodes = 0;
+  search_info.branching_factor = 3;
+  search_info.nodes_per_second = 1000000;
+  terminate_search = false;
+  uint64_t prev_nodes = 1;
+
+  // Timing initialization
   int ideal_time;
   int maximum_time;
   time_manager.GetTimeForMove(game->full_move_number(), &ideal_time,
                               &maximum_time);
-
-  // timing initialization
-  search_info.nodes = 0;
-  uint64_t prev_nodes = 1;
-  search_info.branching_factor = 3;
-  search_info.nodes_per_second = 1000000;
-  terminate_search = false;
   int64_t t_0 = clock();
-  int64_t t = 0;
-  time_manager.nodes_next_clock_check = NODES_PER_CLOCK_CHECK;
-  time_manager.max_clock = t_0 + maximum_time * CLOCKS_PER_SEC / 100;
+  int64_t t = t_0;
+
+  SearchThread search_thread;
+  search_thread.game = *game;
+  search_thread.nodes = 0;
+  search_thread.max_clock = t_0 + maximum_time * CLOCKS_PER_SEC / 100;
+  search_thread.nodes_next_clock_check = NODES_PER_CLOCK_CHECK;
 
   Move best_move = BOGUS_MOVE;
   for (int depth = 1; true; ++depth) {
     prev_nodes = search_info.nodes;
-    int16_t score = Search(game, -INFNTY, INFNTY, depth, 0);
+
+    int16_t score = Search(&search_thread, -INFNTY, INFNTY, depth, 0);
+
     if (depth == 1) {
       continue;
     }
 
     t = clock() - t_0;
 
+    search_info.nodes = search_thread.nodes;
     search_info.branching_factor = (float)search_info.nodes / prev_nodes;
     search_info.time_used = 100 * (float)t / CLOCKS_PER_SEC;
     search_info.nodes_per_second =
@@ -256,9 +263,11 @@ void Exacto::Print(Game* game) {
   add_int_debug("Full moves:", game->full_move_number());
   add_int_debug("Repititions:", game->repitition_ub());
 
+  SearchThread search_thread{*game, 0, 0, 0};
   debug.push_back("--Exacto--");
   add_int_debug("Static eval:", Evaluate(game));
-  add_int_debug("QSearch eval:", QSearch(game, -MATESCORE, MATESCORE, 0));
+  add_int_debug("QSearch eval:",
+                QSearch(&search_thread, -MATESCORE, MATESCORE, 0));
   add_int_debug("Time:", time_manager.time);
   add_int_debug("Opponent time:", time_manager.opponent_time);
   add_str_debug("Control", time_control);

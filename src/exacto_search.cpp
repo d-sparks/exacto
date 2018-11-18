@@ -9,24 +9,26 @@ namespace exacto {
 // various pruning heuristics:
 //   - Transposition table pruning
 //   - TODO: many more
-int16_t Exacto::Search(Game* game,
+int16_t Exacto::Search(SearchThread* thread,
                        int16_t alpha,
                        int16_t beta,
                        int16_t depth,
                        int16_t ply,
                        bool from_null) {
+  Game* game = &thread->game;
+
   // Time management
   if (terminate_search) {
     return alpha;
   }
-  search_info.nodes++;
-  if (search_info.nodes >= time_manager.nodes_next_clock_check) {
-    if (clock() >= time_manager.max_clock) {
+  thread->nodes++;
+  if (thread->nodes >= thread->nodes_next_clock_check) {
+    if (clock() >= thread->max_clock) {
       terminate_search = true;
       return alpha;
     } else {
-      time_manager.nodes_next_clock_check =
-          search_info.nodes + NODES_PER_CLOCK_CHECK;
+      thread->nodes_next_clock_check =
+          thread->nodes + NODES_PER_CLOCK_CHECK;
     }
   }
 
@@ -52,7 +54,7 @@ int16_t Exacto::Search(Game* game,
        hash.get_val(game->hash_key) >= beta)) {
     Move null_move = 0;
     game->MakeNull(&null_move);
-    int16_t score = -Search(game, -beta, -beta + 1, depth - 3, ply + 1, true);
+    int16_t score = -Search(thread, -beta, -beta + 1, depth - 3, ply + 1, true);
     game->UnmakeNull(null_move);
     if (score >= beta) {
       return score;
@@ -61,7 +63,7 @@ int16_t Exacto::Search(Game* game,
 
   // At depth = 0, call qsearch to continue searching exciting moves.
   if (depth == 0) {
-    return QSearch(game, alpha, beta, ply);
+    return QSearch(thread, alpha, beta, ply);
   }
 
   // Generate legal moves to determine children nodes.
@@ -86,7 +88,7 @@ int16_t Exacto::Search(Game* game,
   for (ind i = 0; moves[i]; i++) {
     Move move = moves[i];
     game->MakeMove(&move);
-    int score = -Search(game, -beta, -best_score, depth - 1, ply + 1);
+    int score = -Search(thread, -beta, -best_score, depth - 1, ply + 1);
     game->UnmakeMove(move);
 
 #ifdef _DEBUG
@@ -112,7 +114,7 @@ int16_t Exacto::Search(Game* game,
     // Keep track of the best move.
     if (score > best_score) {
       best_score = score;
-      best_move = moves[i];  // because moves[i] was mutated
+      best_move = moves[i];  // because `move` was mutated
     }
   }
 
@@ -132,12 +134,14 @@ int16_t Exacto::Search(Game* game,
 // qsearch ("quiescence search") is alphabeta except that only exciting or
 // "loud" nodes are traversed, things like checks, pawn promotions and captures.
 // In the event of being in check, all evasions are searched.
-int16_t Exacto::QSearch(Game* game,
+int16_t Exacto::QSearch(SearchThread* thread,
                         int16_t alpha,
                         int16_t beta,
                         int16_t ply) {
+  Game* game = &thread->game;
+
   // Time control
-  search_info.nodes++;
+  thread->nodes++;
 
   // Check for a draw by repition or 50 move rule.
   if (drawn_by_repitition_or_50_move_rule(game)) {
@@ -171,7 +175,7 @@ int16_t Exacto::QSearch(Game* game,
   for (ind i = 0; moves[i]; i++) {
     Move move = moves[i];
     game->MakeMove(&move);
-    int score = -QSearch(game, -beta, -alpha, ply + 1);
+    int score = -QSearch(thread, -beta, -alpha, ply + 1);
     game->UnmakeMove(move);
     if (score >= beta) {
       return score;

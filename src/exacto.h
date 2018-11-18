@@ -21,13 +21,24 @@ class Exacto {
 
   int16_t Evaluate(Game* game);
 
-  int16_t Search(Game* game,
+  struct SearchThread {
+    Game game;
+    int64_t max_clock;
+    uint64_t nodes_next_clock_check;
+    uint64_t nodes;
+  };
+
+  int16_t Search(SearchThread* thread,
                  int16_t alpha,
                  int16_t beta,
                  int16_t depth,
                  int16_t ply,
                  bool from_null = false);
-  int16_t QSearch(Game* game, int16_t alpha, int16_t beta, int16_t ply);
+
+  int16_t QSearch(SearchThread* thread,
+                  int16_t alpha,
+                  int16_t beta,
+                  int16_t ply);
 
   void SortMoves(Game* game, Move* moves);
   void SortCaps(Game* game, Move* moves);
