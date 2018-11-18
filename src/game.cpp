@@ -239,6 +239,44 @@ void Game::UnmakeMove(Move m) {
   occupied = pieces[WHITE][ALL] | pieces[BLACK][ALL];
 }
 
+void Game::MakeNull(Move* m) {
+  // Set en passant square to 'none'
+  Move en_passant_file = 9;
+  if (en_passant) {
+    en_passant_file = squares::file(bitscan(en_passant));
+    set_en_passant();
+  }
+  *m |= en_passant_file << 18;
+
+  wtm = !wtm;
+  hash_key ^= zobrist::wtm;
+
+  // Increment half-move clock
+  move_number++;
+  half_move_history[move_number] = half_move_history[move_number - 1] + 1;
+
+  position_history[move_number] = hash_key;
+  repitition_hash[hash_key >> REPITITION_HASH_SHIFT]++;
+}
+
+void Game::UnmakeNull(Move m) {
+  //  Decrement half-move clock and reduce repitition hash sum.
+  repitition_hash[hash_key >> REPITITION_HASH_SHIFT]--;
+  move_number--;
+
+  hash_key ^= zobrist::wtm;
+  wtm = !wtm;
+
+  // Reset en passant square
+  ind en_passant_file = moves::en_passant(m);
+  if (en_passant_file < 9) {
+    ind en_passant_rank = wtm ? 5 : 2;
+    set_en_passant(8 * en_passant_rank + en_passant_file);
+  } else if (en_passant) {
+    set_en_passant();
+  }
+}
+
 // Browses the game tree and counts the number of nodes
 Bitboard perft(Game *game, int depth) {
   Bitboard nodes = 1;

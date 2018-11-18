@@ -2,6 +2,7 @@
 
 #include "../src/game.h"
 
+#include <cstring>
 #include <map>
 #include <vector>
 
@@ -40,8 +41,6 @@ int TestMakeMoveUnmakeMove() {
   Game game1("r2qk3/1P6/8/2Pp4/4P3/1N3b2/5PPP/R3K2R", "w", "KQq", "D6");
   Game game2 = game1;
   ASSERT(game1 == game2, "operator== failed for game.");
-  magics::PopulateBishopTables();
-  magics::PopulateRookTables();
   Move move_list[256] = {0};
   game1.MoveGen(move_list, true);
   for (Move* move = move_list; *move; move++) {
@@ -153,12 +152,53 @@ int TestFancyAlgebraic() {
   return 1;
 }
 
+int TestMakeNullUnmakeNull() {
+  cout << "Testing that MakeNull and UnmakeNull are inverses..." << endl;
+
+  // +---+---+---+---+---+---+---+---+
+  // | r |   |   | q |[k]|   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   | P |   |   |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   | : |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   | P | p |   |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   | P |   |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   | N |   |   |   | b |   |   |
+  // +---+---+---+---+---+---+---+---+
+  // |   |   |   |   |   | P | P | P |
+  // +---+---+---+---+---+---+---+---+
+  // | R |   |   |   |[K]|   |   | R |
+  // +---+---+---+---+---+---+---+---+
+
+  Game game1("r2qk3/1P6/8/2Pp4/4P3/1N3b2/5PPP/R3K2R", "w", "KQq", "D6");
+  Game game2 = game1;
+  ASSERT_EQ(game1, game2, "operator== failed for game.");
+
+  Move null_move = 0;
+  game1.MakeNull(&null_move);
+  ASSERT(!memcmp(game1.board, game2.board, sizeof(game1.board[0]) * 64),
+         "Null move altered board state.");
+  ASSERT(game1.wtm != game2.wtm, "Null move didn't change wtm.");
+  ASSERT_EQ(game1.en_passant, 0, "En passant not removed.");
+  game1.UnmakeNull(null_move);
+  ASSERT_EQ(game1, game2, "UnmakeNull didn't undo MakeNull.");
+
+  return 1;
+}
+
 int main() {
+  magics::PopulateBishopTables();
+  magics::PopulateRookTables();
+
   int t = 0;
 
   t += TestMakeMoveUnmakeMove();
   t += TestReset50MoveLogic();
   t += TestFancyAlgebraic();
+  t += TestMakeNullUnmakeNull();
 
   cout << endl;
   cout << t << " test(s) OK" << endl;

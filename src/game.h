@@ -27,6 +27,8 @@ class Game : public Board {
 
   void MakeMove(Move* m);
   void UnmakeMove(Move m);
+  void MakeNull(Move* m);
+  void UnmakeNull(Move m);
   bool operator==(const Game& other) const;
 
   int full_move_number() { return (move_number / 2) + 1; };
