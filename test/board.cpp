@@ -102,6 +102,22 @@ int TestRemoveKingsideCastlingRights() {
   return 1;
 }
 
+// Tests have_piece method
+int TestHavePiece() {
+  cout << "Testing have_piece..." << endl;
+  Board board;
+
+  board.SetBoard("k7/8/8/8/8/8/7P/7K", "w");
+  ASSERT(!board.have_piece(), "Shouldn't have a piece...");
+
+  board.SetBoard("k7/8/8/8/4N3/8/7P/7K", "w");
+  ASSERT(board.have_piece(), "Should have a piece...");
+
+  return 1;
+}
+
+
+
 int main() {
   int t = 0;
 
@@ -110,6 +126,7 @@ int main() {
   t += TestMakePiece();
   t += TestRemoveQueensideCastlingRights();
   t += TestRemoveKingsideCastlingRights();
+  t += TestHavePiece();
 
   cout << endl;
   cout << t << " test(s) OK" << endl;

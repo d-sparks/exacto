@@ -211,4 +211,9 @@ void Board::GrantKingsideCastlingRights(bool color) {
   }
 }
 
+bool Board::have_piece() {
+  return 0 != popcount(pieces[wtm][ALL] ^ (pieces[wtm][KING] |
+                                           pieces[wtm][PAWN]));
+}
+
 }  // namespace exacto

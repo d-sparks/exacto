@@ -46,6 +46,7 @@ class Board {
 
   void set_en_passant(ind square = 64);
   bool in_check();
+  bool have_piece();
 
   bool operator==(const Board &other) const;
 
