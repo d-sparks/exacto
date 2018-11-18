@@ -13,7 +13,8 @@ int16_t Exacto::Search(Game* game,
                        int16_t alpha,
                        int16_t beta,
                        int16_t depth,
-                       int16_t ply) {
+                       int16_t ply,
+                       bool from_null) {
   // Time management
   if (terminate_search) {
     return alpha;
@@ -29,6 +30,11 @@ int16_t Exacto::Search(Game* game,
     }
   }
 
+  // Check for a draw by repition or 50 move rule.
+  if (drawn_by_repitition_or_50_move_rule(game)) {
+    return DRAWSCORE;
+  }
+
   // Transposition table pruning.
   uint8_t hash_lookup = hash.probe(game->hash_key, depth);
   if (hash_lookup) {
@@ -40,9 +46,17 @@ int16_t Exacto::Search(Game* game,
     }
   }
 
-  // Check for a draw by repition or 50 move rule.
-  if (drawn_by_repitition_or_50_move_rule(game)) {
-    return DRAWSCORE;
+  // Null move forward pruning.
+  if (depth >= 3 && game->have_piece() && !game->in_check() && !from_null &&
+      (hash.probe(game->hash_key, depth - 3) != HASH_ALPHA ||
+       hash.get_val(game->hash_key) >= beta)) {
+    Move null_move = 0;
+    game->MakeNull(&null_move);
+    int16_t score = -Search(game, -beta, -beta + 1, depth - 3, ply + 1, true);
+    game->UnmakeNull(null_move);
+    if (score >= beta) {
+      return score;
+    }
   }
 
   // At depth = 0, call qsearch to continue searching exciting moves.

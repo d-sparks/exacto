@@ -25,7 +25,8 @@ class Exacto {
                  int16_t alpha,
                  int16_t beta,
                  int16_t depth,
-                 int16_t ply);
+                 int16_t ply,
+                 bool from_null = false);
   int16_t QSearch(Game* game, int16_t alpha, int16_t beta, int16_t ply);
 
   void SortMoves(Game* game, Move* moves);
