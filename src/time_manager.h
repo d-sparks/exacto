@@ -26,4 +26,4 @@ class TimeManager {
 
 }  // namespace exacto
 
-#endif  // time_manager_h
+#endif  // exacto_src_time_manager_h
