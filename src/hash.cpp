@@ -28,7 +28,7 @@ void Hash::set_dimension(int size_in_mb) {
 }
 
 void Hash::record(uint64_t key_, Move sugg_, int16_t depth_, uint8_t flag_,
-                   int16_t val_) {
+                  int16_t val_) {
   uint64_t digest = key_ % entries;
   // collision resolution. Replace if either of these hold:
   // - Given flag > stored flag

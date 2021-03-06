@@ -8,7 +8,7 @@ namespace exacto {
 
 class Hash {
  public:
-  Hash(int size_in_mb = 128);
+  explicit Hash(int size_in_mb = 128);
   ~Hash();
 
   // The transposition table: 17 bytes per entry

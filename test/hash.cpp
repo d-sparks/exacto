@@ -13,6 +13,8 @@ int TestSetDimensions() {
   int expectedEntries = 1024 * 1024;
   ASSERT(hash.entries == expectedEntries,
          "set_dimension gives wrong # of entries");
+
+  return 1;
 }
 
 // Checks that a basic record works
@@ -24,6 +26,8 @@ int TestRecordHappyPath() {
 
   hash.record(exampleKey, BOGUS_MOVE, 0, HASH_EXACT, 0);
   ASSERT(hash.probe(exampleKey, 0) == HASH_EXACT, "Probe failed after record");
+
+  return 1;
 }
 
 // Checks that flag takes precedence
@@ -37,6 +41,8 @@ int TestRecordFlagOrder() {
   hash.record(exampleKey2, BOGUS_MOVE, 0, HASH_ALPHA, 0);
   ASSERT(hash.probe(exampleKey2, 0) == HASH_MISS,
          "HASH_ALPHA overwrote HASH_BETA");
+  
+  return 1;
 }
 
 // Checks that record marks entry as old if not recording
@@ -50,6 +56,8 @@ int TestRecordMarkFlagOld() {
   hash.record(exampleKey2, BOGUS_MOVE, 0, HASH_ALPHA, 0);
   ASSERT(hash.probe(exampleKey1, 0) == HASH_BETA_OLD,
          "Record did not mark flag as old");
+
+  return 1;
 }
 
 // Checks that record respects depth
@@ -63,6 +71,8 @@ int TestRecordRespectsDepth() {
   ASSERT(hash.probe(exampleKey1, 3) == HASH_EXACT, "Record failed to record");
   hash.record(exampleKey2, BOGUS_MOVE, 2, HASH_EXACT, 0);
   ASSERT(hash.probe(exampleKey2, 0) == HASH_MISS, "Depth 2 overwrote depth 3");
+
+  return 1;
 }
 
 int main() {

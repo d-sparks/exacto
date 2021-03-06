@@ -57,6 +57,8 @@ int TestEstimateMovesLeft() {
   ASSERT_EQ(time_manager.EstimateMovesLeft(40), 1, "Expected 1 moves left.");
   ASSERT_EQ(time_manager.EstimateMovesLeft(41), 40, "Expected 40 moves left.");
   ASSERT_EQ(time_manager.EstimateMovesLeft(80), 1, "Expected 1 moves left.");
+
+  return 1;
 }
 
 int main() {

@@ -15,7 +15,7 @@ using namespace exacto;
 
 namespace {
 
-static const char kVersion[] = "?.?";
+static constexpr char kVersion[] = "?.?";
 
 // greet is the classic exacto greeting, dating back to 0.a.
 void greet() {
@@ -27,7 +27,7 @@ void greet() {
             << std::endl << std::endl;
 }
 
-bool REPL(Game& game, Exacto& exacto, std::string input) {
+bool REPL(Game& game, Exacto& exacto, const std::string& input) {
   // Exacto specific commands
   if (input == "greet") {
     greet();
@@ -60,17 +60,20 @@ bool REPL(Game& game, Exacto& exacto, std::string input) {
   } else if (input == "xboard" || input == "winboard") {
     exacto.post_pretty = false;
   } else if (input == "protover") {
-    std::cin >> input;  // TODO:
+    std::string unused_input;
+    std::cin >> unused_input;  // TODO:
     std::cout << "feature ping=1 setboard=1 playother=1 san=0 usermove=1 "
               << "time=1 draw=0 sigint=0 sigterm=0 reuse=1 analyze=0 "
               << "colors=0 ics=0 name=0 pause=0 done=1" << std::endl;
     return true;
   } else if (input == "accepted") {
-    std::cin >> input;
+    std::string unused_input;
+    std::cin >> unused_input;
     return true;
   } else if (input == "ping") {
-    std::cin >> input;
-    std::cout << "pong " << input << std::endl;
+    std::string signature;
+    std::cin >> signature;
+    std::cout << "pong " << signature << std::endl;
     return true;
   } else if (input == "force") {
     exacto.force = !exacto.force;
